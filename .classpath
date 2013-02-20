@@ -2,5 +2,22 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="res"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/api/api-base.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/api/api-workbench.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/axis.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/CLCbioData.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/commons-compress-1.0.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/commons-discovery-0.4.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/commons-math-2.2.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/endorsed/jhall.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/logback-classic-1.0.1.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/logback-core-1.0.1.jar"/>
+	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/slf4j-api-1.6.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Peter Skovgaard/Desktop/6. semester/Bachelor Projekt/New CLC 932/CLCDeveloperKit/CLCWorkbench.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
