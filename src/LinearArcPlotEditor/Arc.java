@@ -29,7 +29,7 @@ public class Arc extends ChildDrawingNode {
 	private Color color;
 	
 	public Arc(int p1, int p2, double seqLength, double reliability){
-		System.out.println("hej");
+		System.out.println("hej2");
 		this.seqLength = seqLength;
 		this.reliability = reliability;
 		this.p1=p1;

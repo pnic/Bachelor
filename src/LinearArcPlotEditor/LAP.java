@@ -101,7 +101,4 @@ public class LAP extends RootDrawingNode {
 		// TODO Auto-generated method stub
 		setSize(-600,600,-600,600);
 	}
-	
-	
-
 }
