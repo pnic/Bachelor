@@ -38,7 +38,7 @@ public class LAP extends RootDrawingNode {
 	private float [] reliabilities; 
 	private Color [] colors;
 	private int seqLength;
-	
+	private int lengtht;
 	private ColorGradientRectangle colorGradientRectangle; 
 	
 	
@@ -51,10 +51,10 @@ public class LAP extends RootDrawingNode {
 
 	public LAP(Sequence seq, ColorGradientModel gradmodel, String title){
 		this.seq = seq;
+		seqLength = seq.getLength();
 		init();
 		
 		baseline = new Baseline(seqLength);
-		baseline.setOffset(20, 20);
 		addChild(baseline);
 		
 		
@@ -81,6 +81,7 @@ public class LAP extends RootDrawingNode {
 		}
 		
 		setColors(gradmodel);
+		setSize();
 	}
 	
 	private void init(){
@@ -107,7 +108,7 @@ public class LAP extends RootDrawingNode {
 			//get reliability of structure at that position
 			reliabilities[i] = (float)probAnnotation.getValue(i);
 		}
-    	
+    	System.out.println("L®ngde: " + seq.getLength());
     	this.seqLength = seq.getLength();
 	}
 	
@@ -126,6 +127,14 @@ public class LAP extends RootDrawingNode {
 	@Override
 	protected void setSize() {
 		// TODO Auto-generated method stub
-		setSize(-600,600,-600,600);
+		if(pairings != null){
+			System.out.println("seq length: " + pairings.length);
+			setSize(0, pairings.length*getScaleX(), 0, 600*getScaleX());
+		}
+		else{
+			System.out.println("Null");
+		}
+		//System.out.println(" width: " + seq.getLength()*getScaleX() + " ScaleX: " + getScaleX());
+		setSize(0,1200*getScaleX(),0,600);
 	}
 }

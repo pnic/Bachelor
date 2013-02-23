@@ -26,23 +26,34 @@ public class Arc extends ChildDrawingNode {
 	
 	int p1;
 	int p2;
+	int newp1;
+	int newp2;
+	
 	private Color color;
 	
 	public Arc(int p1, int p2, double seqLength, double reliability){
+
 		this.seqLength = seqLength;
 		this.reliability = reliability;
 		this.p1=p1;
 		this.p2=p2;
 		
 		
-		arc = new Arc2D.Double(-600+p1,-300-((p2-p1)/2),(p2-p1),(p2-p1),0,180,Arc2D.OPEN);
+		arc = new Arc2D.Double(p1,316-((p2-p1)/2),(p2-p1),(p2-p1),0,180,Arc2D.OPEN);
 	}
 	
+	private void update(){
+		newp1 = (int)(p1*getScaleX());
+		newp2 = (int) (p2*getScaleX());
+		System.out.println("nwp1 " + newp1 + " nwp2 " + newp2);
+		
+		arc = new Arc2D.Double(newp1,316-((newp2-newp1)/2),(newp2-newp1),(newp2-newp1),0,180,Arc2D.OPEN);
+	}
 	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, 
 										DrawingLayer drawinglayer, 
 										double minx, double maxx, 
 										double miny, double maxy){
-		
+		update();
 		//g2.setStroke(stroke);
 		g2.setColor(color);
 		g2.draw(arc);

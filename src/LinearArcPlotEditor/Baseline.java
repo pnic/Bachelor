@@ -17,21 +17,18 @@ import com.clcbio.api.clc.graphics.framework.DrawingResult;
 public class Baseline extends ChildDrawingNode {
 	
 	Line2D baseLine = new Line2D.Double(0,0,300,0);
-	Stroke stroke = new BasicStroke(5); 
-	
-	private void updateLength(int l){
-		//baseLine.setLine(0, 0, l, 0);
-	
-	}
+	Stroke stroke = new BasicStroke(2); 
+	private int length;
 	
 	public Baseline(int length){
-		baseLine.setLine(-600,-316,-600+length,-316);
+		this.length = length;
+		baseLine.setLine(0,316,length,316);
 	}
 	
 	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
 		//updateLength(3);
-	
+		baseLine.setLine(0,316, (int)(length*getScaleX()), 316);
 		g2.setStroke(stroke);
 		g2.draw(baseLine);
 		g2.fill(baseLine);
