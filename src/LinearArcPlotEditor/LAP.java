@@ -1,6 +1,7 @@
 package LinearArcPlotEditor;
 
 import java.awt.BasicStroke;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -24,6 +25,7 @@ import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
 import com.clcbio.api.clc.graphics.DrawingContext;
 import com.clcbio.api.clc.graphics.components.ColorGradientManager;
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
+import com.clcbio.api.clc.graphics.framework.ClcCanvas;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.gui.components.ObjectMoveable;
@@ -133,13 +135,13 @@ public class LAP extends RootDrawingNode {
 	protected void setSize() {
 		// TODO Auto-generated method stub
 		if(pairings != null){
-			System.out.println("seq length: " + pairings.length);
-			setSize(0, pairings.length*getScaleX(), 0, broadestPair*getScaleY());
+			//System.out.println("seq length: " + pairings.length);
+			setSize(0, pairings.length*getScaleX(), 0, 316+broadestPair*getScaleY());
 		}
 		else{
-			System.out.println("Null");
+			//System.out.println("Null");
+			setSize(0,1200*getScaleX(),0,600);
 		}
 		//System.out.println(" width: " + seq.getLength()*getScaleX() + " ScaleX: " + getScaleX());
-		setSize(0,1200*getScaleX(),0,600);
 	}
 }
