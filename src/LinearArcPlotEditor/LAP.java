@@ -58,14 +58,15 @@ public class LAP extends RootDrawingNode {
 		seqLength = seq.getLength();
 		init();
 		
-		baseline = new Baseline(seqLength);
-		addChild(baseline);
 		
 		
 		int nr=0;
 		for(int i = 0;i<pairings.length; i++){
 			if(pairings[i]>i){
 				nr = nr+1;
+				if(pairings[i]-i > broadestPair){
+					broadestPair = pairings[i]-i;
+				}
 			}
 		}
 		
@@ -75,17 +76,19 @@ public class LAP extends RootDrawingNode {
 			arcs = new Arc[nr];
 			for(int i = 0; i<pairings.length; i++){
 				if(pairings[i]>i){
-					if(pairings[i]-i > broadestPair){
-						broadestPair = pairings[i]-i;
-					}
 					System.out.println(i + " i");
 					System.out.println(pairings[i] + " p[i]");
 					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i]);
+					arcs[cnt].broadestPair = broadestPair;
 					addChild(arcs[cnt]);
 					cnt = cnt+1;
 				}
 			}
 		}
+		
+		baseline = new Baseline(seqLength);
+		addChild(baseline);
+		baseline.broadestPair = broadestPair;
 		
 		setColors(gradmodel);
 		setSize();
@@ -136,7 +139,7 @@ public class LAP extends RootDrawingNode {
 		// TODO Auto-generated method stub
 		if(pairings != null){
 			//System.out.println("seq length: " + pairings.length);
-			setSize(0, pairings.length*getScaleX(), 0, 316+broadestPair*getScaleY());
+			setSize(0, pairings.length*getScaleX()+50, 0, 316+broadestPair*getScaleY());
 		}
 		else{
 			//System.out.println("Null");
