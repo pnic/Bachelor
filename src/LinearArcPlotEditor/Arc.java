@@ -45,7 +45,6 @@ public class Arc extends ChildDrawingNode {
 	private void update(){
 		newp1 = (int)(p1*getScaleX());
 		newp2 = (int) (p2*getScaleX());
-		System.out.println("nwp1 " + newp1 + " nwp2 " + newp2);
 		
 		arc = new Arc2D.Double(newp1,316-((newp2-newp1)/2),(newp2-newp1),(newp2-newp1),0,180,Arc2D.OPEN);
 	}
