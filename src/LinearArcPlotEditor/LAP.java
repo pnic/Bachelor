@@ -39,6 +39,8 @@ public class LAP extends RootDrawingNode {
 	private Color [] colors;
 	private int seqLength;
 	private int lengtht;
+	//Used to specify height of size. 
+	private int broadestPair;
 	private ColorGradientRectangle colorGradientRectangle; 
 	
 	
@@ -71,6 +73,9 @@ public class LAP extends RootDrawingNode {
 			arcs = new Arc[nr];
 			for(int i = 0; i<pairings.length; i++){
 				if(pairings[i]>i){
+					if(pairings[i]-i > broadestPair){
+						broadestPair = pairings[i]-i;
+					}
 					System.out.println(i + " i");
 					System.out.println(pairings[i] + " p[i]");
 					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i]);
@@ -129,7 +134,7 @@ public class LAP extends RootDrawingNode {
 		// TODO Auto-generated method stub
 		if(pairings != null){
 			System.out.println("seq length: " + pairings.length);
-			setSize(0, pairings.length*getScaleX(), 0, 600*getScaleX());
+			setSize(0, pairings.length*getScaleX(), 0, broadestPair*getScaleY());
 		}
 		else{
 			System.out.println("Null");

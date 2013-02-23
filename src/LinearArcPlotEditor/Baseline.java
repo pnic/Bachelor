@@ -32,6 +32,14 @@ public class Baseline extends ChildDrawingNode {
 		g2.setStroke(stroke);
 		g2.draw(baseLine);
 		g2.fill(baseLine);
+		
+		//Draw numbers
+		int interval = length/10;
+		for(int i=0; i<length; i++){
+			if(i%interval == 0){
+				g2.drawString(Integer.toString(i), (int)(i*getScaleX()), 330);
+			}
+		}
 		return DrawingResult.NORMAL;
 	}
 }
