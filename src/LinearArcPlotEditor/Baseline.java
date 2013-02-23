@@ -47,6 +47,6 @@ public class Baseline extends ChildDrawingNode {
 		double width = length*getScaleX();
 		
 		
-		return (int)(length/3/getScaleX());
+		return (int)(length/(3*getScaleX()));
 	}
 }
