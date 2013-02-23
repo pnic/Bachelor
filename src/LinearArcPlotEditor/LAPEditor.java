@@ -120,20 +120,11 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         addSidePanelView(lapView);
        
+        
         lapView.setEnabled(true);
-		int pairing[] = RnaStructures.getStructures(
-				seq).getStructure(0).getPairing();
-    	float[] reliability = new float[seq.getLength()];
-		for(int i = 0; i<seq.getLength(); i++){
-			//get reliability of structure at that position
-			List<RnaStructureAnnotation> annotations = RnaStructures.getStructures(
-					seq).getStructure(0).getStructureAnnotations();
-			RnaStructureAnnotation probAnnotation = annotations.get(0);
-			reliability[i] = (float)probAnnotation.getValue(i);
-		}	
-		
-		lap = new LAP(pairing,reliability,seq.getLength(),lapModel.getColorModel(),seq.getName());
-		
+        
+        //New linear arc plot
+		lap = new LAP(seq,lapModel.getColorModel(),seq.getName());
 		getCanvas().addChild(lap);
     }
 	

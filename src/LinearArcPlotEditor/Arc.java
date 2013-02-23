@@ -29,7 +29,6 @@ public class Arc extends ChildDrawingNode {
 	private Color color;
 	
 	public Arc(int p1, int p2, double seqLength, double reliability){
-		System.out.println("hej2");
 		this.seqLength = seqLength;
 		this.reliability = reliability;
 		this.p1=p1;
@@ -37,9 +36,6 @@ public class Arc extends ChildDrawingNode {
 		
 		
 		arc = new Arc2D.Double(-600+p1,-300-((p2-p1)/2),(p2-p1),(p2-p1),0,180,Arc2D.OPEN);
-		
-		
-		
 	}
 	
 	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, 
