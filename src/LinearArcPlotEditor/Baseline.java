@@ -45,8 +45,13 @@ public class Baseline extends ChildDrawingNode {
 	
 	private int getIntervalNumber(){
 		double width = length*getScaleX();
-		
-		
-		return (int)(length/(3*getScaleX()));
+		System.out.println(width + " getScaleX() " +getScaleX());
+		if(getScaleX() < 0.2 && length > 1000) return 500;
+		if(getScaleX() < 0.3) return 300;
+		if(getScaleX() < 0.8) return 150;
+		if(0.8 < getScaleX() && getScaleX() < 1.5) return 100;
+		if(1.5 < getScaleX() && getScaleX() < 3.0) return 50;
+		if(3.0 < getScaleX() && getScaleX() < 15) return 25;
+		else return 10;
 	}
 }

@@ -45,8 +45,8 @@ public class LAPLayoutModel extends SidePanelModel {
 	        model.put(KEY_COLORSTATE, colormodel.getState());
 	        return model;
 	    }
-	//The loadModel(..) and saveModel() methods, that has to be overwritten are used to support usersettings. We simply store and restore our properties in a State.
-
+	    
+	    //The loadModel(..) and saveModel() methods, that has to be overwritten are used to support usersettings. We simply store and restore our properties in a State.
 	    public int zoomLevel() {
 	        return zoomLevel;
 	    }

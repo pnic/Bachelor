@@ -77,8 +77,8 @@ public class ArcMouseListener implements MouseInputListener{
 	private boolean isOnCircle(int x_pos, int y_pos){
 		int radius = (x2-x1)/2;
 		int circle_xorigin = x1+radius;
-		int circle_yorigin = y+(circleHeight/2);
-		System.out.println("x1 " + x1 + " x2 " + x2 + " y " + y);
+		int circle_yorigin = y+radius;
+		System.out.println("x1 " + x1 + " x2 " + x2 + " x_origin " + circle_xorigin+ " y origin " + circle_yorigin);
 		int returner = (int) (Math.pow(x_pos-circle_xorigin, 2)+Math.pow(y_pos-circle_yorigin, 2) - Math.pow(radius, 2));
 		//System.out.println(returner);
 		if(returner == 0){

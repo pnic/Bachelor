@@ -34,13 +34,12 @@ public class Arc extends ChildDrawingNode {
 	private Color color;
 	
 	public Arc(int p1, int p2, double seqLength, double reliability){
-
 		this.seqLength = seqLength;
 		this.reliability = reliability;
 		this.p1=p1;
 		this.p2=p2;
-		mouseListener = new ArcMouseListener();
-		this.addMouseInputListener(mouseListener);
+		//mouseListener = new ArcMouseListener();
+		//this.addMouseInputListener(mouseListener);
 		arc = new Arc2D.Double(p1,(200+broadestPair*getScaleY())-((p2-p1)/2),(p2-p1),(p2-p1),0,180,Arc2D.OPEN);
 	}
 	
@@ -52,9 +51,9 @@ public class Arc extends ChildDrawingNode {
 		int height = newp2-newp1;
 		int width = newp2-newp1;
 		// mouse listener
-		mouseListener.setXs(newp1, newp2);
-		mouseListener.setHeight(height);
-		mouseListener.setY(y_position);
+		//mouseListener.setXs(newp1, newp2);
+		//mouseListener.setHeight(height);
+		//mouseListener.setY(y_position);
 		
 		arc = new Arc2D.Double(newp1,y_position,width,height,0,180,Arc2D.OPEN);
 
