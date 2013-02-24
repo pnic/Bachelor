@@ -52,7 +52,8 @@ public class ArcMouseListener implements MouseInputListener{
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		//System.out.println("Moved");
+		System.out.println("Moved " +" x " + arg0.getX() + " y: " + arg0.getY());
+	
 		if(isOnCircle(arg0.getX(), arg0.getY())){
 			System.out.println("yes");
 		}
@@ -77,6 +78,7 @@ public class ArcMouseListener implements MouseInputListener{
 		int radius = (x2-x1)/2;
 		int circle_xorigin = x1+radius;
 		int circle_yorigin = y+(circleHeight/2);
+		System.out.println("x1 " + x1 + " x2 " + x2 + " y " + y);
 		int returner = (int) (Math.pow(x_pos-circle_xorigin, 2)+Math.pow(y_pos-circle_yorigin, 2) - Math.pow(radius, 2));
 		//System.out.println(returner);
 		if(returner == 0){

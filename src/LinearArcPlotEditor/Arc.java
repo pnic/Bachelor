@@ -51,9 +51,11 @@ public class Arc extends ChildDrawingNode {
 		int y_position = (int)(200+broadestPair*getScaleY())-((newp2-newp1)/2);
 		int height = newp2-newp1;
 		int width = newp2-newp1;
+		// mouse listener
 		mouseListener.setXs(newp1, newp2);
 		mouseListener.setHeight(height);
 		mouseListener.setY(y_position);
+		
 		arc = new Arc2D.Double(newp1,y_position,width,height,0,180,Arc2D.OPEN);
 
 	}
