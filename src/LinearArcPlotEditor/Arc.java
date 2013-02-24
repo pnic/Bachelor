@@ -12,6 +12,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
+import javax.swing.event.MouseInputListener;
 
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
@@ -24,7 +25,7 @@ public class Arc extends ChildDrawingNode {
 	private double reliability;
 	private Stroke stroke = new BasicStroke(3);
 	public int broadestPair;
-	
+	private ArcMouseListener mouseListener;
 	int p1;
 	int p2;
 	int newp1;
@@ -38,8 +39,8 @@ public class Arc extends ChildDrawingNode {
 		this.reliability = reliability;
 		this.p1=p1;
 		this.p2=p2;
-		
-		
+		mouseListener = new ArcMouseListener();
+		this.addMouseInputListener(mouseListener);
 		arc = new Arc2D.Double(p1,(200+broadestPair*getScaleY())-((p2-p1)/2),(p2-p1),(p2-p1),0,180,Arc2D.OPEN);
 	}
 	
@@ -50,6 +51,9 @@ public class Arc extends ChildDrawingNode {
 		int y_position = (int)(200+broadestPair*getScaleY())-((newp2-newp1)/2);
 		int height = newp2-newp1;
 		int width = newp2-newp1;
+		mouseListener.setXs(newp1, newp2);
+		mouseListener.setHeight(height);
+		mouseListener.setY(y_position);
 		arc = new Arc2D.Double(newp1,y_position,width,height,0,180,Arc2D.OPEN);
 
 	}
