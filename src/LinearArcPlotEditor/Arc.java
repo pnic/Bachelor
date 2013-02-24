@@ -40,14 +40,14 @@ public class Arc extends ChildDrawingNode {
 		this.p2=p2;
 		//mouseListener = new ArcMouseListener();
 		//this.addMouseInputListener(mouseListener);
-		arc = new Arc2D.Double(p1,(200+broadestPair*getScaleY())-((p2-p1)/2),(p2-p1),(p2-p1),0,180,Arc2D.OPEN);
+		arc = new Arc2D.Double(p1,(100+broadestPair*getScaleY())-((p2-p1)/2),(p2-p1),(p2-p1),0,180,Arc2D.OPEN);
 	}
 	
 	private void update(){
 		newp1 = (int)(p1*getScaleX());
 		newp2 = (int) (p2*getScaleX());
 		
-		int y_position = (int)(200+broadestPair*getScaleY())-((newp2-newp1)/2);
+		int y_position = (int)(100+(broadestPair/2)*getScaleY())-((newp2-newp1)/2);
 		int height = newp2-newp1;
 		int width = newp2-newp1;
 		// mouse listener

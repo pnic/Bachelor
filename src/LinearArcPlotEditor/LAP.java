@@ -57,6 +57,10 @@ public class LAP extends RootDrawingNode {
 	public LAP(Sequence seq, ColorGradientModel gradmodel, String title){
 		this.seq = seq;
 		seqLength = seq.getLength();
+		if(seq.getLength() > 1000) {
+			scaleX = 0.1;
+			scaleY = 0.1;
+		}
 		this.TextForTitle = title;
 		init();
 		
@@ -104,6 +108,7 @@ public class LAP extends RootDrawingNode {
 		setMinScaleY(0.1);
 		setMinScaleRatio(1.0);
 		setMaxScaleRatio(1.0);
+	
 		
 		//setup pairing and reliabilities.
 		pairings = RnaStructures.getStructures(
@@ -144,7 +149,7 @@ public class LAP extends RootDrawingNode {
 		// TODO Auto-generated method stub
 		if(pairings != null){
 			//System.out.println("seq length: " + pairings.length);
-			setSize(0, pairings.length*getScaleX()+50, 0, 316+broadestPair*getScaleY());
+			setSize(0, pairings.length*getScaleX()+50, 0, 200+(broadestPair/2)*getScaleY());
 		}
 		else{
 			//System.out.println("Null");
