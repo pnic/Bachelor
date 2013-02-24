@@ -15,6 +15,7 @@ public class LAPLayoutModel extends SidePanelModel {
 
 	 private int zoomLevel = 100;
      private State colorstate;
+     private String LAPTitle;
 	    
 	    private ColorGradientModel colormodel = new ColorGradientModel(ColorGradientManager.getGradients()); 
 
@@ -71,5 +72,13 @@ public class LAPLayoutModel extends SidePanelModel {
 			fireModelChanged();
 		}
 
-
+		public void updateTitle(String newTitle){
+			System.out.println("This is the model " + newTitle);
+			LAPTitle = newTitle;
+			fireModelChanged();
+		}
+		
+		public String getLapTitle(){
+			return LAPTitle;
+		}
 }

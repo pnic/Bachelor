@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -27,13 +28,13 @@ import com.clcbio.api.free.gui.StandardLayout;
 public class LAPLayoutView extends SidePanelView {
 
 	private StandardLayout panel = null;
-    private JTextField zoom; //Reverse the sequence? (Clockwise/anticlockwise) 
-   
 
+	private JLabel colorChoose;
     private GradientChooser gradchooser;
     
-    
-    private JSpinner zoomlevel; //to zoom 
+
+    private JTextField Title;
+    private JButton setTitle;
     
 //Here have the three Swing components representing our model properties. Furthermore we use the CLC component StandardLayout to do the layout of our UI.
     
@@ -45,25 +46,15 @@ public class LAPLayoutView extends SidePanelView {
     @Override
     public void setEnabled(boolean val){
     	//Set all components to the required values
-    	zoom.setEnabled(val);
+    
     	
     }
 
     private void createUI() {
-    	
     	final LAPLayoutModel lapModel = (LAPLayoutModel) getModel();
     	
         if (panel == null) {
-            zoom = new JTextField("Zoom In");
             
-            zoom.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    lapModel.setZoom(Integer.parseInt(zoom.getText()));
-                }
-            });
-           //zoom.setSelected((lapModel).zoomLevel());
-            
-          
             final ColorGradientModel gradmodel = lapModel.getColorModel();
             gradchooser = new GradientChooser(gradmodel);
             gradmodel.addListener(new GradientModelListener(){
@@ -82,6 +73,19 @@ public class LAPLayoutView extends SidePanelView {
 				public void stringsChanged() {}
             });
          
+            Title = new JTextField("Title");
+            
+            setTitle = new JButton("Set title");
+            setTitle.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					((LAPLayoutModel) getModel()).updateTitle(Title.getText());
+				}
+            	
+            });
+            
+            
+            colorChoose = new JLabel("Color of arcs");
             panel = new StandardLayout();
             
             fillPanel();
@@ -91,8 +95,10 @@ public class LAPLayoutView extends SidePanelView {
 
     private void fillPanel() {
         createUI();
-        panel.removeAll();
-        panel.addComps(new JLabel("Zoom Level"), zoom);         
+        panel.removeAll();  
+        panel.addComp(Title);
+        panel.addComp(setTitle);
+        panel.addComp(colorChoose);
         panel.addComp(gradchooser);
         
     }

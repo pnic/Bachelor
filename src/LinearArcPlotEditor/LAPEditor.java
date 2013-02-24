@@ -103,14 +103,17 @@ public class LAPEditor extends AbstractGraphicsEditor {
         };
         seq.addListener(sequenceListener);
         
+        
         lapModel = new LAPLayoutModel(manager);
         lapView = new LAPLayoutView(lapModel);
         
+        // This states what happens (to the view) when the model changes.
         lapModel.addSidePanelListener(new SidePanelListener() {
             public void modelChanged(SidePanelModel model, SidePanelEvent event) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                     	if(lap!=null){
+                    		lap.setTitle(lapModel.getLapTitle());
                     		repaint();
                     	}
                     }
@@ -124,7 +127,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         lapView.setEnabled(true);
         
         //New linear arc plot
-		lap = new LAP(seq,lapModel.getColorModel(),seq.getName());
+        lap = new LAP(seq,lapModel.getColorModel(),"The title");
 		getCanvas().addChild(lap);
     }
 	

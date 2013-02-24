@@ -44,20 +44,21 @@ public class LAP extends RootDrawingNode {
 	//Used to specify height of size. 
 	private int broadestPair;
 	private ColorGradientRectangle colorGradientRectangle; 
+	private TitleText titleText;
 	
 	
 	private Arc [] arcs; 
 	
 	private Baseline baseline;
 	
-	private String title;
+	private String TextForTitle;
 	private Sequence seq;
 
 	public LAP(Sequence seq, ColorGradientModel gradmodel, String title){
 		this.seq = seq;
 		seqLength = seq.getLength();
+		this.TextForTitle = title;
 		init();
-		
 		
 		
 		int nr=0;
@@ -89,7 +90,8 @@ public class LAP extends RootDrawingNode {
 		baseline = new Baseline(seqLength);
 		addChild(baseline);
 		baseline.broadestPair = broadestPair;
-		
+		titleText = new TitleText(TextForTitle);
+		addChild(titleText);
 		setColors(gradmodel);
 		setSize();
 	}
@@ -122,6 +124,9 @@ public class LAP extends RootDrawingNode {
     	this.seqLength = seq.getLength();
 	}
 	
+	public void setTitle(String title){
+		titleText.setTitle(title);
+	}
 	
 	public void setColors(ColorGradientModel gradmodel){  
 		int cnt = 0; 
