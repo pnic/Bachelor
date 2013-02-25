@@ -123,8 +123,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
         });
         
         addSidePanelView(lapView);
-       
-        
         lapView.setEnabled(true);
         
         //New linear arc plot

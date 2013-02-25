@@ -38,8 +38,8 @@ public class Arc extends ChildDrawingNode {
 		this.reliability = reliability;
 		this.p1=p1;
 		this.p2=p2;
-		//mouseListener = new ArcMouseListener();
-		//this.addMouseInputListener(mouseListener);
+		mouseListener = new ArcMouseListener();
+		this.addMouseInputListener(mouseListener);
 		arc = new Arc2D.Double(p1,(100+broadestPair*getScaleY())-((p2-p1)/2),(p2-p1),(p2-p1),0,180,Arc2D.OPEN);
 	}
 	
@@ -47,17 +47,28 @@ public class Arc extends ChildDrawingNode {
 		newp1 = (int)(p1*getScaleX());
 		newp2 = (int) (p2*getScaleX());
 		
-		int y_position = (int)(100+(broadestPair/2)*getScaleY())-((newp2-newp1)/2);
-		int height = newp2-newp1;
+		int y_position = getArcYPosition();
+		int height = getArcHeight();
 		int width = newp2-newp1;
 		// mouse listener
+		
 		//mouseListener.setXs(newp1, newp2);
 		//mouseListener.setHeight(height);
 		//mouseListener.setY(y_position);
 		
 		arc = new Arc2D.Double(newp1,y_position,width,height,0,180,Arc2D.OPEN);
-
+		mouseListener.setArc(arc);
 	}
+	
+	
+	private int getArcHeight(){
+		return (newp2-newp1)/2;
+	}
+	
+	private int getArcYPosition(){
+		return (int)(100+(broadestPair/2)*getScaleY())-(getArcHeight()/2);
+	}
+	
 	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, 
 										DrawingLayer drawinglayer, 
 										double minx, double maxx, 

@@ -57,7 +57,7 @@ public class LAP extends RootDrawingNode {
 	public LAP(Sequence seq, ColorGradientModel gradmodel, String title){
 		this.seq = seq;
 		seqLength = seq.getLength();
-		if(seq.getLength() > 1000) {
+		if(seq.getLength() > 1000){
 			scaleX = 0.1;
 			scaleY = 0.1;
 		}
@@ -70,7 +70,7 @@ public class LAP extends RootDrawingNode {
 			if(pairings[i]>i){
 				nr = nr+1;
 				if(pairings[i]-i > broadestPair){
-					broadestPair = pairings[i]-i;
+					broadestPair = (pairings[i]-i);
 				}
 			}
 		}
@@ -146,7 +146,6 @@ public class LAP extends RootDrawingNode {
 	
 	@Override
 	protected void setSize() {
-		
 		if(pairings != null){
 			//System.out.println("seq length: " + pairings.length);
 			setSize(0, pairings.length*getScaleX()+50, 0, 200+(broadestPair/2)*getScaleY());
@@ -164,6 +163,8 @@ public class LAP extends RootDrawingNode {
 		
 	}
 	
-	
+	public int GetLDHeight(){
+		return 500;
+	}
 
 }

@@ -20,10 +20,13 @@ public class Baseline extends ChildDrawingNode {
 	Stroke stroke = new BasicStroke(2); 
 	private int length;
 	public int broadestPair;
+	public static final int baseLineY = 100;
 	public Baseline(int length){
 		this.length = length;
 		baseLine.setLine(0,316,length,316);
 	}
+	
+	
 	
 	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){

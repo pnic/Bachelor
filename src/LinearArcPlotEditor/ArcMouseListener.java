@@ -1,11 +1,13 @@
 package LinearArcPlotEditor;
 
 import java.awt.event.MouseEvent;
+import java.awt.geom.Arc2D;
 
 import javax.swing.event.MouseInputListener;
 
 public class ArcMouseListener implements MouseInputListener{
 	
+	private Arc2D arc;
 	private int x1;
 	private int x2;
 	private int circleHeight;
@@ -52,10 +54,9 @@ public class ArcMouseListener implements MouseInputListener{
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		System.out.println("Moved " +" x " + arg0.getX() + " y: " + arg0.getY());
-	
-		if(isOnCircle(arg0.getX(), arg0.getY())){
-			System.out.println("yes");
+		
+		if(arc != null){
+			System.out.println(arc.contains(arg0.getX(), arg0.getY(), 5, 5));
 		}
 		
 		//System.out.println("x: " + arg0.getX() + " y " + arg0.getY());
@@ -85,5 +86,9 @@ public class ArcMouseListener implements MouseInputListener{
 			return true;
 		}
 		return false;
+	}
+	
+	public void setArc(Arc2D arc){
+		this.arc = arc;
 	}
 }
