@@ -56,7 +56,7 @@ public class ArcMouseListener implements MouseInputListener{
 	public void mouseMoved(MouseEvent arg0) {
 		
 		if(arc != null){
-			System.out.println(arc.contains(arg0.getX(), arg0.getY(), 5, 5));
+			//System.out.println(arc.contains(arg0.getX(), arg0.getY(), 5, 5));
 		}
 		
 		//System.out.println("x: " + arg0.getX() + " y " + arg0.getY());
