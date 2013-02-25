@@ -148,7 +148,7 @@ public class LAP extends RootDrawingNode {
 	protected void setSize() {
 		if(pairings != null){
 			//System.out.println("seq length: " + pairings.length);
-			setSize(0, pairings.length*getScaleX()+50, 0, 200+(broadestPair/2)*getScaleY());
+			setSize(0, pairings.length*getScaleX()+50, 0, 200+(broadestPair/4)*getScaleY());
 		}
 		else{
 			//System.out.println("Null");
