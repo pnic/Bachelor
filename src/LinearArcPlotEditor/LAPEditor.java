@@ -103,15 +103,18 @@ public class LAPEditor extends AbstractGraphicsEditor {
         };
         seq.addListener(sequenceListener);
         
+        
         lapModel = new LAPLayoutModel(manager);
         lapView = new LAPLayoutView(lapModel);
         
+        // This states what happens (to the view) when the model changes.
         lapModel.addSidePanelListener(new SidePanelListener() {
             public void modelChanged(SidePanelModel model, SidePanelEvent event) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                     	if(lap!=null){
                     		lap.refresh(lapModel.getColorModel());
+                    		lap.setTitle(lapModel.getLapTitle());
                     		repaint();
                     	}
                     }
@@ -121,20 +124,11 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         addSidePanelView(lapView);
        
+        
         lapView.setEnabled(true);
-		int pairing[] = RnaStructures.getStructures(
-				seq).getStructure(0).getPairing();
-    	float[] reliability = new float[seq.getLength()];
-		for(int i = 0; i<seq.getLength(); i++){
-			//get reliability of structure at that position
-			List<RnaStructureAnnotation> annotations = RnaStructures.getStructures(
-					seq).getStructure(0).getStructureAnnotations();
-			RnaStructureAnnotation probAnnotation = annotations.get(0);
-			reliability[i] = (float)probAnnotation.getValue(i);
-		}	
-		
-		lap = new LAP(pairing,reliability,seq.getLength(),lapModel.getColorModel(),seq.getName());
-		
+        
+        //New linear arc plot
+        lap = new LAP(seq,lapModel.getColorModel(),"The title");
 		getCanvas().addChild(lap);
     }
 	

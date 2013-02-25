@@ -15,6 +15,7 @@ public class LAPLayoutModel extends SidePanelModel {
 
 	 private int zoomLevel = 100;
      private State colorstate;
+     private String LAPTitle;
 	    
 	    private ColorGradientModel colormodel = new ColorGradientModel(ColorGradientManager.getGradients()); 
 
@@ -44,8 +45,8 @@ public class LAPLayoutModel extends SidePanelModel {
 	        model.put(KEY_COLORSTATE, colormodel.getState());
 	        return model;
 	    }
-	//The loadModel(..) and saveModel() methods, that has to be overwritten are used to support usersettings. We simply store and restore our properties in a State.
-
+	    
+	    //The loadModel(..) and saveModel() methods, that has to be overwritten are used to support usersettings. We simply store and restore our properties in a State.
 	    public int zoomLevel() {
 	        return zoomLevel;
 	    }
@@ -71,5 +72,13 @@ public class LAPLayoutModel extends SidePanelModel {
 			fireModelChanged();
 		}
 
-
+		public void updateTitle(String newTitle){
+			System.out.println("This is the model " + newTitle);
+			LAPTitle = newTitle;
+			fireModelChanged();
+		}
+		
+		public String getLapTitle(){
+			return LAPTitle;
+		}
 }
