@@ -18,19 +18,19 @@ public class ArcMouseListener implements MouseInputListener{
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		System.out.println("Clicked");
+		//System.out.println("Clicked");
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		System.out.println("Enter");
+		//System.out.println("Enter");
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		System.out.println("Exited");
+		//System.out.println("Exited");
 		
 	}
 
@@ -48,7 +48,7 @@ public class ArcMouseListener implements MouseInputListener{
 
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		System.out.println("dragged");
+		//System.out.println("dragged");
 		
 	}
 
@@ -56,7 +56,7 @@ public class ArcMouseListener implements MouseInputListener{
 	public void mouseMoved(MouseEvent arg0) {
 		
 		if(arc != null){
-			System.out.println(arc.contains(arg0.getX(), arg0.getY(), 5, 5));
+			//System.out.println(arc.contains(arg0.getX(), arg0.getY(), 5, 5));
 		}
 		
 		//System.out.println("x: " + arg0.getX() + " y " + arg0.getY());

@@ -46,7 +46,7 @@ public class Arc extends ChildDrawingNode {
 	private void update(){
 		newp1 = (int)(p1*getScaleX());
 		newp2 = (int) (p2*getScaleX());
-		
+		System.out.println("GGlobal full offset " + getGlobalFullOffsetX() + "Full offset " + getFullOffsetX());
 		int y_position = getArcYPosition();
 		int height = getArcHeight();
 		int width = newp2-newp1;
@@ -63,6 +63,7 @@ public class Arc extends ChildDrawingNode {
 	
 	private int getArcHeight(){
 		return (newp2-newp1)/2;
+		//This is the arc height method
 	}
 	
 	private int getArcYPosition(){
