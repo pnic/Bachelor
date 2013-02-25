@@ -63,7 +63,7 @@ public class Arc extends ChildDrawingNode {
 	
 	private int getArcHeight(){
 		return (newp2-newp1)/2;
-		//This is the arc height method
+		//This is the arc height methodewrwer
 	}
 	
 	private int getArcYPosition(){
