@@ -31,7 +31,7 @@ public class Baseline extends ChildDrawingNode {
 	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
 		//updateLength(3);
-		baseLine.setLine(0,100+(broadestPair/2)*getScaleY(), (int)(length*getScaleX()), 100+(broadestPair/2)*getScaleY());
+		baseLine.setLine(0,100+(broadestPair/4)*getScaleY(), (int)(length*getScaleX()), 100+(broadestPair/4)*getScaleY());
 		g2.setStroke(stroke);
 		g2.draw(baseLine);
 		g2.fill(baseLine);
@@ -40,7 +40,7 @@ public class Baseline extends ChildDrawingNode {
 		int interval = getIntervalNumber();
 		for(int i=0; i<length; i++){
 			if(i%interval == 0){
-				g2.drawString(Integer.toString(i), (int)(i*getScaleX()), (int)(100+(broadestPair/2)*getScaleY()+20));
+				g2.drawString(Integer.toString(i), (int)(i*getScaleX()), (int)(100+(broadestPair/4)*getScaleY()+20));
 			}
 		}
 		return DrawingResult.NORMAL;

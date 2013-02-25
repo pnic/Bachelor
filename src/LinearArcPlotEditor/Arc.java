@@ -66,7 +66,7 @@ public class Arc extends ChildDrawingNode {
 	}
 	
 	private int getArcYPosition(){
-		return (int)(100+(broadestPair/2)*getScaleY())-(getArcHeight()/2);
+		return (int)(100+(broadestPair/4)*getScaleY())-(getArcHeight()/2);
 	}
 	
 	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, 
