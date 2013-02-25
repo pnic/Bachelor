@@ -77,7 +77,7 @@ public class Arc extends ChildDrawingNode {
 		//g2.setStroke(stroke);
 		g2.setColor(color);
 		g2.draw(arc);
-		
+		//Useless Comment
 		return DrawingResult.NORMAL;
 	}
 	
