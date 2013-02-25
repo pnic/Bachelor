@@ -91,7 +91,7 @@ public class LAP extends RootDrawingNode {
 			}
 		}
 		
-		baseline = new Baseline(seqLength);
+		baseline = new Baseline(seq);
 		addChild(baseline);
 		baseline.broadestPair = broadestPair;
 		titleText = new TitleText(TextForTitle);
@@ -102,8 +102,8 @@ public class LAP extends RootDrawingNode {
 	
 	private void init(){
 		// Set scaleX and scaleY for zooming. 
-		setMaxScaleX(30);
-		setMaxScaleY(30);
+		setMaxScaleX(12);
+		setMaxScaleY(12);
 		setMinScaleX(0.1);
 		setMinScaleY(0.1);
 		setMinScaleRatio(1.0);
@@ -160,7 +160,6 @@ public class LAP extends RootDrawingNode {
 
 	public void refresh(ColorGradientModel colorGradientModel) {
 		setColors(colorGradientModel);
-		
 	}
 	
 	public int GetLDHeight(){

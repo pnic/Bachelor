@@ -44,6 +44,7 @@ import com.clcbio.api.free.editors.framework.AbstractEditor;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelListener;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.editors.framework.sidepanel.event.SidePanelEvent;
+import com.clcbio.api.free.framework.navigation.NavigationManager;
 import com.clcbio.api.free.framework.workspace.Workspace;
 import com.clcbio.api.free.gui.StandardLayout;
 import com.clcbio.api.free.gui.components.JTextAreaNotPasteable;

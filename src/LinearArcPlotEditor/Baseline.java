@@ -13,6 +13,7 @@ import javax.swing.JComponent;
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 
 public class Baseline extends ChildDrawingNode {
 	
@@ -21,8 +22,15 @@ public class Baseline extends ChildDrawingNode {
 	private int length;
 	public int broadestPair;
 	public static final int baseLineY = 100;
-	public Baseline(int length){
-		this.length = length;
+	private Sequence seq;
+	private byte[] nrs;
+	
+	public Baseline(Sequence seq){
+		this.length = seq.getLength();
+		nrs = new byte[length];
+		for(int i=0; i<length; i++){
+			nrs[i] = seq.getSymbolIndexAt(i);
+		}
 		baseLine.setLine(0,316,length,316);
 	}
 	
@@ -30,17 +38,30 @@ public class Baseline extends ChildDrawingNode {
 	
 	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
-		//updateLength(3);
-		baseLine.setLine(0,100+(broadestPair/4)*getScaleY(), (int)(length*getScaleX()), 100+(broadestPair/4)*getScaleY());
-		g2.setStroke(stroke);
-		g2.draw(baseLine);
-		g2.fill(baseLine);
+		// If scaleX() is under 12, draw a line.
+		if(getScaleX() < 11){
+			baseLine.setLine(0,100+(broadestPair/4)*getScaleY(), (int)(length*getScaleX()), 100+(broadestPair/4)*getScaleY());
+			g2.setStroke(stroke);
+			g2.draw(baseLine);
+			g2.fill(baseLine);
+		}
+		// If scaleX() is over 12, draw sequence instead.
+		else{
+			for(int i=0; i<length; i++){
+					String s = getNucleotide(nrs[i]);
+					System.out.println(s);
+					g2.drawString(s, (int)(i*getScaleX()), (int)(112+(broadestPair/4)*getScaleY()));
+			}
+		}
 		
 		//Draw numbers
 		int interval = getIntervalNumber();
 		for(int i=0; i<length; i++){
 			if(i%interval == 0){
-				g2.drawString(Integer.toString(i), (int)(i*getScaleX()), (int)(100+(broadestPair/4)*getScaleY()+20));
+				if(getScaleX()>11)g2.drawString(Integer.toString(i), (int)(i*getScaleX())-4, (int)(100+(broadestPair/4)*getScaleY()+24));
+				else{	
+					g2.drawString(Integer.toString(i), (int)(i*getScaleX()), (int)(100+(broadestPair/4)*getScaleY()+20));
+				}
 			}
 		}
 		return DrawingResult.NORMAL;
@@ -54,7 +75,18 @@ public class Baseline extends ChildDrawingNode {
 		if(getScaleX() < 0.8) return 150;
 		if(0.8 < getScaleX() && getScaleX() < 1.5) return 100;
 		if(1.5 < getScaleX() && getScaleX() < 3.0) return 50;
-		if(3.0 < getScaleX() && getScaleX() < 15) return 25;
+		if(3.0 < getScaleX() && getScaleX() < 11) return 25;
 		else return 10;
+	}
+	
+	public String getNucleotide(byte letter){
+		switch(letter){
+			case 0: return "A";
+			case 1: return "C";
+			case 2: return "G";
+			case 3: return "U";
+		}
+		
+		return "0";
 	}
 }

@@ -44,9 +44,11 @@ public class Arc extends ChildDrawingNode {
 	}
 	
 	private void update(){
-		newp1 = (int)(p1*getScaleX());
-		newp2 = (int) (p2*getScaleX());
-		System.out.println("GGGGlobal full offset " + getGlobalFullOffsetX() + "Full offset " + getFullOffsetX());
+		newp1 = (int)(p1*getScaleX())+5;
+		newp2 = (int) (p2*getScaleX())+5;
+		System.out.println("Global full offset " + getGlobalFullOffsetX() + "Full offset " + getFullOffsetX() + " get offset " + getOffsetX() + " scaleable offset " + getScalableOffsetX());
+	
+		
 		int y_position = getArcYPosition();
 		int height = getArcHeight();
 		int width = newp2-newp1;
@@ -74,10 +76,10 @@ public class Arc extends ChildDrawingNode {
 										double minx, double maxx, 
 										double miny, double maxy){
 		update();
-		//g2.setStroke(stroke);
+		// If we are close, make arcs thicker. 
+		if(getScaleX() > 11) g2.setStroke(new BasicStroke(3));
 		g2.setColor(color);
 		g2.draw(arc);
-		//Useless Comment
 		return DrawingResult.NORMAL;
 	}
 	
