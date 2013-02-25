@@ -111,6 +111,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                     	if(lap!=null){
+                    		lap.refresh(lapModel.getColorModel());
                     		repaint();
                     	}
                     }

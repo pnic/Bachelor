@@ -98,8 +98,14 @@ public class LAP extends RootDrawingNode {
 	
 	@Override
 	protected void setSize() {
-		// TODO Auto-generated method stub
+		
 		setSize(-600,600,-600,600);
+	}
+
+
+	public void refresh(ColorGradientModel colorGradientModel) {
+		setColors(colorGradientModel);
+		
 	}
 	
 	
