@@ -25,11 +25,11 @@ public class Baseline extends ChildDrawingNode {
 	Stroke stroke = new BasicStroke(2); 
 	private int length;
 
-	private Sequence seq;
 	private byte[] nrs;
 	private Font font;
 	private boolean isBold;
 	private int fontSize;
+	private String fontName;
 
 	private LAP root;
 	/*
@@ -50,6 +50,11 @@ public class Baseline extends ChildDrawingNode {
 	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
 		// If scaleX() is under 12, draw a line.
+		
+		if(font != null) {
+			g2.setFont(font);
+		}
+		
 		if(getScaleX() < 11){
 			baseLine.setLine(0,root.getBaseXAxis(), (int)(length*getScaleX()), root.getBaseXAxis());
 			g2.setStroke(stroke);
@@ -58,7 +63,6 @@ public class Baseline extends ChildDrawingNode {
 		}
 		// If scaleX() is over 12, draw sequence instead.
 		else{
-			g2.setFont(font);
 			for(int i=0; i<length; i++){
 					String s = getNucleotide(nrs[i]);
 					int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), s);
@@ -92,8 +96,6 @@ public class Baseline extends ChildDrawingNode {
 	 * Returns the interval for when an index number should be shown. 
 	 */
 	private int getIntervalNumber(){
-		double width = length*getScaleX();
-		System.out.println(width + " getScaleX() " +getScaleX());
 		if(getScaleX() < 0.2 && length > 1000) return 500;
 		if(getScaleX() < 0.3) return 300;
 		if(getScaleX() < 0.8) return 150;
@@ -123,6 +125,7 @@ public class Baseline extends ChildDrawingNode {
 	}
 
 	public void setFontSize(int fontSize) {
+		System.out.println("Font size: " + fontSize);
 		this.fontSize = fontSize;
 	}
 
@@ -132,17 +135,28 @@ public class Baseline extends ChildDrawingNode {
 
 	public void setBold(boolean isBold) {
 		this.isBold = isBold;
-		updateFont();
+	}
+	
+	public void updateFontWithFont(Font font){
+		this.font = font;
+		repaint();
 	}
 	
 	public void updateFont(){
-		System.out.println(isBold);
 		if(isBold){
-			font = new Font(font.getName(), Font.BOLD, fontSize);
+			font = new Font(fontName, Font.BOLD, fontSize);
 		}
 		else{
-			font = new Font(font.getName(), Font.PLAIN, fontSize);
+			font = new Font(fontName, Font.PLAIN, fontSize);
 		}
 		repaint();
+	}
+	
+	public String getFontName() {
+		return fontName;
+	}
+
+	public void setFontName(String fontName) {
+		this.fontName = fontName;
 	}
 }

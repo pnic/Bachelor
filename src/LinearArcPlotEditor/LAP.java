@@ -3,6 +3,7 @@ package LinearArcPlotEditor;
 import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -39,21 +40,12 @@ public class LAP extends RootDrawingNode {
 	
 	private int [] pairings; 
 	private float [] reliabilities; 
-	private Color [] colors;
 	private int seqLength;
-	private int lengtht;
 	//Used to specify height of size. 
 	private int broadestPair;
-	private ColorGradientRectangle colorGradientRectangle; 
 	private TitleText titleText;
-	private ClcCanvas canvas;
-	private ClcScrollPane pn;
-	
-	
 	private Arc [] arcs; 
-	
 	private Baseline baseline;
-	
 	private String TextForTitle;
 	private Sequence seq;
 
@@ -165,8 +157,15 @@ public class LAP extends RootDrawingNode {
 		return 500;
 	}
 	
-	public void setBaseLineText(boolean isBold){
+	public void setBaseLineText(boolean isBold, int textSize, String fontName){
 		baseline.setBold(isBold);
+		baseline.setFontSize(textSize);
+		baseline.setFontName(fontName);
+		baseline.updateFont();
+	}
+	
+	public void setbaseLineFont(Font font, int textSize){
+		
 	}
 	
 	

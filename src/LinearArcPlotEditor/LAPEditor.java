@@ -81,6 +81,9 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	private TextModel textModel;
 	private TextView textView;
 	
+	private Font font = new Font("Monospaced", Font.PLAIN, 12);
+    private int[] sizeLookup = new int[] { 6, 9, 12, 18, 24 };
+	
 	public boolean canEdit(Class[] types) {
         if (types == null || types.length != 1) {
             return false;
@@ -131,18 +134,16 @@ public class LAPEditor extends AbstractGraphicsEditor {
         textView = new TextView(textModel);
         
         textModel.addSidePanelListener(new SidePanelListener(){
-
 			@Override
 			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
 				SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         if(lap != null){
-                        	lap.setBaseLineText(textModel.isBold());
+                        	lap.setBaseLineText(textModel.isBold(), sizeLookup[textModel.getTextSize()], textModel.getFontName());
                         }
                     }
                 });
 			}
-        	
         });
         
         addSidePanelView(textView);        
