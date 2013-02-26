@@ -78,6 +78,9 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	private LAPLayoutView lapView;
 	private LAPLayoutModel lapModel;
 	
+	private TextModel textModel;
+	private TextView textView;
+	
 	public boolean canEdit(Class[] types) {
         if (types == null || types.length != 1) {
             return false;
@@ -124,9 +127,27 @@ public class LAPEditor extends AbstractGraphicsEditor {
             }
         });
         
-        addSidePanelView(lapView);
-        lapView.setEnabled(true);
+        textModel = new TextModel(manager);
+        textView = new TextView(textModel);
         
+        textModel.addSidePanelListener(new SidePanelListener(){
+
+			@Override
+			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
+				SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        
+                    }
+                });
+			}
+        	
+        });
+        
+        addSidePanelView(textView);        
+        addSidePanelView(lapView);
+
+        lapView.setEnabled(true);
+        textView.setEnabled(true);
         //New linear arc plot
         lap = new LAP(seq,lapModel.getColorModel(),"The title");
 		getCanvas().addChild(lap);
@@ -150,7 +171,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	// This method is invoked when the user triggers popup on the editor. In this case we use a standard popup the API offers
 
 	    private void update() {
-	    	System.out.println("hej");
 	        SwingUtilities.invokeLater(new Runnable() {
 	            public void run() {
 	            	if(RnaStructures.getStructures(seq)==null||RnaStructures.getStructures(seq).getStructureCount() != 1){
@@ -168,6 +188,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     public State getState() {
         State s = super.getState();
         s.putAll(lapModel.save());
+        s.putAll(textModel.save());
         return s;
     }
 // In this case the user state of the editor is the state of the sidepanel. More about this later
@@ -176,6 +197,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     public void setState(State s) {
         super.setState(s);
         lapModel.load(s);
+        textModel.load(s);
     }
 // And vice versa, when setting the state, we simply load it into the sidepanel state
 
