@@ -57,6 +57,7 @@ import com.clcbio.api.free.workbench.WorkbenchManager;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.annotation.RnaStructureAnnotation;
 import com.clcbio.api.clc.graphics.AbstractGraphicsEditor;
+import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.free.editors.framework.MouseMode;
 import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.ClcString;
@@ -149,6 +150,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	// This method is invoked when the user triggers popup on the editor. In this case we use a standard popup the API offers
 
 	    private void update() {
+	    	System.out.println("hej");
 	        SwingUtilities.invokeLater(new Runnable() {
 	            public void run() {
 	            	if(RnaStructures.getStructures(seq)==null||RnaStructures.getStructures(seq).getStructureCount() != 1){

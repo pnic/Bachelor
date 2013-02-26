@@ -49,7 +49,6 @@ public class Baseline extends ChildDrawingNode {
 		else{
 			for(int i=0; i<length; i++){
 					String s = getNucleotide(nrs[i]);
-					System.out.println(s);
 					g2.drawString(s, (int)(i*getScaleX()), (int)(112+(broadestPair/4)*getScaleY()));
 			}
 		}
@@ -85,6 +84,7 @@ public class Baseline extends ChildDrawingNode {
 			case 1: return "C";
 			case 2: return "G";
 			case 3: return "U";
+			case 33: return "T";
 		}
 		
 		return "0";

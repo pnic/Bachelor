@@ -26,6 +26,7 @@ import com.clcbio.api.clc.graphics.DrawingContext;
 import com.clcbio.api.clc.graphics.components.ColorGradientManager;
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.ClcCanvas;
+import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.gui.components.ObjectMoveable;
@@ -45,6 +46,8 @@ public class LAP extends RootDrawingNode {
 	private int broadestPair;
 	private ColorGradientRectangle colorGradientRectangle; 
 	private TitleText titleText;
+	private ClcCanvas canvas;
+	private ClcScrollPane pn;
 	
 	
 	private Arc [] arcs; 
@@ -108,8 +111,8 @@ public class LAP extends RootDrawingNode {
 		setMinScaleY(0.1);
 		setMinScaleRatio(1.0);
 		setMaxScaleRatio(1.0);
-	
 		
+		this.addMouseInputListener(new ArcMouseListener());
 		//setup pairing and reliabilities.
 		pairings = RnaStructures.getStructures(
 				seq).getStructure(0).getPairing();
@@ -141,20 +144,17 @@ public class LAP extends RootDrawingNode {
 				cnt = cnt+1;
 			}
 		}
-		//colorGradientRectangle.setColors(gradmodel);
 	}
 	
 	@Override
 	protected void setSize() {
+		System.out.println(getFullOffsetX() + " alm: " + getOffsetX() + " " + getGlobalFullOffsetX() + " " + getScalableOffsetX());
 		if(pairings != null){
-			//System.out.println("seq length: " + pairings.length);
 			setSize(0, pairings.length*getScaleX()+50, 0, 200+(broadestPair/4)*getScaleY());
 		}
 		else{
-			//System.out.println("Null");
 			setSize(0,1200*getScaleX(),0,600);
 		}
-		//System.out.println(" width: " + seq.getLength()*getScaleX() + " ScaleX: " + getScaleX());
 	}
 
 
