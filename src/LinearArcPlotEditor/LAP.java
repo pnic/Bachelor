@@ -86,7 +86,7 @@ public class LAP extends RootDrawingNode {
 				if(pairings[i]>i){
 					System.out.println(i + " i");
 					System.out.println(pairings[i] + " p[i]");
-					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i]);
+					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i], this);
 					arcs[cnt].broadestPair = broadestPair;
 					addChild(arcs[cnt]);
 					cnt = cnt+1;
@@ -94,9 +94,8 @@ public class LAP extends RootDrawingNode {
 			}
 		}
 		
-		baseline = new Baseline(seq);
+		baseline = new Baseline(seq, this);
 		addChild(baseline);
-		baseline.broadestPair = broadestPair;
 		titleText = new TitleText(TextForTitle);
 		addChild(titleText);
 		setColors(gradmodel);
@@ -150,7 +149,7 @@ public class LAP extends RootDrawingNode {
 	protected void setSize() {
 		System.out.println(getFullOffsetX() + " alm: " + getOffsetX() + " " + getGlobalFullOffsetX() + " " + getScalableOffsetX());
 		if(pairings != null){
-			setSize(0, pairings.length*getScaleX()+50, 0, 200+(broadestPair/4)*getScaleY());
+			setSize(-10, pairings.length*getScaleX()+50, 0, 200+(broadestPair/4)*getScaleY());
 		}
 		else{
 			setSize(0,1200*getScaleX(),0,600);
@@ -165,5 +164,16 @@ public class LAP extends RootDrawingNode {
 	public int GetLDHeight(){
 		return 500;
 	}
-
+	
+	public void setBaseLineText(boolean isBold){
+		baseline.setBold(isBold);
+	}
+	
+	
+	/*
+	 * This returns the Y position of the Base X-axis used for drawing. 
+	 */
+	public int getBaseXAxis(){
+		return (int)(100+(broadestPair/4)*getScaleY());
+	}
 }

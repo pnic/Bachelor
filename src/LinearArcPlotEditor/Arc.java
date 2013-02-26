@@ -21,33 +21,27 @@ import com.clcbio.api.clc.graphics.framework.DrawingResult;
 public class Arc extends ChildDrawingNode {
 
 	private Arc2D arc;
-	private double seqLength;
-	private double reliability;
-	private Stroke stroke = new BasicStroke(3);
 	public int broadestPair;
 	private ArcMouseListener mouseListener;
 	int p1;
 	int p2;
 	int newp1;
 	int newp2;
+	private LAP root;
 	
 	private Color color;
 	
-	public Arc(int p1, int p2, double seqLength, double reliability){
-		this.seqLength = seqLength;
-		this.reliability = reliability;
+	public Arc(int p1, int p2, double seqLength, double reliability, LAP root){
 		this.p1=p1;
 		this.p2=p2;
 		mouseListener = new ArcMouseListener();
+		this.root = root;
 		//this.addMouseInputListener(mouseListener);
-		arc = new Arc2D.Double(p1,(100+broadestPair*getScaleY())-((p2-p1)/2),(p2-p1),(p2-p1),0,180,Arc2D.OPEN);
 	}
 	
 	private void update(){
-		newp1 = (int)(p1*getScaleX())+5;
-		newp2 = (int) (p2*getScaleX())+5;
-		System.out.println("Global full offset " + getGlobalFullOffsetX() + "Full offset " + getFullOffsetX() + " get offset " + getOffsetX() + " scaleable offset " + getScalableOffsetX());
-	
+		newp1 = (int)(p1*getScaleX());
+		newp2 = (int) (p2*getScaleX());
 		
 		int y_position = getArcYPosition();
 		int height = getArcHeight();
@@ -68,7 +62,7 @@ public class Arc extends ChildDrawingNode {
 	}
 	
 	private int getArcYPosition(){
-		return (int)(100+(broadestPair/4)*getScaleY())-(getArcHeight()/2);
+		return root.getBaseXAxis()-(getArcHeight()/2);
 	}
 	
 	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, 
@@ -76,8 +70,10 @@ public class Arc extends ChildDrawingNode {
 										double minx, double maxx, 
 										double miny, double maxy){
 		update();
-		// If we are close, make arcs thicker. 
+		// If we are close, make arcs thicker.
+		if(getScaleX() > 8) g2.setStroke(new BasicStroke(2));
 		if(getScaleX() > 11) g2.setStroke(new BasicStroke(3));
+		
 		g2.setColor(color);
 		g2.draw(arc);
 		return DrawingResult.NORMAL;

@@ -136,7 +136,9 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
 				SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        
+                        if(lap != null){
+                        	lap.setBaseLineText(textModel.isBold());
+                        }
                     }
                 });
 			}

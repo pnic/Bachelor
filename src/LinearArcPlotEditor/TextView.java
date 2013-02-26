@@ -80,7 +80,7 @@ public class TextView extends SidePanelView{
 		createUI();
 		isBoldBox.setSelected(((TextModel) getModel()).isBold());
         fontNameBox.setSelectedIndex(((TextModel) getModel()).getFontNumber());
-        textSizeBox.setSelectedIndex(((TextModel) getModel()).getTextSize());
+        //textSizeBox.setSelectedIndex(((TextModel) getModel()).getTextSize());
 	}
 	
 	private void createUI(){
