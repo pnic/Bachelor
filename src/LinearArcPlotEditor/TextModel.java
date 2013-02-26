@@ -86,6 +86,7 @@ public class TextModel extends SidePanelModel{
     }
 
     public void setFontNumber(int index) {
+    	System.out.println("index number chosen " + index);
         if (selectedFont == index) {
             return;
         }

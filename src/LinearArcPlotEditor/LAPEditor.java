@@ -149,8 +149,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
         addSidePanelView(textView);        
         addSidePanelView(lapView);
 
-        lapView.setEnabled(true);
-        textView.setEnabled(true);
+        //lapView.setEnabled(true);
+        //textView.setEnabled(true);
         //New linear arc plot
         lap = new LAP(seq,lapModel.getColorModel(),"The title");
 		getCanvas().addChild(lap);

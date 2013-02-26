@@ -92,6 +92,8 @@ public class TextView extends SidePanelView{
 					((TextModel)getModel()).setBold(isBoldBox.isSelected());
 				}
 			});
+			isBoldBox.setSelected(true);
+			
 			fontNameBox = new JComboBox(((TextModel)getModel()).getFontNames());
 			fontNameBox.addItemListener(new ItemListener(){
 				@Override
@@ -100,13 +102,18 @@ public class TextView extends SidePanelView{
 				}
 				
 			});
+			fontNameBox.setSelectedIndex(221);
 			fontNameBox.setPreferredSize(new Dimension(150, fontNameBox.getPreferredSize().height));
+			
+			
 			textSizeBox = new JComboBox(((TextModel)getModel()).getTextSizeNames());
 			textSizeBox.addItemListener(new ItemListener(){
 				public void itemStateChanged(ItemEvent even){
 					((TextModel)getModel()).setTextSize(textSizeBox.getSelectedIndex());
 				}
 			});
+			
+			textSizeBox.setSelectedIndex(2);
 			
 			panel = new StandardLayout();
 			fillPanel();
