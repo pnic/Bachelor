@@ -82,7 +82,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	private TextView textView;
 	
 	private Font font = new Font("Monospaced", Font.PLAIN, 12);
-    private int[] sizeLookup = new int[] { 6, 9, 12, 18, 24 };
+    private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };
 	
 	public boolean canEdit(Class[] types) {
         if (types == null || types.length != 1) {

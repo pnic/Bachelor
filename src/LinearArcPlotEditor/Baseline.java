@@ -27,9 +27,11 @@ public class Baseline extends ChildDrawingNode {
 
 	private byte[] nrs;
 	private Font font;
+	private Font numbersFont;
 	private boolean isBold;
 	private int fontSize;
 	private String fontName;
+
 
 	private LAP root;
 	/*
@@ -42,8 +44,9 @@ public class Baseline extends ChildDrawingNode {
 			nrs[i] = seq.getSymbolIndexAt(i);
 		}
 		
-		fontSize = 13;
+		fontSize = 14;
 		font = new Font("SansSerif", Font.BOLD, fontSize);
+		numbersFont = new Font("SansSerif", Font.PLAIN, fontSize);
 		this.root = root;
 	}
 	
@@ -65,20 +68,26 @@ public class Baseline extends ChildDrawingNode {
 		else{
 			for(int i=0; i<length; i++){
 					String s = getNucleotide(nrs[i]);
+					int stringHeight = g2.getFontMetrics().getHeight();
 					int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), s);
-					g2.drawString(s, (int)(i*getScaleX())-stringWidth/2, root.getBaseXAxis()+12);
+					g2.drawString(s, (int)(i*getScaleX())-stringWidth/2, root.getBaseXAxis()+stringHeight);
 			}
 		}
 		
 		//Draw numbers and number lines
 		int interval = getIntervalNumber();
+		if(numbersFont != null) {
+			g2.setFont(numbersFont);
+		}
 		for(int i=0; i<length; i++){
 			if(i%interval == 0){
+				// variables used for calculating positions of numbers and number lines.
 				int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), Integer.toString(i));
 				int stringHeight = g2.getFontMetrics().getHeight();
 				int stringx_pos = (int)(i*getScaleX()-stringWidth/2);
 				int lineX_pos = (int)(i*getScaleX());
 				
+				// If scale is above 11, we need more space since nucleotides are shown instead of just a line. 
 				if(getScaleX() < 11){
 					g2.drawString(Integer.toString(i), stringx_pos, root.getBaseXAxis()+stringHeight+14);
 					g2.drawLine(lineX_pos, root.getBaseXAxis()+5, lineX_pos, root.getBaseXAxis()+stringHeight);
@@ -149,6 +158,7 @@ public class Baseline extends ChildDrawingNode {
 		else{
 			font = new Font(fontName, Font.PLAIN, fontSize);
 		}
+		numbersFont = new Font(fontName, Font.PLAIN, fontSize);
 		repaint();
 	}
 	
