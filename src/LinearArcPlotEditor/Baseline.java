@@ -59,10 +59,13 @@ public class Baseline extends ChildDrawingNode {
 		}
 		
 		if(getScaleX() < 11){
+<<<<<<< HEAD
 			int end = (int)(length*getScaleX());
 			baseLine.setLine(0,root.getBaseXAxis(), (int)(length*getScaleX()), root.getBaseXAxis());
-			System.out.println("length: " + length + "* ScaleX: " + (getScaleX()) + " in baseline");
-			System.out.println("end: " + end + " in baseline");
+			
+=======
+			baseLine.setLine(0,root.getBaseXAxis(), (int)(length*getScaleX()), root.getBaseXAxis());
+>>>>>>> 6b2f70184909568a2c50d3beea92b063be71c955
 			g2.setStroke(stroke);
 			g2.draw(baseLine);
 			g2.fill(baseLine);
