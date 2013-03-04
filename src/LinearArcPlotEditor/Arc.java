@@ -9,6 +9,7 @@ import java.awt.Stroke;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
@@ -21,32 +22,28 @@ import com.clcbio.api.clc.graphics.framework.DrawingResult;
 public class Arc extends ChildDrawingNode {
 
 	private Arc2D arc;
-	private double seqLength;
-	private double reliability;
-	private Stroke stroke = new BasicStroke(3);
 	public int broadestPair;
 	private ArcMouseListener mouseListener;
 	int p1;
 	int p2;
 	int newp1;
 	int newp2;
+	private LAP root;
 	
 	private Color color;
 	
-	public Arc(int p1, int p2, double seqLength, double reliability){
-		this.seqLength = seqLength;
-		this.reliability = reliability;
+	public Arc(int p1, int p2, double seqLength, double reliability, LAP root){
 		this.p1=p1;
 		this.p2=p2;
 		mouseListener = new ArcMouseListener();
-		this.addMouseInputListener(mouseListener);
-		arc = new Arc2D.Double(p1,(100+broadestPair*getScaleY())-((p2-p1)/2),(p2-p1),(p2-p1),0,180,Arc2D.OPEN);
+		this.root = root;
+		//this.addMouseInputListener(mouseListener);
 	}
 	
 	private void update(){
 		newp1 = (int)(p1*getScaleX());
 		newp2 = (int) (p2*getScaleX());
-		System.out.println("GGlobal full offset " + getGlobalFullOffsetX() + "Full offset " + getFullOffsetX());
+		
 		int y_position = getArcYPosition();
 		int height = getArcHeight();
 		int width = newp2-newp1;
@@ -63,11 +60,10 @@ public class Arc extends ChildDrawingNode {
 	
 	private int getArcHeight(){
 		return (newp2-newp1)/2;
-		//This is the arc height methodewrwer
 	}
 	
 	private int getArcYPosition(){
-		return (int)(100+(broadestPair/4)*getScaleY())-(getArcHeight()/2);
+		return root.getBaseXAxis()-(getArcHeight()/2);
 	}
 	
 	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, 
@@ -75,10 +71,12 @@ public class Arc extends ChildDrawingNode {
 										double minx, double maxx, 
 										double miny, double maxy){
 		update();
-		//g2.setStroke(stroke);
+		// If we are close, make arcs thicker.
+		if(getScaleX() > 8) g2.setStroke(new BasicStroke(2));
+		if(getScaleX() > 11) g2.setStroke(new BasicStroke(3));
+		
 		g2.setColor(color);
 		g2.draw(arc);
-		//Useless Comment
 		return DrawingResult.NORMAL;
 	}
 	

@@ -44,6 +44,7 @@ import com.clcbio.api.free.editors.framework.AbstractEditor;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelListener;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.editors.framework.sidepanel.event.SidePanelEvent;
+import com.clcbio.api.free.framework.navigation.NavigationManager;
 import com.clcbio.api.free.framework.workspace.Workspace;
 import com.clcbio.api.free.gui.StandardLayout;
 import com.clcbio.api.free.gui.components.JTextAreaNotPasteable;
@@ -56,6 +57,7 @@ import com.clcbio.api.free.workbench.WorkbenchManager;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.annotation.RnaStructureAnnotation;
 import com.clcbio.api.clc.graphics.AbstractGraphicsEditor;
+import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.free.editors.framework.MouseMode;
 import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.ClcString;
@@ -75,6 +77,12 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	
 	private LAPLayoutView lapView;
 	private LAPLayoutModel lapModel;
+	
+	private TextModel textModel;
+	private TextView textView;
+	
+	private Font font = new Font("Monospaced", Font.PLAIN, 12);
+    private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };
 	
 	public boolean canEdit(Class[] types) {
         if (types == null || types.length != 1) {
@@ -122,9 +130,27 @@ public class LAPEditor extends AbstractGraphicsEditor {
             }
         });
         
-        addSidePanelView(lapView);
-        lapView.setEnabled(true);
+        textModel = new TextModel(manager);
+        textView = new TextView(textModel);
         
+        textModel.addSidePanelListener(new SidePanelListener(){
+			@Override
+			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
+				SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        if(lap != null){
+                        	lap.setBaseLineText(textModel.isBold(), sizeLookup[textModel.getTextSize()], textModel.getFontName());
+                        }
+                    }
+                });
+			}
+        });
+        
+        addSidePanelView(textView);        
+        addSidePanelView(lapView);
+
+        //lapView.setEnabled(true);
+        //textView.setEnabled(true);
         //New linear arc plot
         lap = new LAP(seq,lapModel.getColorModel(),"The title");
 		getCanvas().addChild(lap);
@@ -165,6 +191,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     public State getState() {
         State s = super.getState();
         s.putAll(lapModel.save());
+        s.putAll(textModel.save());
         return s;
     }
 // In this case the user state of the editor is the state of the sidepanel. More about this later
@@ -173,6 +200,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     public void setState(State s) {
         super.setState(s);
         lapModel.load(s);
+        textModel.load(s);
     }
 // And vice versa, when setting the state, we simply load it into the sidepanel state
 

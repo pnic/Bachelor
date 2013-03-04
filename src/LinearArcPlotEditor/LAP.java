@@ -3,6 +3,7 @@ package LinearArcPlotEditor;
 import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -26,6 +27,7 @@ import com.clcbio.api.clc.graphics.DrawingContext;
 import com.clcbio.api.clc.graphics.components.ColorGradientManager;
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.ClcCanvas;
+import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.gui.components.ObjectMoveable;
@@ -38,19 +40,12 @@ public class LAP extends RootDrawingNode {
 	
 	private int [] pairings; 
 	private float [] reliabilities; 
-	private Color [] colors;
 	private int seqLength;
-	private int lengtht;
 	//Used to specify height of size. 
 	private int broadestPair;
-	private ColorGradientRectangle colorGradientRectangle; 
 	private TitleText titleText;
-	
-	
 	private Arc [] arcs; 
-	
 	private Baseline baseline;
-	
 	private String TextForTitle;
 	private Sequence seq;
 
@@ -58,7 +53,7 @@ public class LAP extends RootDrawingNode {
 		this.seq = seq;
 		seqLength = seq.getLength();
 		if(seq.getLength() > 1000){
-			scaleX = 0.1;
+			scaleX = 0.09;
 			scaleY = 0.1;
 		}
 		this.TextForTitle = title;
@@ -81,9 +76,9 @@ public class LAP extends RootDrawingNode {
 			arcs = new Arc[nr];
 			for(int i = 0; i<pairings.length; i++){
 				if(pairings[i]>i){
-					System.out.println(i + " i");
-					System.out.println(pairings[i] + " p[i]");
-					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i]);
+					//System.out.println(i + " i");
+					//System.out.println(pairings[i] + " p[i]");
+					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i], this);
 					arcs[cnt].broadestPair = broadestPair;
 					addChild(arcs[cnt]);
 					cnt = cnt+1;
@@ -91,25 +86,37 @@ public class LAP extends RootDrawingNode {
 			}
 		}
 		
-		baseline = new Baseline(seqLength);
+		LAPFeatureView lv = new LAPFeatureView(seq,this);
+		for(LAPFeature l : lv.getFeatures()){
+			addChild(l);
+			System.out.println(l.getYAxis() + "YAxis of lapfeature l");
+			for(LAPFeatureInterval li : l.getIntervals()){
+				addChild(li);
+			}
+		}
+		System.out.println("Before new baseline");
+		baseline = new Baseline(seq, this);
 		addChild(baseline);
-		baseline.broadestPair = broadestPair;
+		
+		
 		titleText = new TitleText(TextForTitle);
 		addChild(titleText);
+		
+		
 		setColors(gradmodel);
 		setSize();
 	}
 	
 	private void init(){
 		// Set scaleX and scaleY for zooming. 
-		setMaxScaleX(30);
-		setMaxScaleY(30);
-		setMinScaleX(0.1);
+		setMaxScaleX(12);
+		setMaxScaleY(12);
+		setMinScaleX(0.09);
 		setMinScaleY(0.1);
 		setMinScaleRatio(1.0);
 		setMaxScaleRatio(1.0);
-	
 		
+		this.addMouseInputListener(new ArcMouseListener());
 		//setup pairing and reliabilities.
 		pairings = RnaStructures.getStructures(
 				seq).getStructure(0).getPairing();
@@ -141,30 +148,44 @@ public class LAP extends RootDrawingNode {
 				cnt = cnt+1;
 			}
 		}
-		//colorGradientRectangle.setColors(gradmodel);
 	}
 	
 	@Override
 	protected void setSize() {
+		System.out.println(getFullOffsetX() + " alm: " + getOffsetX() + " " + getGlobalFullOffsetX() + " " + getScalableOffsetX());
 		if(pairings != null){
-			//System.out.println("seq length: " + pairings.length);
-			setSize(0, pairings.length*getScaleX()+50, 0, 200+(broadestPair/4)*getScaleY());
+			setSize(-110, pairings.length*getScaleX()+50, 0, 1000+(broadestPair/4)*getScaleY());
 		}
 		else{
-			//System.out.println("Null");
 			setSize(0,1200*getScaleX(),0,600);
 		}
-		//System.out.println(" width: " + seq.getLength()*getScaleX() + " ScaleX: " + getScaleX());
 	}
 
 
 	public void refresh(ColorGradientModel colorGradientModel) {
 		setColors(colorGradientModel);
-		
 	}
 	
 	public int GetLDHeight(){
 		return 500;
 	}
-
+	
+	public void setBaseLineText(boolean isBold, int textSize, String fontName){
+		baseline.setBold(isBold);
+		baseline.setFontSize(textSize);
+		baseline.setFontName(fontName);
+		baseline.updateFont();
+	}
+	
+	public void setbaseLineFont(Font font, int textSize){
+		
+	}
+	
+	
+	/*
+	 * This returns the Y position of the Base X-axis used for drawing. 
+	 */
+	public int getBaseXAxis(){
+		return (int)(100+(broadestPair/4)*getScaleY());
+	}
 }
