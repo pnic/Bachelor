@@ -55,7 +55,7 @@ public class LAP extends RootDrawingNode {
 		this.seq = seq;
 		seqLength = seq.getLength();
 		if(seq.getLength() > 1000){
-			scaleX = 0.1;
+			scaleX = 0.09;
 			scaleY = 0.1;
 		}
 		this.TextForTitle = title;
@@ -80,6 +80,7 @@ public class LAP extends RootDrawingNode {
 				if(pairings[i]>i){
 					System.out.println(i + " i");
 					System.out.println(pairings[i] + " p[i]");
+
 					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i], this);
 					arcs[cnt].broadestPair = broadestPair;
 					addChild(arcs[cnt]);
@@ -87,11 +88,28 @@ public class LAP extends RootDrawingNode {
 				}
 			}
 		}
-		
+
+		LAPFeatureView lv = new LAPFeatureView(seq,this);
+		for(LAPFeature l : lv.getFeatures()){
+			addChild(l);
+			System.out.println(l.getYAxis() + "YAxis of lapfeature l");
+			for(LAPFeatureInterval li : l.getIntervals()){
+				addChild(li);
+			}
+		}
+		System.out.println("Before new baseline");
 		baseline = new Baseline(seq, this);
 		addChild(baseline);
+		
+		
+
+		baseline = new Baseline(seq, this);
+		addChild(baseline);
+
 		titleText = new TitleText(TextForTitle);
 		addChild(titleText);
+		
+		
 		setColors(gradmodel);
 		setSize();
 	}
@@ -100,6 +118,7 @@ public class LAP extends RootDrawingNode {
 		// Set scaleX and scaleY for zooming. 
 		setMaxScaleX(12);
 		setMaxScaleY(12);
+		setMinScaleX(0.09);
 		setMinScaleX(0.1);
 		setMinScaleY(0.1);
 		setMinScaleRatio(1.0);
@@ -156,7 +175,7 @@ public class LAP extends RootDrawingNode {
 		}
 		
 		if(pairings != null){
-			setSize(-10, pairings.length*getScaleX()+50, 0, 200+(broadestPair/4)*getScaleY());
+			setSize(-110, pairings.length*getScaleX()+50, 0, 1000+(broadestPair/4)*getScaleY());
 		}
 		else{
 			setSize(0,1200*getScaleX(),0,600);
