@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -19,7 +20,7 @@ import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
 
-public class Arc extends ChildDrawingNode {
+public class Arc extends ChildDrawingNode implements MouseInputListener{
 
 	private Arc2D arc;
 	public int broadestPair;
@@ -37,7 +38,7 @@ public class Arc extends ChildDrawingNode {
 		this.p2=p2;
 		mouseListener = new ArcMouseListener();
 		this.root = root;
-		//this.addMouseInputListener(mouseListener);
+		this.addMouseInputListener(this);
 	}
 	
 	private void update(){
@@ -77,11 +78,71 @@ public class Arc extends ChildDrawingNode {
 		
 		g2.setColor(color);
 		g2.draw(arc);
+		g2.drawRect(getCenterX(), getCenterY(), 2, 2);
 		return DrawingResult.NORMAL;
 	}
 	
 	public void setColor(Color input){
 		color = input;
+	}
+	
+	private int getCenterX(){
+		return newp1+((newp2-newp1)/2);
+	}
+	
+	private int getCenterY(){
+		return getArcYPosition()+(getArcHeight()/2);
+	}
+	
+	private boolean touchesArc(int x, int y){
+		int first = (int)(Math.pow(x-getCenterX(), 2))/(int)Math.pow((getCenterY()-getArcYPosition()), 2);
+		int second = (int)(Math.pow(y, 2))/(int)Math.pow((newp2-getCenterX()), 2);
+		System.out.println("x: "+ x + " y: " +y + " first: " + first + " second " + second + " GCX " + getCenterX() + " GAY " + getArcYPosition() + " GCY " + getCenterY() + " np2 " + newp2);
+		
+		if(first+second ==1) return true;
+		return false;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		//System.out.println("x pos: " + (arg0.getX()-10) + " y: " + (arg0.getY()) + " scale: " + scaleX);
+		if(touchesArc(arg0.getX()-10, arg0.getY())) System.out.println("Yes");
 	}
 	
 }

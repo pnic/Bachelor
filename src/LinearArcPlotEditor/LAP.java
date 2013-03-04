@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.MouseListener;
@@ -29,6 +30,7 @@ import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.ClcCanvas;
 import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
+import com.clcbio.api.clc.graphics.framework.ViewBounds;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.gui.components.ObjectMoveable;
 import com.clcbio.api.free.gui.dialog.ClcMessages;
@@ -139,7 +141,20 @@ public class LAP extends RootDrawingNode {
 	
 	@Override
 	protected void setSize() {
-		System.out.println(getFullOffsetX() + " alm: " + getOffsetX() + " " + getGlobalFullOffsetX() + " " + getScalableOffsetX());
+		ClcCanvas cv = getCanvas();
+		if(cv != null){
+			ClcScrollPane pane = cv.getScrollPane();
+			if(pane != null){
+				System.out.println("pane width " + pane.getViewWidth());
+				List<ViewBounds> pp = pane.getHorizontalViewBounds();
+				ViewBounds bb = pp.get(0);
+				List<ViewBounds> pV = pane.getVerticalViewBounds();
+				System.out.println("Viewbounds position x: " + bb.getPosition() + " y: " +  pV.get(0).getPosition());
+				Rectangle rg = pane.getVisibleRect();
+				System.out.println("rectangle x: " + rg.x + " rg.width " + rg.width + " center x " + rg.getCenterX());
+			}	
+		}
+		
 		if(pairings != null){
 			setSize(-10, pairings.length*getScaleX()+50, 0, 200+(broadestPair/4)*getScaleY());
 		}
@@ -147,7 +162,7 @@ public class LAP extends RootDrawingNode {
 			setSize(0,1200*getScaleX(),0,600);
 		}
 	}
-
+	
 
 	public void refresh(ColorGradientModel colorGradientModel) {
 		setColors(colorGradientModel);
@@ -175,4 +190,5 @@ public class LAP extends RootDrawingNode {
 	public int getBaseXAxis(){
 		return (int)(100+(broadestPair/4)*getScaleY());
 	}
+	
 }
