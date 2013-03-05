@@ -48,14 +48,8 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		int y_position = getArcYPosition();
 		int height = getArcHeight();
 		int width = newp2-newp1;
-		// mouse listener
-		
-		//mouseListener.setXs(newp1, newp2);
-		//mouseListener.setHeight(height);
-		//mouseListener.setY(y_position);
-		
+
 		arc = new Arc2D.Double(newp1,y_position,width,height,0,180,Arc2D.OPEN);
-		mouseListener.setArc(arc);
 	}
 	
 	
@@ -77,8 +71,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		if(getScaleX() > 11) g2.setStroke(new BasicStroke(3));
 		
 		g2.setColor(color);
-		g2.draw(arc);
-		g2.drawRect(getCenterX(), getCenterY(), 2, 2);
+		g2.draw(arc);		
 		return DrawingResult.NORMAL;
 	}
 	
@@ -94,12 +87,15 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		return getArcYPosition()+(getArcHeight()/2);
 	}
 	
-	private boolean touchesArc(int x, int y){
-		int first = (int)(Math.pow(x-getCenterX(), 2))/(int)Math.pow((getCenterY()-getArcYPosition()), 2);
-		int second = (int)(Math.pow(y, 2))/(int)Math.pow((newp2-getCenterX()), 2);
-		System.out.println("x: "+ x + " y: " +y + " first: " + first + " second " + second + " GCX " + getCenterX() + " GAY " + getArcYPosition() + " GCY " + getCenterY() + " np2 " + newp2);
-		
-		if(first+second ==1) return true;
+	private boolean touchesArc(int x_pos, int y){
+		int a = (newp2-newp1)/2;
+		int b = getArcHeight()/2;
+		int mouse_x = x_pos-(a+newp1);
+		int mouse_y = (b+getArcYPosition()-y);
+		double contains = (((Math.pow(mouse_x, 2))/Math.pow(a, 2))+((Math.pow(mouse_y, 2))/Math.pow(b, 2)));
+		if(contains > 0.93 && contains < 1.07 && mouse_y > 0){
+			return true;
+		}
 		return false;
 	}
 
@@ -141,8 +137,11 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		//System.out.println("x pos: " + (arg0.getX()-10) + " y: " + (arg0.getY()) + " scale: " + scaleX);
-		if(touchesArc(arg0.getX()-10, arg0.getY())) System.out.println("Yes");
+		int x_pos = arg0.getX()+root.getXViewBounds();
+		int y_pos = arg0.getY()+root.getYViewBounds();
+		if(touchesArc(x_pos, y_pos)){
+			System.out.println("Touches");
+		}
 	}
 	
 }
