@@ -24,15 +24,12 @@ public class Baseline extends ChildDrawingNode {
 	Line2D baseLine = new Line2D.Double(0,0,300,0);
 	Stroke stroke = new BasicStroke(2); 
 	private int length;
-
 	private byte[] nrs;
 	private Font font;
 	private Font numbersFont;
 	private boolean isBold;
 	private int fontSize;
 	private String fontName;
-
-
 	private LAP root;
 	/*
 	 * A baseline represents the x-axis of the linearArcDiagram.
@@ -53,13 +50,17 @@ public class Baseline extends ChildDrawingNode {
 	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
 		// If scaleX() is under 12, draw a line.
+		int viewPX = root.getXViewBounds();
+		int viewPY = root.getYViewBounds();
+		
+		int viewPWidth = root.getViewPaneWidth();
+		int viewPHeight = root.getViewPaneHeight();
 		
 		if(font != null) {
 			g2.setFont(font);
 		}
 		
 		if(getScaleX() < 11){
-
 			int end = (int)(length*getScaleX());
 			baseLine.setLine(0,root.getBaseXAxis(), (int)(length*getScaleX()), root.getBaseXAxis());
 			
@@ -70,10 +71,13 @@ public class Baseline extends ChildDrawingNode {
 		// If scaleX() is over 12, draw sequence instead.
 		else{
 			for(int i=0; i<length; i++){
+				if(viewPX < (i*getScaleX()) && i*getScaleX() < (viewPX+viewPWidth)){
 					String s = getNucleotide(nrs[i]);
 					int stringHeight = g2.getFontMetrics().getHeight();
 					int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), s);
 					g2.drawString(s, (int)(i*getScaleX())-stringWidth/2, root.getBaseXAxis()+stringHeight);
+			
+				}
 			}
 		}
 		

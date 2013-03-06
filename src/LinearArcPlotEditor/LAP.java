@@ -97,12 +97,6 @@ public class LAP extends RootDrawingNode {
 				addChild(li);
 			}
 		}
-		System.out.println("Before new baseline");
-		baseline = new Baseline(seq, this);
-		addChild(baseline);
-		
-		
-
 		baseline = new Baseline(seq, this);
 		addChild(baseline);
 
@@ -124,7 +118,6 @@ public class LAP extends RootDrawingNode {
 		setMinScaleRatio(1.0);
 		setMaxScaleRatio(1.0);
 		
-		this.addMouseInputListener(new ArcMouseListener());
 		//setup pairing and reliabilities.
 		pairings = RnaStructures.getStructures(
 				seq).getStructure(0).getPairing();
@@ -175,6 +168,16 @@ public class LAP extends RootDrawingNode {
 		ClcScrollPane pane = getCanvas().getScrollPane();
 		List<ViewBounds> pH = pane.getHorizontalViewBounds();
 		return (int)pH.get(0).getPosition();
+	}
+	
+	public int getViewPaneWidth(){
+		ClcScrollPane pane = getCanvas().getScrollPane();
+		return pane.getWidth();
+	}
+	
+	public int getViewPaneHeight(){
+		ClcScrollPane pane = getCanvas().getScrollPane();
+		return pane.getHeight();
 	}
 	
 	@Override
