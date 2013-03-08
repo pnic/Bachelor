@@ -19,12 +19,12 @@ import com.clcbio.api.clc.graphics.framework.DrawingResult;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 
-public class LAPFeatureInterval extends ChildDrawingNode{
+public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 
 	Line2D line;
-	int startPos;
-	int endPos;
-	int offset;
+	private int startPos;
+	private int endPos;
+	private int offset;
 	
 	private LAP root;
 	
@@ -55,6 +55,25 @@ public class LAPFeatureInterval extends ChildDrawingNode{
 		
 		
 		return DrawingResult.NORMAL;
+	}
+	
+	public int getStartPos(){
+		return startPos;
+	}
+	
+	public int getEndPos(){
+		return endPos;
+	}
+	
+	public int getOffset(){
+		return offset;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		LAPFeatureInterval li = (LAPFeatureInterval)o;
+		return this.getStartPos() < li.getStartPos() ? 1 : 0;
+		
 	}
 	
 }

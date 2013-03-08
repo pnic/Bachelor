@@ -24,21 +24,25 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 
 	private Arc2D arc;
 	public int broadestPair;
-	private ArcMouseListener mouseListener;
 	int p1;
 	int p2;
 	int newp1;
 	int newp2;
 	private LAP root;
-	
 	private Color color;
+	private boolean showAnnotation;
+	private int oldViewX=0;
+	private int oldViewY=0;
+	private boolean drawRect;
+	private int mouse_x;
+	private int mouse_y;
+	private boolean mouseListenerSat;
 	
 	public Arc(int p1, int p2, double seqLength, double reliability, LAP root){
 		this.p1=p1;
 		this.p2=p2;
-		mouseListener = new ArcMouseListener();
 		this.root = root;
-		this.addMouseInputListener(this);
+		mouseListenerSat = false;
 	}
 	
 	private void update(){
@@ -48,14 +52,8 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		int y_position = getArcYPosition();
 		int height = getArcHeight();
 		int width = newp2-newp1;
-		// mouse listener
-		
-		//mouseListener.setXs(newp1, newp2);
-		//mouseListener.setHeight(height);
-		//mouseListener.setY(y_position);
-		
+
 		arc = new Arc2D.Double(newp1,y_position,width,height,0,180,Arc2D.OPEN);
-		mouseListener.setArc(arc);
 	}
 	
 	
@@ -67,18 +65,34 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		return root.getBaseXAxis()-(getArcHeight()/2);
 	}
 	
-	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, 
-										DrawingLayer drawinglayer, 
-										double minx, double maxx, 
-										double miny, double maxy){
-		update();
-		// If we are close, make arcs thicker.
-		if(getScaleX() > 8) g2.setStroke(new BasicStroke(2));
-		if(getScaleX() > 11) g2.setStroke(new BasicStroke(3));
+	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
+			update();
+			// If we are close, make arcs thicker.
+			if(isArcInScreen()){
+				if(!mouseListenerSat){
+					this.addMouseInputListener(this);
+					mouseListenerSat = true;
+				}
+				if(getScaleX() > 8) g2.setStroke(new BasicStroke(2));
+				if(getScaleX() > 11) g2.setStroke(new BasicStroke(3));
 		
-		g2.setColor(color);
-		g2.draw(arc);
-		g2.drawRect(getCenterX(), getCenterY(), 2, 2);
+				g2.setColor(color);
+				g2.draw(arc);
+				oldViewX = root.getXViewBounds();
+				oldViewY = root.getYViewBounds();
+				
+				if(showAnnotation){
+					g2.drawRect(mouse_x, mouse_y, 200, 100);
+				}
+				
+			}
+			else{
+				if(mouseListenerSat){
+					this.removeMouseInputListener(this);
+					mouseListenerSat = false;
+				}
+				
+			}
 		return DrawingResult.NORMAL;
 	}
 	
@@ -94,15 +108,66 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		return getArcYPosition()+(getArcHeight()/2);
 	}
 	
-	private boolean touchesArc(int x, int y){
-		int first = (int)(Math.pow(x-getCenterX(), 2))/(int)Math.pow((getCenterY()-getArcYPosition()), 2);
-		int second = (int)(Math.pow(y, 2))/(int)Math.pow((newp2-getCenterX()), 2);
-		System.out.println("x: "+ x + " y: " +y + " first: " + first + " second " + second + " GCX " + getCenterX() + " GAY " + getArcYPosition() + " GCY " + getCenterY() + " np2 " + newp2);
+	/*
+	 * Returns whether or not the x and y parameters touches the arc. 
+	 */
+	private boolean touchesArc(int x_pos, int y){
+		int a = (newp2-newp1)/2;
+		int b = getArcHeight()/2;
+		int mouse_x = x_pos-(a+newp1);
+		int mouse_y = (b+getArcYPosition()-y);
+		double contains = (((Math.pow(mouse_x, 2))/Math.pow(a, 2))+((Math.pow(mouse_y, 2))/Math.pow(b, 2)));
+		if(contains > 0.93 && contains < 1.07 && mouse_y > 0){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isArcInScreen(){
+		int viewPX = root.getXViewBounds();
+		int viewPY = root.getYViewBounds();
+		int viewWidth = root.getViewPaneWidth();
+		int viewHeight = root.getViewPaneHeight();
 		
-		if(first+second ==1) return true;
+		for(int i=viewPX; i<(viewPX+viewWidth); i++){
+			if(touchesArc(i,viewPY) || (newp1 > viewPX && (newp1 < (viewPX+(viewPX+viewWidth))))) return true;
+		}
+		for(int j=viewPY; j<(viewPY+viewHeight); j++){
+			if(touchesArc(viewPX, j)) return true;
+		}
+		
 		return false;
 	}
 
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		if(isArcInScreen()){
+			int x_pos = arg0.getX()+root.getXViewBounds();
+			int y_pos = arg0.getY()+root.getYViewBounds();
+			if(touchesArc(x_pos, y_pos)){
+				showAnnotation = true;
+				mouse_x = x_pos;
+				mouse_y = y_pos;
+				drawRect = true;
+				System.out.println("repaints true");
+				repaint();
+			}
+			else{
+				if(oldViewX == root.getXViewBounds() && oldViewY == root.getYViewBounds() && drawRect == false){
+					
+				}
+				else{
+					System.out.println("repaints false");
+					showAnnotation = false;
+					//repaint();
+					oldViewX = root.getXViewBounds();
+					oldViewY = root.getYViewBounds();
+					drawRect = false;
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// TODO Auto-generated method stub
@@ -137,12 +202,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		//System.out.println("x pos: " + (arg0.getX()-10) + " y: " + (arg0.getY()) + " scale: " + scaleX);
-		if(touchesArc(arg0.getX()-10, arg0.getY())) System.out.println("Yes");
 	}
 	
 }

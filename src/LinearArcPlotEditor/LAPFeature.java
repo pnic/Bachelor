@@ -67,9 +67,9 @@ public class LAPFeature extends ChildDrawingNode{
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy)
 	{
 		g2.drawString(this.name, -108, root.getBaseXAxis()+offset);
-		return DrawingResult.NORMAL;
-		
+		return DrawingResult.NORMAL;		
 	}
+	
 	
 	
 }
