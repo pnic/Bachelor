@@ -90,22 +90,18 @@ public class LAP extends RootDrawingNode {
 		}
 
 		LAPFeatureView lv = new LAPFeatureView(seq,this);
-		for(LAPFeature l : lv.getFeatures()){
+		for(LAPFeatureType l : lv.getTypes()){
 			addChild(l);
-			System.out.println(l.getYAxis() + "YAxis of lapfeature l");
+			System.out.println(l.getName());
 			for(LAPFeatureInterval li : l.getIntervals()){
 				addChild(li);
 			}
 		}
-		System.out.println("Before new baseline");
+	
 		baseline = new Baseline(seq, this);
 		addChild(baseline);
 		
 		
-
-		baseline = new Baseline(seq, this);
-		addChild(baseline);
-
 		titleText = new TitleText(TextForTitle);
 		addChild(titleText);
 		
@@ -194,7 +190,7 @@ public class LAP extends RootDrawingNode {
 		}
 		
 		if(pairings != null){
-			setSize(-110, pairings.length*getScaleX()+50, 0, 1000+(broadestPair/4)*getScaleY());
+			setSize(-110, pairings.length*getScaleX()+50, 0, 200+(broadestPair/4)*getScaleY());
 		}
 		else{
 			setSize(0,1200*getScaleX(),0,600);
