@@ -195,8 +195,11 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		int viewWidth = root.getViewPaneWidth();
 		int viewHeight = root.getViewPaneHeight();
 		
+		if(newp1 > viewPX && newp1 < (viewPX+viewWidth)) return true;
+		if(newp2 > viewPX && newp2 < (viewPX+viewWidth)) return true;
+		
 		for(int i=viewPX; i<(viewPX+viewWidth); i++){
-			if(touchesArc(i,viewPY) || (newp1 > viewPX && (newp1 < (viewPX+(viewPX+viewWidth))))) return true;
+			if(touchesArc(i,viewPY)) return true;
 		}
 		for(int j=viewPY; j<(viewPY+viewHeight); j++){
 			if(touchesArc(viewPX, j)) return true;
