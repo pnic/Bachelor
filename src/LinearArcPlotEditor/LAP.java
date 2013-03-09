@@ -12,6 +12,7 @@ import java.awt.Stroke;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -50,7 +51,9 @@ public class LAP extends RootDrawingNode {
 	private Baseline baseline;
 	private String TextForTitle;
 	private Sequence seq;
-
+	private PriorityQueue<Arc> MouseOverArcs;
+	private Arc mouseOverArc;
+	
 	public LAP(Sequence seq, ColorGradientModel gradmodel, String title){
 		this.seq = seq;
 		seqLength = seq.getLength();
@@ -78,10 +81,8 @@ public class LAP extends RootDrawingNode {
 			arcs = new Arc[nr];
 			for(int i = 0; i<pairings.length; i++){
 				if(pairings[i]>i){
-					System.out.println(i + " i");
-					System.out.println(pairings[i] + " p[i]");
-
 					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i], this);
+					//System.out.println("Reliabilities first: " + reliabilities[i] + " reliabilities second " + reliabilities[pairings[i]]);
 					arcs[cnt].broadestPair = broadestPair;
 					addChild(arcs[cnt]);
 					cnt = cnt+1;
@@ -102,7 +103,6 @@ public class LAP extends RootDrawingNode {
 
 		titleText = new TitleText(TextForTitle);
 		addChild(titleText);
-		
 		
 		setColors(gradmodel);
 		setSize();
@@ -133,8 +133,10 @@ public class LAP extends RootDrawingNode {
 			//get reliability of structure at that position
 			reliabilities[i] = (float)probAnnotation.getValue(i);
 		}
-    	System.out.println("L®ngde: " + seq.getLength());
     	this.seqLength = seq.getLength();
+    	
+    	ArcComparator comp = new ArcComparator();
+    	MouseOverArcs = new PriorityQueue<Arc>(20, comp);
 	}
 	
 	public void setTitle(String title){
@@ -149,6 +151,26 @@ public class LAP extends RootDrawingNode {
 				cnt = cnt+1;
 			}
 		}
+	}
+	
+	public void addArcToQueue(Arc arc){
+		this.MouseOverArcs.add(arc);
+	}
+	
+	public void removeArcFromQueue(Arc arc){
+		this.MouseOverArcs.remove(arc);
+	}
+	
+	public void iterateOverArcs(){
+		while(MouseOverArcs.size() != 0){
+			System.out.println("ct value " + MouseOverArcs.remove().getContainValue());
+		}
+	}
+	
+	
+	
+	public boolean canArcShow(){
+		return false;
 	}
 	
 	/*
@@ -204,6 +226,31 @@ public class LAP extends RootDrawingNode {
 		}
 	}
 	
+	public boolean canArcShowMouseOver(Arc arc){
+		if(mouseOverArc == null){
+			this.mouseOverArc = arc;
+			mouseOverArc.showAnnotation(true);
+			mouseOverArc.drawRect(true);
+			return true;
+		}
+		
+		double newArcValue = arc.getContainValue()-1;
+		double currentArcValue = mouseOverArc.getContainValue()-1;
+		
+		if(Math.abs(newArcValue) < Math.abs(currentArcValue)) {
+			mouseOverArc.showAnnotation(false);
+			mouseOverArc = arc;
+			mouseOverArc.showAnnotation(true);
+			mouseOverArc.drawRect(true);
+			repaint();
+			return true;
+		}
+		if(arc == mouseOverArc) {
+			return true;
+		}
+		arc.showAnnotation(false);
+		return false;
+	}
 
 	public void refresh(ColorGradientModel colorGradientModel) {
 		setColors(colorGradientModel);
@@ -219,11 +266,6 @@ public class LAP extends RootDrawingNode {
 		baseline.setFontName(fontName);
 		baseline.updateFont();
 	}
-	
-	public void setbaseLineFont(Font font, int textSize){
-		
-	}
-	
 	
 	/*
 	 * This returns the Y position of the Base X-axis used for drawing. 
