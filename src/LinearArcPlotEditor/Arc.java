@@ -15,6 +15,8 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
@@ -96,7 +98,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 				BasicStroke backArcStroke = new BasicStroke(3);
 				BasicStroke normalArcStroke = new BasicStroke(1);
 				
-				if(!mouseListenerSat && (arc_width > 70 || getScaleX() > 8)){
+				if(!mouseListenerSat && (arc_width > 100 || getScaleX() > 8)){
 					this.addMouseInputListener(this);
 					mouseListenerSat = true;
 				}
@@ -133,20 +135,14 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 				}
 				
 			}
+			
 		return DrawingResult.NORMAL;
 	}
 	
 	public void setColor(Color input){
 		color = input;
-	}
-	
-	private int getCenterX(){
-		return newp1+((newp2-newp1)/2);
-	}
-	
-	private int getCenterY(){
-		return getArcYPosition(newp1, newp2)+(getArcHeight(newp1, newp2)/2);
-	}
+	}	
+
 	
 	/*
 	 * Returns whether or not the x and y parameters touches the arc. 
@@ -186,10 +182,13 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		return false;
 	}
 	
+	
 	/*
 	 * Returns if the arc is inside the visible screen. 
 	 */
 	private boolean isArcInScreen(){
+		if(getScaleX() < 2) return true;
+		
 		int viewPX = root.getXViewBounds();
 		int viewPY = root.getYViewBounds();
 		int viewWidth = root.getViewPaneWidth();
@@ -269,7 +268,9 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		if(showAnnotation){
+			System.out.println("Clicked");
+		}
 	}
 
 	@Override

@@ -219,7 +219,6 @@ public class LAP extends RootDrawingNode {
 		double currentArcValue = mouseOverArc.getContainValue()-1;
 		
 		if(Math.abs(newArcValue) < Math.abs(currentArcValue)) {
-			System.out.println("Under v¾rdien");
 			mouseOverArc.showAnnotation(false);
 			mouseOverArc = arc;
 			mouseOverArc.showAnnotation(true);
@@ -227,7 +226,6 @@ public class LAP extends RootDrawingNode {
 			return true;
 		}
 		if(arc == mouseOverArc) {
-			System.out.println("Samme arc");
 			mouseOverArc.showAnnotation(true);
 			mouseOverArc.drawRect(true);
 			return true;
