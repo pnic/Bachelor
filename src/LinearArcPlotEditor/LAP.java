@@ -51,7 +51,6 @@ public class LAP extends RootDrawingNode {
 	private Baseline baseline;
 	private String TextForTitle;
 	private Sequence seq;
-	private PriorityQueue<Arc> MouseOverArcs;
 	private Arc mouseOverArc;
 	
 	public LAP(Sequence seq, ColorGradientModel gradmodel, String title){
@@ -134,9 +133,6 @@ public class LAP extends RootDrawingNode {
 			reliabilities[i] = (float)probAnnotation.getValue(i);
 		}
     	this.seqLength = seq.getLength();
-    	
-    	ArcComparator comp = new ArcComparator();
-    	MouseOverArcs = new PriorityQueue<Arc>(20, comp);
 	}
 	
 	public void setTitle(String title){
@@ -152,22 +148,7 @@ public class LAP extends RootDrawingNode {
 			}
 		}
 	}
-	
-	public void addArcToQueue(Arc arc){
-		this.MouseOverArcs.add(arc);
-	}
-	
-	public void removeArcFromQueue(Arc arc){
-		this.MouseOverArcs.remove(arc);
-	}
-	
-	public void iterateOverArcs(){
-		while(MouseOverArcs.size() != 0){
-			System.out.println("ct value " + MouseOverArcs.remove().getContainValue());
-		}
-	}
-	
-	
+
 	
 	public boolean canArcShow(){
 		return false;
@@ -243,7 +224,6 @@ public class LAP extends RootDrawingNode {
 			mouseOverArc = arc;
 			mouseOverArc.showAnnotation(true);
 			mouseOverArc.drawRect(true);
-			//repaint();
 			return true;
 		}
 		if(arc == mouseOverArc) {
