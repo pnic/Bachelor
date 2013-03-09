@@ -52,17 +52,19 @@ public class LAP extends RootDrawingNode {
 	private String TextForTitle;
 	private Sequence seq;
 	private Arc mouseOverArc;
+	private boolean satSize = false;;
 	
 	public LAP(Sequence seq, ColorGradientModel gradmodel, String title){
 		this.seq = seq;
 		seqLength = seq.getLength();
-		if(seq.getLength() > 1000){
-			scaleX = 0.09;
-			scaleY = 0.1;
-		}
+		
 		this.TextForTitle = title;
 		init();
 		
+		System.out.println("getScaleX() " + getScaleX() + " getScaleY() " + getScaleY() + " pairings length " + pairings.length);
+		
+		scaleX = 700.0/pairings.length;
+		scaleY = scaleX;
 		
 		int nr=0;
 		for(int i = 0;i<pairings.length; i++){
@@ -92,7 +94,7 @@ public class LAP extends RootDrawingNode {
 		LAPFeatureView lv = new LAPFeatureView(seq,this);
 		for(LAPFeature l : lv.getFeatures()){
 			addChild(l);
-			System.out.println(l.getYAxis() + "YAxis of lapfeature l");
+			//System.out.println(l.getYAxis() + "YAxis of lapfeature l");
 			for(LAPFeatureInterval li : l.getIntervals()){
 				addChild(li);
 			}
@@ -111,9 +113,8 @@ public class LAP extends RootDrawingNode {
 		// Set scaleX and scaleY for zooming. 
 		setMaxScaleX(12);
 		setMaxScaleY(12);
-		setMinScaleX(0.09);
-		setMinScaleX(0.1);
-		setMinScaleY(0.1);
+		setMinScaleX(0.05);
+		setMinScaleY(0.05);
 		setMinScaleRatio(1.0);
 		setMaxScaleRatio(1.0);
 		
@@ -230,7 +231,6 @@ public class LAP extends RootDrawingNode {
 			mouseOverArc.drawRect(true);
 			return true;
 		}
-		System.out.println("false");
 		arc.showAnnotation(false);
 		return false;
 	}
