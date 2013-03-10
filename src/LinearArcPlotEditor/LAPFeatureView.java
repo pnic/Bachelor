@@ -29,6 +29,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 
 public class LAPFeatureView {
@@ -36,7 +38,7 @@ public class LAPFeatureView {
 	Sequence seq;
 	List<LAPFeatureType> types;
 	List<LAPFeature> features;
-	private int typeHeight = 50;
+	private int typeHeight = 30;
 	private int typeWidth;
 	
 	
@@ -66,7 +68,7 @@ public void buildFeatureTypes(LAP root){
 		
 		
 		int curOverlaps = 0;
-		int offset = 30;
+		int offset = 38;
 				
 		cur.setX(0);
 		cur.setTypeOffset(offset);
@@ -79,13 +81,11 @@ public void buildFeatureTypes(LAP root){
 			if(fet.getType().compareToIgnoreCase(cur.getName()) != 0){
 				System.out.println("New Type");
 				cur = typeIter.next();
-				
+				offset += typeHeight+20;
 				cur.setX(0);
 				cur.setTypeOffset(offset);
 				cur.setWidth(typeWidth);
-				cur.setHeight(typeHeight);
-				
-				offset += typeHeight;
+				cur.setHeight(typeHeight);				
 			}
 			
 			if(fet.getName().length() > 20) continue;
@@ -100,23 +100,23 @@ public void buildFeatureTypes(LAP root){
 			
 			while(II.hasNext()){
 				Interval in = II.next();
-				LAPFeatureInterval li = new LAPFeatureInterval(in.getFirstPos().getMin(),in.getLastPos().getMax(),offset, root);
+				LAPFeatureInterval li = new LAPFeatureInterval(in.getFirstPos().getMin(),in.getLastPos().getMax(),offset+5, root);
 				tmp.addFeatureInterval(li);
 				//System.out.println("Interval \n First Position: " + in.getFirstPos() + " \n Last Position: " + in.getLastPos());
 				//System.out.println("Interval \n First Position.getMin: " + in.getFirstPos().getMin() + " \n Last Position.getMin: " + in.getLastPos().getMin());
 				//System.out.println("Interval \n First Position.getMax: " + in.getFirstPos().getMax() + " \n Last Position.getMax: " + in.getLastPos().getMax());
 				cur.addInterval(li);
 			}
-			//features.add(tmp);
+			features.add(tmp);
 			
-			offset += 20;	
+			
 		}			
 		
 		sortTypes();
 		
 		
 		
-		
+		drawFeatures();
 		
 }
 	
@@ -129,10 +129,41 @@ private void sortTypes() {
 
 private void buildTypes(Set<String> s, LAP root){
 	for(String t : s){
+		System.out.println(t);
 		types.add(new LAPFeatureType(t,root));
 	}
 }
 	
+public void drawFeatures(){
+	Queue<Integer> lvl = new PriorityQueue<Integer>();
+	int overlap = 0;	
+	int curLvl = 0;
+	int prevEnd = -998;
+	int curEnd=-999;
+	
+	
+	
+	for(LAPFeatureType l : types){
+		for(LAPFeatureInterval i : l.getIntervals()){
+			if(i.getStartPos() < curEnd){
+				i.addToOffset(overlap+2);
+				overlap+=1;
+				
+				if(i.getEndPos() < curEnd){
+					prevEnd = curEnd;
+					curEnd = i.getEndPos();					
+				}
+				
+			} else {
+				curEnd = i.getEndPos();
+				
+				overlap=0;
+				
+			}
+		}
+	}
+}
+
 public List<LAPFeature> getFeatures(){
 	return features;
 }

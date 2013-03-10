@@ -12,6 +12,7 @@ import java.awt.Stroke;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -52,17 +53,20 @@ public class LAP extends RootDrawingNode {
 	private Sequence seq;
 	private ColorGradientRectangle colorGradientRectangle;
 	
-
+	private Arc mouseOverArc;
+	private boolean satSize = false;;
+	
 	public LAP(Sequence seq, ColorGradientModel gradmodel, String title){
 		this.seq = seq;
 		seqLength = seq.getLength();
-		if(seq.getLength() > 1000){
-			scaleX = 0.09;
-			scaleY = 0.1;
-		}
+		
 		this.TextForTitle = title;
 		init();
 		
+		System.out.println("getScaleX() " + getScaleX() + " getScaleY() " + getScaleY() + " pairings length " + pairings.length);
+		
+		scaleX = 700.0/pairings.length;
+		scaleY = scaleX;
 		
 		int nr=0;
 		for(int i = 0;i<pairings.length; i++){
@@ -80,10 +84,8 @@ public class LAP extends RootDrawingNode {
 			arcs = new Arc[nr];
 			for(int i = 0; i<pairings.length; i++){
 				if(pairings[i]>i){
-					System.out.println(i + " i");
-					System.out.println(pairings[i] + " p[i]");
-
 					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i], this);
+					//System.out.println("Reliabilities first: " + reliabilities[i] + " reliabilities second " + reliabilities[pairings[i]]);
 					arcs[cnt].broadestPair = broadestPair;
 					addChild(arcs[cnt]);
 					cnt = cnt+1;
@@ -110,7 +112,6 @@ public class LAP extends RootDrawingNode {
 		
 		colorGradientRectangle = new ColorGradientRectangle();
 		addChild(colorGradientRectangle);
-		
 		setColors(gradmodel);
 		setSize();
 	}
@@ -119,9 +120,8 @@ public class LAP extends RootDrawingNode {
 		// Set scaleX and scaleY for zooming. 
 		setMaxScaleX(12);
 		setMaxScaleY(12);
-		setMinScaleX(0.09);
-		setMinScaleX(0.1);
-		setMinScaleY(0.1);
+		setMinScaleX(0.05);
+		setMinScaleY(0.05);
 		setMinScaleRatio(1.0);
 		setMaxScaleRatio(1.0);
 		
@@ -140,7 +140,6 @@ public class LAP extends RootDrawingNode {
 			//get reliability of structure at that position
 			reliabilities[i] = (float)probAnnotation.getValue(i);
 		}
-    	System.out.println("L®ngde: " + seq.getLength());
     	this.seqLength = seq.getLength();
 	}
 	
@@ -157,6 +156,11 @@ public class LAP extends RootDrawingNode {
 			}
 		}
 		colorGradientRectangle.setColors(gradmodel);
+	}
+
+	
+	public boolean canArcShow(){
+		return false;
 	}
 	
 	/*
@@ -205,13 +209,39 @@ public class LAP extends RootDrawingNode {
 		}
 		
 		if(pairings != null){
-			setSize(-110, pairings.length*getScaleX()+50, 0, 600+(broadestPair/4)*getScaleY());
+			setSize(-110, pairings.length*getScaleX()+50, 0, 1000+(broadestPair/4)*getScaleY());
 		}
 		else{
 			setSize(0,1200*getScaleX(),0,600);
 		}
 	}
 	
+	public boolean canArcShowMouseOver(Arc arc){
+		if(mouseOverArc == null){
+			this.mouseOverArc = arc;
+			mouseOverArc.showAnnotation(true);
+			mouseOverArc.drawRect(true);
+			return true;
+		}
+		
+		double newArcValue = arc.getContainValue()-1;
+		double currentArcValue = mouseOverArc.getContainValue()-1;
+		
+		if(Math.abs(newArcValue) < Math.abs(currentArcValue)) {
+			mouseOverArc.showAnnotation(false);
+			mouseOverArc = arc;
+			mouseOverArc.showAnnotation(true);
+			mouseOverArc.drawRect(true);
+			return true;
+		}
+		if(arc == mouseOverArc) {
+			mouseOverArc.showAnnotation(true);
+			mouseOverArc.drawRect(true);
+			return true;
+		}
+		arc.showAnnotation(false);
+		return false;
+	}
 
 	public void refresh(ColorGradientModel colorGradientModel) {
 		setColors(colorGradientModel);
@@ -227,11 +257,6 @@ public class LAP extends RootDrawingNode {
 		baseline.setFontName(fontName);
 		baseline.updateFont();
 	}
-	
-	public void setbaseLineFont(Font font, int textSize){
-		
-	}
-	
 	
 	/*
 	 * This returns the Y position of the Base X-axis used for drawing. 

@@ -68,6 +68,14 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 	public int getOffset(){
 		return offset;
 	}
+	
+	public void setOffset(int o){
+		this.offset=o;
+	}
+	
+	public void addToOffset(int a){
+		this.offset += a;
+	}
 
 	@Override
 	public int compareTo(Object o) {
