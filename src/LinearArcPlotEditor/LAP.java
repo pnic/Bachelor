@@ -50,6 +50,8 @@ public class LAP extends RootDrawingNode {
 	private Baseline baseline;
 	private String TextForTitle;
 	private Sequence seq;
+	private ColorGradientRectangle colorGradientRectangle;
+	
 
 	public LAP(Sequence seq, ColorGradientModel gradmodel, String title){
 		this.seq = seq;
@@ -106,6 +108,8 @@ public class LAP extends RootDrawingNode {
 		titleText = new TitleText(TextForTitle);
 		addChild(titleText);
 		
+		colorGradientRectangle = new ColorGradientRectangle();
+		addChild(colorGradientRectangle);
 		
 		setColors(gradmodel);
 		setSize();
@@ -152,6 +156,7 @@ public class LAP extends RootDrawingNode {
 				cnt = cnt+1;
 			}
 		}
+		colorGradientRectangle.setColors(gradmodel);
 	}
 	
 	/*
@@ -200,7 +205,7 @@ public class LAP extends RootDrawingNode {
 		}
 		
 		if(pairings != null){
-			setSize(-110, pairings.length*getScaleX()+50, 0, 200+(broadestPair/4)*getScaleY());
+			setSize(-110, pairings.length*getScaleX()+50, 0, 600+(broadestPair/4)*getScaleY());
 		}
 		else{
 			setSize(0,1200*getScaleX(),0,600);
