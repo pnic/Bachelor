@@ -153,7 +153,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		int mouse_x = x_pos-(a+newp1);
 		int mouse_y = (b+getArcYPosition(newp1, newp2)-y);
 		contains = (((Math.pow(mouse_x, 2))/Math.pow(a, 2))+((Math.pow(mouse_y, 2))/Math.pow(b, 2)));
-		if(contains > 1-mouse_limit && contains < 1+mouse_limit && mouse_y > 0){
+		if(contains > 0.9 && contains < 1.1 && mouse_y > 0){
 			return true;
 		}
 		return false;
@@ -197,10 +197,10 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		if(newp1 > viewPX && newp1 < (viewPX+viewWidth)) return true;
 		if(newp2 > viewPX && newp2 < (viewPX+viewWidth)) return true;
 		
-		for(int i=viewPX; i<(viewPX+viewWidth); i++){
+		for(int i=viewPX; i<(viewPX+viewWidth); i += 2){
 			if(touchesArc(i,viewPY)) return true;
 		}
-		for(int j=viewPY; j<(viewPY+viewHeight); j++){
+		for(int j=viewPY; j<(viewPY+viewHeight); j += 2){
 			if(touchesArc(viewPX, j)) return true;
 		}
 		
