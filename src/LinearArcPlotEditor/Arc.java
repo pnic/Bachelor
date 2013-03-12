@@ -3,6 +3,8 @@ package LinearArcPlotEditor;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -15,9 +17,13 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
+
+import org.apache.batik.gvt.AbstractGraphicsNode;
 
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
@@ -153,7 +159,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		int mouse_x = x_pos-(a+newp1);
 		int mouse_y = (b+getArcYPosition(newp1, newp2)-y);
 		contains = (((Math.pow(mouse_x, 2))/Math.pow(a, 2))+((Math.pow(mouse_y, 2))/Math.pow(b, 2)));
-		if(contains > 1-mouse_limit && contains < 1+mouse_limit && mouse_y > 0){
+		if(contains > 0.9 && contains < 1.1 && mouse_y > 0){
 			return true;
 		}
 		return false;
@@ -197,10 +203,10 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		if(newp1 > viewPX && newp1 < (viewPX+viewWidth)) return true;
 		if(newp2 > viewPX && newp2 < (viewPX+viewWidth)) return true;
 		
-		for(int i=viewPX; i<(viewPX+viewWidth); i++){
+		for(int i=viewPX; i<(viewPX+viewWidth); i += 2){
 			if(touchesArc(i,viewPY)) return true;
 		}
-		for(int j=viewPY; j<(viewPY+viewHeight); j++){
+		for(int j=viewPY; j<(viewPY+viewHeight); j += 2){
 			if(touchesArc(viewPX, j)) return true;
 		}
 		
@@ -231,6 +237,11 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 				}
 			}
 		}
+	}
+	
+	public boolean canChangeArc(int new_point1, int new_points2){
+		if(root.canChangeArc(p1, new_point1, p2, new_points2)) return true;
+		return false;
 	}
 	
 	public void showAnnotation(boolean show){
@@ -270,7 +281,15 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	public void mouseClicked(MouseEvent arg0) {
 		if(showAnnotation){
 			System.out.println("Clicked");
+			Container cmp = (Container)this.getComponent();
+
+			EditArcDialog et = new EditArcDialog(this);
+			et.setVisible(true);
+			
+			System.out.println(cmp.getClass());
+			System.out.println("width: " + cmp.getWidth());
 		}
+		showAnnotation = false;
 	}
 
 	@Override

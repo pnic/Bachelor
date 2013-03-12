@@ -154,6 +154,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         //New linear arc plot
         lap = new LAP(seq,lapModel.getColorModel(),"The title");
 		getCanvas().addChild(lap);
+		getCanvas().addChild(new infoBox());
     }
 	
 	
