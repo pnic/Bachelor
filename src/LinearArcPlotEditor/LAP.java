@@ -59,6 +59,7 @@ public class LAP extends RootDrawingNode {
 		seqLength = seq.getLength();
 		
 		this.TextForTitle = title;
+		// initialize
 		init();
 		
 		System.out.println("getScaleX() " + getScaleX() + " getScaleY() " + getScaleY() + " pairings length " + pairings.length);
@@ -119,13 +120,11 @@ public class LAP extends RootDrawingNode {
 		setMaxScaleRatio(1.0);
 		
 		//setup pairing and reliabilities.
-		pairings = RnaStructures.getStructures(
-				seq).getStructure(0).getPairing();
+		pairings = RnaStructures.getStructures(seq).getStructure(0).getPairing();
     	reliabilities = new float[seq.getLength()];
     	
     	//Our Rna structure
-    	List<RnaStructureAnnotation> annotations = RnaStructures.getStructures(
-				seq).getStructure(0).getStructureAnnotations();
+    	List<RnaStructureAnnotation> annotations = RnaStructures.getStructures(seq).getStructure(0).getStructureAnnotations();
 		RnaStructureAnnotation probAnnotation = annotations.get(0);
 		
 		//Set reliability values
@@ -255,6 +254,41 @@ public class LAP extends RootDrawingNode {
 	 */
 	public int getBaseXAxis(){
 		return (int)(100+(broadestPair/4)*getScaleY());
+	}
+	
+	public boolean canChangeArc(int old_p1, int new_p1, int old_p2, int new_p2){
+		boolean first_same = old_p1 == new_p1;
+		boolean second_same = old_p2 == new_p2; 
+		boolean returner = true;
+		
+		for(int i=0; i<pairings.length; i++){
+			if(pairings[i] > i){
+				if(first_same && second_same){
+					return true;
+				}
+				if(first_same && new_p1 == i){
+					continue;
+				}
+				if(second_same && new_p2 == pairings[i]){
+					continue;
+				}
+				if((new_p1 > i && new_p2 < pairings[i]) || new_p1 < i && pairings[i] < new_p2){
+					continue;
+				}
+				if(new_p1 > pairings[i]) continue;
+				if(new_p2 < i) continue;
+				System.out.println("i " + i + " pairings[i] " + pairings[i] + " oldp1 " + old_p1 + " p1 " + new_p1 + " oldp2 " + old_p2 + " p2 " + new_p2);
+				returner = false;
+			}
+		}
+		if(returner == true){
+			pairings[old_p1] = -1;
+			pairings[old_p2] = -1;
+			pairings[new_p1] = new_p2;
+			pairings[new_p2] = new_p1;
+		}
+		return returner;
+		
 	}
 	
 }
