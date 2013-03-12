@@ -16,6 +16,7 @@ import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.feature.Feature;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.interval.Interval;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.Region;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.rnasecondary.RnaStructureAnnotationTools;
 import com.clcbio.api.free.gui.dialog.ClcMessages;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 //import com.ppfold.algo.ExportTools;
@@ -37,13 +38,16 @@ public class LAPFeatureView {
 	
 	Sequence seq;
 	List<LAPFeatureType> types;
+	List<LAPFeatureType> relevantTypes;
 	List<LAPFeature> features;
 	private int typeHeight = 30;
 	private int typeWidth;
-	
+	private LAP root;
 	
 	public LAPFeatureView(Sequence seq, LAP root){
+		this.root = root;
 		this.seq = seq;
+		
 		features = new ArrayList<LAPFeature>();
 		typeWidth = seq.getLength();
 		buildFeatureTypes(root);
@@ -51,7 +55,7 @@ public class LAPFeatureView {
 	
 
 public void buildFeatureTypes(LAP root){
-	
+	String s = com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.annotation.RnaStructureAnnotation.class.getName();
 		//Get an iterator over the features and only proceed if at least one feature exists.
 		
 		Iterator<Feature> featureIter = seq.getFeatureIterator();
@@ -68,26 +72,16 @@ public void buildFeatureTypes(LAP root){
 		
 		
 		int curOverlaps = 0;
-		int offset = 38;
-				
-		cur.setX(0);
-		cur.setTypeOffset(offset);
-		cur.setWidth(typeWidth);
-		cur.setHeight(typeHeight);
+		int offset = 60;
+		
 		
 		while(featureIter.hasNext()){
 			Feature fet = featureIter.next(); 
 			System.out.println(fet.getType() + " is the type of the feature and " + cur.getName() + " is the name of the type");
 			if(fet.getType().compareToIgnoreCase(cur.getName()) != 0){
-				System.out.println("New Type");
-				cur = typeIter.next();
-				offset += typeHeight+20;
-				cur.setX(0);
-				cur.setTypeOffset(offset);
-				cur.setWidth(typeWidth);
-				cur.setHeight(typeHeight);				
+				cur = changeCurrentType(fet.getType());
 			}
-			
+			System.out.println("Feature type = " + fet.getType() + " Type Name = " + cur.getName());
 			if(fet.getName().length() > 20) continue;
 						
 			Region fetregion = fet.getRegion();
@@ -100,7 +94,8 @@ public void buildFeatureTypes(LAP root){
 			
 			while(II.hasNext()){
 				Interval in = II.next();
-				LAPFeatureInterval li = new LAPFeatureInterval(in.getFirstPos().getMin(),in.getLastPos().getMax(),offset+5, root);
+				LAPFeatureInterval li = new LAPFeatureInterval(in.getFirstPos().getMin(),in.getLastPos().getMax(),cur.getTypeOffset(), root);
+				li.setType(cur);
 				tmp.addFeatureInterval(li);
 				//System.out.println("Interval \n First Position: " + in.getFirstPos() + " \n Last Position: " + in.getLastPos());
 				//System.out.println("Interval \n First Position.getMin: " + in.getFirstPos().getMin() + " \n Last Position.getMin: " + in.getLastPos().getMin());
@@ -115,8 +110,10 @@ public void buildFeatureTypes(LAP root){
 		sortTypes();
 		
 		
+		//drawFeatures();
 		
-		drawFeatures();
+		relevantTypes = new ArrayList<LAPFeatureType>();
+		
 		
 }
 	
@@ -126,11 +123,74 @@ private void sortTypes() {
 	}	
 }
 
+public void buildRelevantTypes(){
+	int minusOffset = 0;
+	int startOffset = 50;
+	int curAdded = 0;
+	
+	double startPosX = 0;
+	double endPosX = 0;
+	
+	int curX;
+	int curWidth;
+	try{
+		curX = root.getXViewBounds();
+	} catch(java.lang.NullPointerException e){
+		curX = 0;
+	}
+	try{
+		curWidth = root.getViewPaneWidth();
+	} catch (java.lang.NullPointerException e){
+		curWidth = 100000;
+	}
+	System.out.println(curX + " is current x");
+	System.out.println(curWidth + " is current width");
+	System.out.println(curWidth/root.getScaleX());
+	
+	relevantTypes.clear();
+	for(LAPFeatureType l : types){
+		if(l.getIntervals().size() > 0){
+			boolean rel = false;
+			l.setTypeOffset(startOffset+((typeHeight+20)*curAdded));
+			for(LAPFeatureInterval li : l.getIntervals()){
+				//Check if type has at least one feature interval within the current view.
+				if(!rel){				
+					startPosX = li.getStartPos()*li.getScaleX();
+					endPosX = li.getEndPos()*li.getScaleX();
+					if(!(startPosX > curX+curWidth || endPosX < curX)){
+						rel = true;
+					}
+				}
+				System.out.println(li.getStartPos() + " is start pos" + li.getEndPos() + " is end pos ");
+				System.out.println(startPosX + " is start pos" + endPosX + " is end pos ");
+				li.setOffset(startOffset+((typeHeight+20)*curAdded));
+			}
+			if(rel) { 
+				relevantTypes.add(l);			
+				curAdded += 1;
+				l.setRelevant(true);
+			} else {
+				l.setRelevant(false);
+			}
+		}
+	}
+	
+}
+
+private LAPFeatureType changeCurrentType(String fetType){
+	for(LAPFeatureType type : types){
+		if( type.getName().compareToIgnoreCase(fetType) == 0) return type;
+	}
+	return null;
+}
+
 
 private void buildTypes(Set<String> s, LAP root){
+	int offset = 50;
 	for(String t : s){
 		System.out.println(t);
-		types.add(new LAPFeatureType(t,root));
+		types.add(new LAPFeatureType(t,0,offset,seq.getLength(),typeHeight,root));
+		offset+=typeHeight+20;
 	}
 }
 	
@@ -146,7 +206,7 @@ public void drawFeatures(){
 	for(LAPFeatureType l : types){
 		for(LAPFeatureInterval i : l.getIntervals()){
 			if(i.getStartPos() < curEnd){
-				i.addToOffset(overlap+2);
+				i.addToOffset(overlap+5);
 				overlap+=1;
 				
 				if(i.getEndPos() < curEnd){
@@ -191,6 +251,16 @@ public List<LAPFeatureType> getTypes() {
 
 public void setTypes(List<LAPFeatureType> types) {
 	this.types = types;
+}
+
+
+public List<LAPFeatureType> getRelevantTypes() {
+	return relevantTypes;
+}
+
+
+public void setRelevantTypes(List<LAPFeatureType> relevantTypes) {
+	this.relevantTypes = relevantTypes;
 }
 
 }

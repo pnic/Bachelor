@@ -52,6 +52,7 @@ public class LAP extends RootDrawingNode {
 	private String TextForTitle;
 	private Sequence seq;
 	private ColorGradientRectangle colorGradientRectangle;
+	private LAPFeatureView lv;
 	
 	private Arc mouseOverArc;
 	private boolean satSize = false;;
@@ -93,14 +94,8 @@ public class LAP extends RootDrawingNode {
 			}
 		}
 
-		LAPFeatureView lv = new LAPFeatureView(seq,this);
-		for(LAPFeatureType l : lv.getTypes()){
-			addChild(l);
-			System.out.println(l.getName());
-			for(LAPFeatureInterval li : l.getIntervals()){
-				addChild(li);
-			}
-		}
+		lv = new LAPFeatureView(seq,this);
+		setRelevantTypes();
 
 	
 		baseline = new Baseline(seq, this);
@@ -110,7 +105,7 @@ public class LAP extends RootDrawingNode {
 		titleText = new TitleText(TextForTitle);
 		addChild(titleText);
 		
-		colorGradientRectangle = new ColorGradientRectangle();
+		
 		addChild(colorGradientRectangle);
 		setColors(gradmodel);
 		setSize();
@@ -135,12 +130,26 @@ public class LAP extends RootDrawingNode {
 				seq).getStructure(0).getStructureAnnotations();
 		RnaStructureAnnotation probAnnotation = annotations.get(0);
 		
+		
 		//Set reliability values
     	for(int i = 0; i<seq.getLength(); i++){
 			//get reliability of structure at that position
 			reliabilities[i] = (float)probAnnotation.getValue(i);
 		}
+    	colorGradientRectangle = new ColorGradientRectangle(probAnnotation.getName(),probAnnotation.getFixedMin(),probAnnotation.getFixedMax());
+    	
     	this.seqLength = seq.getLength();
+	}
+	
+	public void setRelevantTypes(){
+		lv.buildRelevantTypes();
+		for(LAPFeatureType l : lv.getRelevantTypes()){
+			addChild(l);
+			System.out.println(l.getName());
+			for(LAPFeatureInterval li : l.getIntervals()){
+				addChild(li);
+			}
+		}
 	}
 	
 	public void setTitle(String title){
@@ -201,8 +210,10 @@ public class LAP extends RootDrawingNode {
 				System.out.println("pane width " + pane.getViewWidth());
 				List<ViewBounds> pp = pane.getHorizontalViewBounds();
 				ViewBounds bb = pp.get(0);
+				
 				List<ViewBounds> pV = pane.getVerticalViewBounds();
 				System.out.println("Viewbounds position x: " + bb.getPosition() + " y: " +  pV.get(0).getPosition());
+				System.out.println("Viewbounds position x: " + pane.getViewWidth()/getScaleX());
 				Rectangle rg = pane.getVisibleRect();
 				System.out.println("rectangle x: " + rg.x + " rg.width " + rg.width + " center x " + rg.getCenterX());
 			}	
@@ -245,6 +256,14 @@ public class LAP extends RootDrawingNode {
 
 	public void refresh(ColorGradientModel colorGradientModel) {
 		setColors(colorGradientModel);
+		for(LAPFeatureType l : lv.getTypes()){
+			removeChild(l);
+			for(LAPFeatureInterval li : l.getIntervals()){
+				removeChild(li);
+			}
+		}
+		System.out.println("refreshing");
+		setRelevantTypes();
 	}
 	
 	public int GetLDHeight(){
