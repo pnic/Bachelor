@@ -54,12 +54,15 @@ public class LAP extends RootDrawingNode {
 	private ColorGradientRectangle colorGradientRectangle;
 	private LAPFeatureView lv;
 	
+	private LAPEditor editor;
+	
 	private Arc mouseOverArc;
 	private boolean satSize = false;;
 	
-	public LAP(Sequence seq, ColorGradientModel gradmodel, String title){
+	public LAP(Sequence seq, ColorGradientModel gradmodel, String title, LAPEditor editor){
 		this.seq = seq;
 		seqLength = seq.getLength();
+		this.editor = editor;
 		
 		this.TextForTitle = title;
 		// initialize
@@ -107,7 +110,7 @@ public class LAP extends RootDrawingNode {
 		addChild(titleText);
 		
 		
-		addChild(colorGradientRectangle);
+		//addChild(colorGradientRectangle); in the infobox now
 		setColors(gradmodel);
 		setSize();
 	}
@@ -129,18 +132,24 @@ public class LAP extends RootDrawingNode {
     	List<RnaStructureAnnotation> annotations = RnaStructures.getStructures(seq).getStructure(0).getStructureAnnotations();
 		RnaStructureAnnotation probAnnotation = annotations.get(0);
 		
-		
 		//Set reliability values
     	for(int i = 0; i<seq.getLength(); i++){
 			//get reliability of structure at that position
 			reliabilities[i] = (float)probAnnotation.getValue(i);
 		}
-    	colorGradientRectangle = new ColorGradientRectangle(probAnnotation.getName(),probAnnotation.getFixedMin(),probAnnotation.getFixedMax());
+    	colorGradientRectangle = new ColorGradientRectangle(probAnnotation.getName(),probAnnotation.getFixedMin(),probAnnotation.getFixedMax(), editor.getInfo());
     	
     	this.seqLength = seq.getLength();
 	}
 	
 	public void setRelevantTypes(){
+		for(LAPFeatureType l : lv.getTypes()){
+			removeChild(l);
+			for(LAPFeatureInterval li : l.getIntervals()){
+				removeChild(li);
+			}
+		}
+
 		lv.buildRelevantTypes();
 		for(LAPFeatureType l : lv.getRelevantTypes()){
 			addChild(l);
@@ -164,6 +173,7 @@ public class LAP extends RootDrawingNode {
 			}
 		}
 		colorGradientRectangle.setColors(gradmodel);
+		editor.getInfo().setCgr(colorGradientRectangle);
 	}
 
 	
@@ -219,7 +229,7 @@ public class LAP extends RootDrawingNode {
 		}
 		
 		if(pairings != null){
-			setSize(-110, pairings.length*getScaleX()+50, 0, 1000+(broadestPair/4)*getScaleY());
+			setSize(0, pairings.length*getScaleX()+50, 0, 600+(broadestPair/4)*getScaleY());
 		}
 		else{
 			setSize(0,1200*getScaleX(),0,600);
@@ -255,14 +265,8 @@ public class LAP extends RootDrawingNode {
 
 	public void refresh(ColorGradientModel colorGradientModel) {
 		setColors(colorGradientModel);
-		for(LAPFeatureType l : lv.getTypes()){
-			removeChild(l);
-			for(LAPFeatureInterval li : l.getIntervals()){
-				removeChild(li);
-			}
-		}
 		System.out.println("refreshing");
-		setRelevantTypes();
+		setRelevantTypes();		
 	}
 	
 	public int GetLDHeight(){
@@ -316,6 +320,15 @@ public class LAP extends RootDrawingNode {
 		}
 		return returner;
 		
+	}
+
+	public ColorGradientRectangle getColorGradientRectangle() {
+		return colorGradientRectangle;
+	}
+
+	public void setColorGradientRectangle(
+			ColorGradientRectangle colorGradientRectangle) {
+		this.colorGradientRectangle = colorGradientRectangle;
 	}
 	
 }

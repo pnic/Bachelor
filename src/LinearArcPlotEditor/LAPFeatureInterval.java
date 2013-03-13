@@ -27,10 +27,13 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 	private int endPos;
 	private int offset;
 	
+	private String name;
+	
 	private LAPFeatureType type;
 	private LAP root;
 	
-	public LAPFeatureInterval(int startPos, int endPos, int offset, LAP root){
+	public LAPFeatureInterval(String name, int startPos, int endPos, int offset, LAP root){
+		this.name = name;
 		this.startPos = startPos;
 		this.endPos = endPos;
 		this.offset = offset;
@@ -95,6 +98,14 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 
 	public void setType(LAPFeatureType type) {
 		this.type = type;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

@@ -71,6 +71,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         System.out.println("### LAPEditor LOADED SUCCESFULLY ###");
     }
 	private LAP lap;
+	private infoBox info;
 	
 	private Sequence seq;
 	private ObjectListener sequenceListener;
@@ -152,9 +153,13 @@ public class LAPEditor extends AbstractGraphicsEditor {
         //lapView.setEnabled(true);
         //textView.setEnabled(true);
         //New linear arc plot
-        lap = new LAP(seq,lapModel.getColorModel(),"The title");
-		getCanvas().addChild(lap);
-		getCanvas().addChild(new infoBox());
+        info = new infoBox();
+        getCanvas().addChild(info);
+        lap = new LAP(seq,lapModel.getColorModel(),"The title", this);
+        
+        getCanvas().addChild(lap);		
+		
+		info.addChild(info.getCgr());
     }
 	
 	
@@ -268,6 +273,14 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	public String getName() {
 		
 		return "As Linear ArcPlot";
+	}
+
+	public infoBox getInfo() {
+		return info;
+	}
+
+	public void setInfo(infoBox info) {
+		this.info = info;
 	}
 
 }

@@ -38,11 +38,17 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 	Rectangle2D[] rectangles = new Rectangle2D[colorResolution];
 	Color[] colors = new Color[colorResolution];
 	Stroke stroke = new BasicStroke(1f); 
+	private infoBox box;
 	
-	public ColorGradientRectangle(String name, double fixedMin, double fixedMax){		
+	public ColorGradientRectangle(){
+		
+	}
+	
+	public ColorGradientRectangle(String name, double fixedMin, double fixedMax, infoBox box){		
 		this.name=name;
 		this.fixedMin = fixedMin;
 		this.fixedMax = fixedMax;
+		this.box = box;
 		update();	
 		
 		//Create rectangle array
@@ -62,11 +68,11 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 			ga.fill(rectangles[i]);
 		}
 		ga.setColor(Color.BLACK);
-		ga.drawString(name, (int)x_pos, 23);
+		ga.drawString(name, (int)x_pos, 35);
 		System.out.println("max= " + fixedMax);
-		ga.drawString(Double.toString(fixedMin), (int)x_pos-10, (int)y_pos-2);
-		ga.drawString(Double.toString((fixedMax+fixedMin)/2), (int)x_pos+length/2-10, (int)y_pos-2);
-		ga.drawString(Double.toString(fixedMax), (length+(int)x_pos)-10, (int)y_pos-2);
+		ga.drawString(Double.toString(fixedMin), (int)x_pos, (int)y_pos-2);
+		ga.drawString(Double.toString((fixedMax+fixedMin)/2), (int)x_pos+length/2-15, (int)y_pos-2);
+		ga.drawString(Double.toString(fixedMax), (length+(int)x_pos)-20, (int)y_pos-2);
 		
 		return DrawingResult.NORMAL;
 	}
@@ -81,8 +87,8 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 	public void update(){
 		  //This method is called when the user eg. changes color gradient
 		//circ_r = ArcplotDraw.radiusfactor*getScaleX();
-		y_pos = 50; 
-		x_pos = -100; 
+		y_pos = box.getYViewBounds()+50; 
+		x_pos = box.getXViewBounds(); 
 	}
 	  
 }

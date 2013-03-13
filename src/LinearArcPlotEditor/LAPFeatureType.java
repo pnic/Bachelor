@@ -24,7 +24,10 @@ import com.clcbio.api.free.gui.dialog.ClcMessages;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedOutputStream;
@@ -36,7 +39,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class LAPFeatureType extends ChildDrawingNode{
+import javax.swing.event.MouseInputListener;
+
+public class LAPFeatureType extends ChildDrawingNode implements MouseInputListener{
 
 	private String name;
 	private List<LAPFeatureInterval> intervals;
@@ -47,9 +52,13 @@ public class LAPFeatureType extends ChildDrawingNode{
 	private int width;
 	private int height;
 	
+	private boolean expanded;
+	
 	private LAP root;
 
 	private boolean relevant;
+	
+	private Font myFont = new Font("Serif", Font.BOLD, 12);
 	
 	private Rectangle2D content;
 	
@@ -70,6 +79,7 @@ public class LAPFeatureType extends ChildDrawingNode{
 		this.typeOffset = offset;
 		this.width = w;
 		this.height = h;
+		expanded = false;
 	}
 	
 	public String getName(){
@@ -89,14 +99,42 @@ public class LAPFeatureType extends ChildDrawingNode{
 		if(relevant){
 			g2.setStroke(new BasicStroke(2));
 			g2.setColor(Color.BLACK);
-		
+			this.addMouseInputListener(this);
 		content = new Rectangle2D.Double(x, root.getBaseXAxis()+typeOffset, width*getScaleX(), height);
 			g2.setColor(Color.LIGHT_GRAY);
 			g2.fill(content);
 		//g2.draw(content);
 			g2.drawString(this.name, (x+((width-x)/2))*(int)getScaleX(), root.getBaseXAxis()+typeOffset-5);
+			g2.setColor(Color.BLACK);
+			//g2.fillRect(root.getXViewBounds(), root.getBaseXAxis()+typeOffset-10, 20, 10);
+			//g2.setColor(Color.WHITE);
+			g2.setFont(myFont);
+			g2.drawString("+", root.getXViewBounds()+5, root.getBaseXAxis()+typeOffset);
+			if(expanded){
+				System.out.println(this.getName() + " Is expanded");
+				int inView = 1;
+				g2.drawString("Features:", root.getXViewBounds(), root.getBaseXAxis()+typeOffset+50);
+				for(LAPFeatureInterval li : intervals){
+					if(!(li.getEndPos()*getScaleX() < root.getXViewBounds() || li.getStartPos()*getScaleX() > root.getXViewBounds()+root.getViewPaneWidth())){
+						g2.drawString(li.getName()+", ", root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+50);
+						inView+=1;
+					}
+				}
+			}
 		}
 		return DrawingResult.NORMAL;
+	}
+	
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		
+			System.out.println("Clicked");
+			Container cmp = (Container)this.getComponent();
+			
+			
+			System.out.println(cmp.getClass());
+			System.out.println("width: " + cmp.getWidth());
+		
 	}
 	
 	public int getX() {
@@ -137,6 +175,55 @@ public class LAPFeatureType extends ChildDrawingNode{
 
 	public void setRelevant(boolean relevant) {
 		this.relevant = relevant;
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		this.expanded = true;
+		root.setRelevantTypes();
+		
+		System.out.println(this.expanded);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		expanded = false;
+		root.setRelevantTypes();
+		System.out.println(expanded);
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean isExpanded() {
+		return expanded;
+	}
+
+	public void setExpanded(boolean expanded) {
+		this.expanded = expanded;
 	}
 	
 }
