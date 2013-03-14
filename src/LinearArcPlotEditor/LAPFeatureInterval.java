@@ -27,7 +27,12 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 	private int endPos;
 	private int offset;
 	
+	
+	
+	
+	
 	private String name;
+	
 	
 	private LAPFeatureType type;
 	private LAP root;
@@ -50,18 +55,21 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy)
 	{
 		if(type.isRelevant()){
-			g2.setStroke(new BasicStroke(1));
-			g2.setColor(Color.BLACK);
+		//	if(type.isChanged() || type.getLastX() != root.getXViewBounds()){
+				g2.setStroke(new BasicStroke(1));
+				g2.setColor(Color.BLACK);
 		
-			int lineStart = (int)(startPos*getScaleX());
-			int lineEnd = (int)(endPos*getScaleX());
+				int lineStart = (int)(startPos*getScaleX());
+				int lineEnd = (int)(endPos*getScaleX());
 		
-			g2.draw(new Line2D.Double(lineStart, root.getBaseXAxis()+offset+15, lineEnd, root.getBaseXAxis()+offset+15));
-			startLine = new Line2D.Double(lineStart, root.getBaseXAxis()+offset+30, lineStart, root.getBaseXAxis()+offset+15);
-			endLine = new Line2D.Double(lineEnd,root.getBaseXAxis()+offset+30,lineEnd,root.getBaseXAxis()+offset);
-			g2.draw(startLine);
-			g2.draw(endLine);
-		}
+				g2.draw(new Line2D.Double(lineStart, root.getBaseXAxis()+offset+15, lineEnd, root.getBaseXAxis()+offset+15));
+				startLine = new Line2D.Double(lineStart, root.getBaseXAxis()+offset+30, lineStart, root.getBaseXAxis()+offset+15);
+				endLine = new Line2D.Double(lineEnd,root.getBaseXAxis()+offset+30,lineEnd,root.getBaseXAxis()+offset);
+				g2.draw(startLine);
+				g2.draw(endLine);
+				
+			}
+		//}
 		return DrawingResult.NORMAL;
 	}
 	
