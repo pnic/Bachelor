@@ -1,4 +1,4 @@
-package LinearArcPlotEditor;
+package Engine;
 
 import java.awt.BasicStroke;
 import java.awt.Canvas;
@@ -19,6 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import LinearArcPlotEditor.Arc;
+import LinearArcPlotEditor.Baseline;
+import LinearArcPlotEditor.LAPFeatureInterval;
+import LinearArcPlotEditor.LAPFeatureType;
+import LinearArcPlotEditor.LAPFeatureView;
+import LinearArcPlotEditor.TitleText;
 
 import LinearArcPlotEditor.ColorGradientRectangle;
 

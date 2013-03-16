@@ -1,4 +1,4 @@
-package LinearArcPlotEditor;
+package Engine;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
@@ -30,6 +30,12 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+
+import LinearArcPlotEditor.LAPLayoutModel;
+import LinearArcPlotEditor.LAPLayoutView;
+import LinearArcPlotEditor.TextModel;
+import LinearArcPlotEditor.TextView;
+import LinearArcPlotEditor.infoBox;
 
 import com.clcbio.api.base.persistence.PersistenceException;
 import com.clcbio.api.base.util.State;
