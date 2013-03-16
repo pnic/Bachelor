@@ -35,7 +35,7 @@ import LinearArcPlotEditor.LAPLayoutModel;
 import LinearArcPlotEditor.LAPLayoutView;
 import LinearArcPlotEditor.TextModel;
 import LinearArcPlotEditor.TextView;
-import LinearArcPlotEditor.infoBox;
+import ViewCanvas.infoBox;
 
 import com.clcbio.api.base.persistence.PersistenceException;
 import com.clcbio.api.base.util.State;

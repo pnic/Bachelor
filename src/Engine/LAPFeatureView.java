@@ -1,7 +1,9 @@
-package LinearArcPlotEditor;
+package Engine;
 
 
-import Engine.LAP;
+import ViewCanvas.LAPFeature;
+import ViewCanvas.LAPFeatureInterval;
+import ViewCanvas.LAPFeatureType;
 
 import com.clcbio.api.base.io.ClcFileFilter;
 import com.clcbio.api.base.io.ExportPlugin;

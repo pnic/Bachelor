@@ -18,14 +18,13 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import LinearArcPlotEditor.Arc;
-import LinearArcPlotEditor.Baseline;
-import LinearArcPlotEditor.LAPFeatureInterval;
-import LinearArcPlotEditor.LAPFeatureType;
-import LinearArcPlotEditor.LAPFeatureView;
-import LinearArcPlotEditor.TitleText;
 
-import LinearArcPlotEditor.ColorGradientRectangle;
+import ViewCanvas.Arc;
+import ViewCanvas.Baseline;
+import ViewCanvas.ColorGradientRectangle;
+import ViewCanvas.LAPFeatureInterval;
+import ViewCanvas.LAPFeatureType;
+import ViewCanvas.TitleText;
 
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.annotation.RnaStructureAnnotation;

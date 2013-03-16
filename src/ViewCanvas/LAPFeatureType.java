@@ -1,4 +1,4 @@
-package LinearArcPlotEditor;
+package ViewCanvas;
 
 
 import Engine.LAP;

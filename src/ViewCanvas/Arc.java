@@ -1,4 +1,4 @@
-package LinearArcPlotEditor;
+package ViewCanvas;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
