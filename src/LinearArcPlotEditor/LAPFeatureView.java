@@ -40,7 +40,7 @@ public class LAPFeatureView {
 	List<LAPFeatureType> types;
 	List<LAPFeatureType> relevantTypes;
 	List<LAPFeature> features;
-	private int typeHeight = 30;
+	private int typeHeight = 20;
 	private int typeWidth;
 	private LAP root;
 	

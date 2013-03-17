@@ -62,9 +62,9 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 				int lineStart = (int)(startPos*getScaleX());
 				int lineEnd = (int)(endPos*getScaleX());
 		
-				g2.draw(new Line2D.Double(lineStart, root.getBaseXAxis()+offset+15, lineEnd, root.getBaseXAxis()+offset+15));
-				startLine = new Line2D.Double(lineStart, root.getBaseXAxis()+offset+30, lineStart, root.getBaseXAxis()+offset+15);
-				endLine = new Line2D.Double(lineEnd,root.getBaseXAxis()+offset+30,lineEnd,root.getBaseXAxis()+offset);
+				g2.draw(new Line2D.Double(lineStart, root.getBaseXAxis()+offset+type.getHeight()/2, lineEnd, root.getBaseXAxis()+offset+type.getHeight()/2));
+				startLine = new Line2D.Double(lineStart, root.getBaseXAxis()+offset+type.getHeight(), lineStart, root.getBaseXAxis()+offset+type.getHeight()/2);
+				endLine = new Line2D.Double(lineEnd,root.getBaseXAxis()+offset+type.getHeight(),lineEnd,root.getBaseXAxis()+offset);
 				g2.draw(startLine);
 				g2.draw(endLine);
 				
