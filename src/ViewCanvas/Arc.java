@@ -1,4 +1,4 @@
-package LinearArcPlotEditor;
+package ViewCanvas;
 
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
 import org.apache.batik.gvt.AbstractGraphicsNode;
+
+import Engine.LAP;
 
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;

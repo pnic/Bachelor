@@ -1,5 +1,9 @@
-package LinearArcPlotEditor;
+package Engine;
 
+
+import ViewCanvas.LAPFeature;
+import ViewCanvas.LAPFeatureInterval;
+import ViewCanvas.LAPFeatureType;
 
 import com.clcbio.api.base.io.ClcFileFilter;
 import com.clcbio.api.base.io.ExportPlugin;
@@ -18,11 +22,6 @@ import com.clcbio.api.free.datatypes.bioinformatics.sequence.interval.Interval;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.Region;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.rnasecondary.RnaStructureAnnotationTools;
 import com.clcbio.api.free.gui.dialog.ClcMessages;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
-//import com.ppfold.algo.ExportTools;
-//import com.ppfold.algo.MatrixTools;
-
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;

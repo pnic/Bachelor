@@ -1,5 +1,7 @@
-package LinearArcPlotEditor;
+package ViewCanvas;
 
+
+import Engine.LAP;
 
 import com.clcbio.api.base.io.ClcFileFilter;
 import com.clcbio.api.base.io.ExportPlugin;

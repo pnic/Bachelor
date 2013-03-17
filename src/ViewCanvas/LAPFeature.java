@@ -1,4 +1,4 @@
-package LinearArcPlotEditor;
+package ViewCanvas;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -14,6 +14,8 @@ import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+
+import Engine.LAP;
 
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;

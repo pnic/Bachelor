@@ -1,6 +1,7 @@
-package LinearArcPlotEditor;
+package ViewCanvas;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Point;
@@ -16,7 +17,10 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
 
 
 public class EditArcDialog extends JDialog{
@@ -29,6 +33,7 @@ public class EditArcDialog extends JDialog{
 	}
 	
 	public void init(){
+		setSize(300, 300);
 		setTitle("Edit Arc");
 		setBackground(Color.white);
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -38,21 +43,34 @@ public class EditArcDialog extends JDialog{
         JLabel first = new JLabel("First");
         final JTextField firstNumber = new JTextField(Integer.toString(arc.p1));
         firstNumber.setPreferredSize(new Dimension(60,20));
-        firstNumber.setHorizontalAlignment(JTextField.RIGHT);
+
         
         // Second
         JLabel second = new JLabel("second");
         final JTextField secondNumber = new JTextField(Integer.toString(arc.p2));
         secondNumber.setPreferredSize(new Dimension(60,20));
-        secondNumber.setHorizontalAlignment(JTextField.RIGHT);
-        
-        
+
         editArcFields.add(first);
         editArcFields.add(firstNumber);
         editArcFields.add(second);
         editArcFields.add(secondNumber);
         add(editArcFields);
         
+        JPanel histPanel = new JPanel();
+        histPanel.setPreferredSize(new Dimension(299,13));
+        
+        histPanel.setBackground(Color.lightGray);
+        JLabel history_label = new JLabel("History");
+        history_label.setOpaque(true);
+        history_label.setBackground(Color.LIGHT_GRAY);
+        history_label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JScrollPane history = new JScrollPane();
+        history.setPreferredSize(new Dimension(290,150));
+        histPanel.add(history_label);
+       	this.add(histPanel);
+       	this.add(history);
+        
+        //this.add(history);
         JPanel btns = new JPanel(new FlowLayout());
         
         JButton cancelBtn = new JButton("cancel");
@@ -99,17 +117,20 @@ public class EditArcDialog extends JDialog{
         btns.add(cancelBtn);
         btns.add(confirmBtn);
         
-        editArcFields.add(btns);
+        add(btns);
+        
+        
+        
 
         setModalityType(ModalityType.APPLICATION_MODAL);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         Point middle = new Point(screenSize.width / 2, screenSize.height / 2);
-        Point newLocation = new Point(middle.x - (400 / 2), 
-                                      middle.y - (200 / 2));
+        Point newLocation = new Point(middle.x - (300/2), 
+                                      middle.y - (200/2));
         setLocation(newLocation.x, newLocation.y);
-        setSize(400, 200);
+        
 	}
 	
 	private boolean tryParse(String number){

@@ -1,6 +1,7 @@
-package LinearArcPlotEditor;
+package ViewCanvas;
 
 import java.util.List;
+
 
 import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
@@ -14,7 +15,6 @@ public class infoBox extends RootDrawingNode{
 		title = new TitleText("Titlen");
 		title.setBox(this);
 		this.addChild(title);
-		
 	}
 	
 	@Override

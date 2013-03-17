@@ -1,6 +1,8 @@
-package LinearArcPlotEditor;
+package Engine;
 
 import java.util.Comparator;
+
+import ViewCanvas.Arc;
 
 public class ArcComparator implements Comparator<Arc>{
 
