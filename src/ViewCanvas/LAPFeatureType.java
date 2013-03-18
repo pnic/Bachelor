@@ -112,19 +112,21 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 				g2.setColor(Color.LIGHT_GRAY);
 				g2.fill(content);
 		//g2.draw(content);
-				g2.drawString(this.name, (x+((width-x)/2))*(int)getScaleX(), root.getBaseXAxis()+typeOffset-5);
+				g2.drawString(this.name, root.getXViewBounds()+(root.getViewPaneWidth()/2), root.getBaseXAxis()+typeOffset-5);
 				g2.setColor(Color.BLACK);
 			//g2.fillRect(root.getXViewBounds(), root.getBaseXAxis()+typeOffset-10, 20, 10);
 			//g2.setColor(Color.WHITE);
 				g2.setFont(myFont);
-				g2.drawString("+", root.getXViewBounds()+5, root.getBaseXAxis()+typeOffset);
+				//g2.drawString("+", root.getXViewBounds()+5, root.getBaseXAxis()+typeOffset);
 				if(expanded){
 					System.out.println(this.getName() + " Is expanded");
 					int inView = 1;
-					g2.drawString("Features:", root.getXViewBounds(), root.getBaseXAxis()+typeOffset+50);
+					g2.drawString("Features:", root.getXViewBounds(), root.getBaseXAxis()+typeOffset+30);
 					for(LAPFeatureInterval li : intervals){
 						if(!(li.getEndPos()*getScaleX() < root.getXViewBounds() || li.getStartPos()*getScaleX() > root.getXViewBounds()+root.getViewPaneWidth())){
-							g2.drawString(li.getName()+", ", root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+50);
+							g2.setColor(li.getCol());
+							g2.drawString(li.getName()+", ", root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+30);
+							g2.drawString(li.getStartPos() + " - " + li.getEndPos(), root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+50);
 							inView+=1;
 						}
 					}

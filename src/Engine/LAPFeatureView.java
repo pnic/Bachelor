@@ -93,8 +93,7 @@ public void buildFeatureTypes(LAP root){
 			
 			while(II.hasNext()){
 				Interval in = II.next();
-				LAPFeatureInterval li = new LAPFeatureInterval(fet.getName(), in.getFirstPos().getMin(),in.getLastPos().getMax(),cur.getTypeOffset(), root);
-				li.setType(cur);
+				LAPFeatureInterval li = new LAPFeatureInterval(fet.getName(), in.getFirstPos().getMin(),in.getLastPos().getMax(),cur.getTypeOffset(), root, cur);
 				tmp.addFeatureInterval(li);
 				//System.out.println("Interval \n First Position: " + in.getFirstPos() + " \n Last Position: " + in.getLastPos());
 				//System.out.println("Interval \n First Position.getMin: " + in.getFirstPos().getMin() + " \n Last Position.getMin: " + in.getLastPos().getMin());
@@ -152,7 +151,7 @@ public void buildRelevantTypes(){
 	for(LAPFeatureType l : types){
 		if(l.getIntervals().size() > 0){
 			boolean rel = false;
-			l.setTypeOffset(startOffset+((typeHeight+20)*curAdded)+(expanded*30));
+			l.setTypeOffset(startOffset+((typeHeight+20)*curAdded)+(expanded*45));
 			for(LAPFeatureInterval li : l.getIntervals()){
 				//Check if type has at least one feature interval within the current view.
 				if(!rel){				
@@ -164,7 +163,7 @@ public void buildRelevantTypes(){
 				}
 				System.out.println(li.getStartPos() + " is start pos" + li.getEndPos() + " is end pos ");
 				System.out.println(startPosX + " is start pos" + endPosX + " is end pos ");
-				li.setOffset(startOffset+((typeHeight+20)*curAdded)+(expanded*30));
+				li.setOffset(startOffset+((typeHeight+20)*curAdded)+(expanded*45));
 			}
 			if(rel) { 
 				relevantTypes.add(l);			
