@@ -119,7 +119,6 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 				g2.setFont(myFont);
 				g2.drawString("+", root.getXViewBounds()+5, root.getBaseXAxis()+typeOffset);
 				if(expanded){
-					System.out.println(this.getName() + " Is expanded");
 					int inView = 1;
 					g2.drawString("Features:", root.getXViewBounds(), root.getBaseXAxis()+typeOffset+50);
 					for(LAPFeatureInterval li : intervals){

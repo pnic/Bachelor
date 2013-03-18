@@ -54,4 +54,13 @@ public class infoBox extends RootDrawingNode{
 	public void setCgr(ColorGradientRectangle cgr) {
 		this.cgr = cgr;
 	}
+	
+	public void setVisible(boolean visible){
+		title.visible = visible;
+		cgr.visible = visible;
+	}
+	
+	public TitleText getTitleText(){
+		return title;
+	}
 }

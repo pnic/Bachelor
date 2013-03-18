@@ -5,34 +5,19 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.LayoutManager;
-
-import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Ellipse2D;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import LinearArcPlotEditor.LAPLayoutModel;
 import LinearArcPlotEditor.LAPLayoutView;
+import LinearArcPlotEditor.SequenceModel;
+import LinearArcPlotEditor.SequenceView;
 import LinearArcPlotEditor.TextModel;
 import LinearArcPlotEditor.TextView;
 import ViewCanvas.infoBox;
@@ -41,33 +26,19 @@ import com.clcbio.api.base.persistence.PersistenceException;
 import com.clcbio.api.base.util.State;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
 import com.clcbio.api.free.datatypes.ClcObject;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.NucleotideSequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.framework.listener.ObjectEvent;
 import com.clcbio.api.free.datatypes.framework.listener.ObjectListener;
 import com.clcbio.api.free.datatypes.framework.listener.SelectionEvent;
-import com.clcbio.api.free.editors.framework.AbstractEditor;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelListener;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.editors.framework.sidepanel.event.SidePanelEvent;
-import com.clcbio.api.free.framework.navigation.NavigationManager;
 import com.clcbio.api.free.framework.workspace.Workspace;
-import com.clcbio.api.free.gui.StandardLayout;
-import com.clcbio.api.free.gui.components.JTextAreaNotPasteable;
-import com.clcbio.api.free.gui.components.SelectFeaturePanel;
-import com.clcbio.api.free.gui.focus.ClcFocusScrollPane;
 import com.clcbio.api.free.gui.icon.ClcIcon;
 import com.clcbio.api.free.gui.icon.DefaultClcIcon;
-import com.clcbio.api.free.gui.icon.EmptyIcon;
 import com.clcbio.api.free.workbench.WorkbenchManager;
-import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
-import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.annotation.RnaStructureAnnotation;
 import com.clcbio.api.clc.graphics.AbstractGraphicsEditor;
-import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.free.editors.framework.MouseMode;
-import com.clcbio.api.free.datatypes.ClcObject;
-import com.clcbio.api.free.datatypes.ClcString;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.NucleotideSequence;
 
 
 public class LAPEditor extends AbstractGraphicsEditor {
@@ -87,6 +58,9 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	
 	private TextModel textModel;
 	private TextView textView;
+	
+	private SequenceModel seqModel;
+	private SequenceView seqView;
 	
 	private Font font = new Font("Monospaced", Font.PLAIN, 12);
     private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };
@@ -129,9 +103,11 @@ public class LAPEditor extends AbstractGraphicsEditor {
                     public void run() {
                     	if(lap!=null){
                     		lap.refresh(lapModel.getColorModel());
-                    		lap.setTitle(lapModel.getLapTitle());
-                    		repaint();
                     	}
+                        if(info != null){
+                        	info.getTitleText().setTitle(lapModel.getLapTitle());
+                        }
+                        repaint();
                     }
                 });
             }
@@ -153,6 +129,26 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			}
         });
         
+        seqModel = new SequenceModel("SequenceLayout");
+        seqView = new SequenceView(seqModel);
+        
+        seqModel.addSidePanelListener(new SidePanelListener(){
+			@Override
+			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
+				SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        if(lap != null){
+                        	System.out.println("hey");
+                        	lap.getBaseline().drawNumbers(seqModel.getDrawNumbers());
+                        }
+                        if(info != null){
+                        	info.setVisible(seqModel.getShowInfoBox());
+                        }
+                    }
+                });
+			}
+        });
+        addSidePanelView(seqView);
         addSidePanelView(textView);        
         addSidePanelView(lapView);
         

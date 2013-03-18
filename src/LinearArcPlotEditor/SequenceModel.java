@@ -4,16 +4,18 @@ import com.clcbio.api.base.util.State;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 
 public class SequenceModel extends SidePanelModel{
-
-	public SequenceModel(String arg0) {
-		super(arg0);
-		// TODO Auto-generated constructor stub
+	private boolean drawNumbers;
+	private boolean showInfoBox;
+	
+	public SequenceModel(String title) {
+		super(title);
+		drawNumbers = true;
+		showInfoBox = true;
 	}
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Sequence layout model";
 	}
 
 	@Override
@@ -24,8 +26,27 @@ public class SequenceModel extends SidePanelModel{
 
 	@Override
 	protected State saveModel() {
-		// TODO Auto-generated method stub
-		return null;
+		State model = new State();
+		
+		return model;
+	}
+	
+	public void drawNumbers(boolean drawNumbers){
+		this.drawNumbers = drawNumbers;
+		fireModelChanged();
+	}
+	
+	public boolean getDrawNumbers(){
+		return drawNumbers;
+	}
+	
+	public void showInfowBox(boolean showInfo){
+		this.showInfoBox = showInfo;
+		fireModelChanged();
+	}
+	
+	public boolean getShowInfoBox(){
+		return showInfoBox;
 	}
 
 }
