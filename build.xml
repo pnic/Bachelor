@@ -5,10 +5,10 @@
 	<!-- ### Basic Properties (Update these to suit your environment) ### //-->
 
 	<!-- The name of your plugin //-->
-	<property name="pluginName" value="MyPlugin"/>
+	<property name="Bachelor Plugin" value="MyPlugin"/>
 
 	<!-- The path to your clcdeveloperkit //-->
-	<property name="sdkDir" value="../CLCDeveloperKit"/>
+	<property name="sdkDir" value="/Users/dvddaver/Documents/workspace/CLCDeveloperKit"/>
 
 	<!-- ### Advanced Properties (Normally you should not have to change these) ### //-->
 	<property name="pluginDescFile" value="plugin_description"/>

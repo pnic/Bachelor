@@ -33,6 +33,8 @@ public class Baseline extends ChildDrawingNode {
 	private int fontSize;
 	private String fontName;
 	private LAP root;
+	private boolean drawNumbers; 
+	
 	/*
 	 * A baseline represents the x-axis of the linearArcDiagram.
 	 */
@@ -42,7 +44,7 @@ public class Baseline extends ChildDrawingNode {
 		for(int i=0; i<length; i++){
 			nrs[i] = seq.getSymbolIndexAt(i);
 		}
-		
+		drawNumbers = true;
 		fontSize = 14;
 		font = new Font("SansSerif", Font.BOLD, fontSize);
 		numbersFont = new Font("SansSerif", Font.PLAIN, fontSize);
@@ -84,26 +86,28 @@ public class Baseline extends ChildDrawingNode {
 		}
 		
 		//Draw numbers and number lines
-		int interval = getIntervalNumber();
-		if(numbersFont != null) {
-			g2.setFont(numbersFont);
-		}
-		for(int i=0; i<length; i++){
-			if(i%interval == 0){
-				// variables used for calculating positions of numbers and number lines.
-				int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), Integer.toString(i));
-				int stringHeight = g2.getFontMetrics().getHeight();
-				int stringx_pos = (int)(i*getScaleX()-stringWidth/2);
-				int lineX_pos = (int)(i*getScaleX());
+		if(drawNumbers){
+			int interval = getIntervalNumber();
+			if(numbersFont != null) {
+				g2.setFont(numbersFont);
+			}
+			for(int i=0; i<length; i++){
+				if(i%interval == 0){
+					// variables used for calculating positions of numbers and number lines.
+					int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), Integer.toString(i));
+					int stringHeight = g2.getFontMetrics().getHeight();
+					int stringx_pos = (int)(i*getScaleX()-stringWidth/2);
+					int lineX_pos = (int)(i*getScaleX());
 				
-				// If scale is above 11, we need more space since nucleotides are shown instead of just a line. 
-				if(getScaleX() < 11){
-					g2.drawString(Integer.toString(i), stringx_pos, root.getBaseXAxis()+stringHeight+14);
-					g2.drawLine(lineX_pos, root.getBaseXAxis()+5, lineX_pos, root.getBaseXAxis()+stringHeight);
-				}
-				else{
-					g2.drawString(Integer.toString(i), stringx_pos, root.getBaseXAxis()+stringHeight+25);
-					g2.drawLine(lineX_pos, root.getBaseXAxis()+stringHeight+2, lineX_pos, root.getBaseXAxis()+stringHeight+10);
+					// If scale is above 11, we need more space since nucleotides are shown instead of just a line. 
+					if(getScaleX() < 11){
+						g2.drawString(Integer.toString(i), stringx_pos, root.getBaseXAxis()+stringHeight+14);
+						g2.drawLine(lineX_pos, root.getBaseXAxis()+5, lineX_pos, root.getBaseXAxis()+stringHeight);
+					}
+					else{
+						g2.drawString(Integer.toString(i), stringx_pos, root.getBaseXAxis()+stringHeight+25);
+						g2.drawLine(lineX_pos, root.getBaseXAxis()+stringHeight+2, lineX_pos, root.getBaseXAxis()+stringHeight+10);
+					}
 				}
 			}
 		}
@@ -177,5 +181,11 @@ public class Baseline extends ChildDrawingNode {
 
 	public void setFontName(String fontName) {
 		this.fontName = fontName;
+	}
+	
+	public void drawNumbers(boolean drawNum){
+		System.out.println("base: " + drawNum);
+		this.drawNumbers = drawNum;
+		this.repaint();
 	}
 }

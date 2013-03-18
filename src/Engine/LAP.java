@@ -53,7 +53,8 @@ public class LAP extends RootDrawingNode {
 	private TitleText titleText;
 	private Arc [] arcs; 
 	private Baseline baseline;
-	private String TextForTitle;
+	
+
 	private Sequence seq;
 	private ColorGradientRectangle colorGradientRectangle;
 	private LAPFeatureView lv;
@@ -68,7 +69,7 @@ public class LAP extends RootDrawingNode {
 		seqLength = seq.getLength();
 		this.editor = editor;
 		
-		this.TextForTitle = title;
+
 		// initialize
 		init();
 		
@@ -110,8 +111,8 @@ public class LAP extends RootDrawingNode {
 		addChild(baseline);
 		
 		
-		titleText = new TitleText(TextForTitle);
-		addChild(titleText);
+		//titleText = new TitleText(TextForTitle);
+		//addChild(titleText);
 		
 		
 		//addChild(colorGradientRectangle); in the infobox now
@@ -333,6 +334,14 @@ public class LAP extends RootDrawingNode {
 	public void setColorGradientRectangle(
 			ColorGradientRectangle colorGradientRectangle) {
 		this.colorGradientRectangle = colorGradientRectangle;
+	}
+	
+	public Baseline getBaseline() {
+		return baseline;
+	}
+
+	public void setBaseline(Baseline baseline) {
+		this.baseline = baseline;
 	}
 	
 }

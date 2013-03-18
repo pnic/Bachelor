@@ -40,6 +40,7 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 	Color[] colors = new Color[colorResolution];
 	Stroke stroke = new BasicStroke(1f); 
 	private infoBox box;
+	public boolean visible = true;
 	
 	public ColorGradientRectangle(){
 		
@@ -61,20 +62,20 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 	
 	@Override
 	protected DrawingResult internalDraw(Graphics2D ga, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy) {
-		update();
-		ga.setStroke(stroke);
-		for(int i = 0; i<colorResolution; i++){
-			rectangles[i].setFrame((float)i*(float)length/(float)colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);
-			ga.setColor(colors[i]);
-			ga.fill(rectangles[i]);
-		}
-		ga.setColor(Color.BLACK);
-		ga.drawString(name, (int)x_pos, (int)y_pos-20);
-		System.out.println("max= " + fixedMax);
-		ga.drawString(Double.toString(fixedMin), (int)x_pos, (int)y_pos-2);
-		ga.drawString(Double.toString((fixedMax+fixedMin)/2), (int)x_pos+length/2-15, (int)y_pos-2);
-		ga.drawString(Double.toString(fixedMax), (length+(int)x_pos)-20, (int)y_pos-2);
-		
+		if(visible){
+			update();
+			ga.setStroke(stroke);
+			for(int i = 0; i<colorResolution; i++){
+				rectangles[i].setFrame((float)i*(float)length/(float)colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);
+				ga.setColor(colors[i]);
+				ga.fill(rectangles[i]);
+			}
+			ga.setColor(Color.BLACK);
+			ga.drawString(name, (int)x_pos, 35);
+			ga.drawString(Double.toString(fixedMin), (int)x_pos, (int)y_pos-2);
+			ga.drawString(Double.toString((fixedMax+fixedMin)/2), (int)x_pos+length/2-15, (int)y_pos-2);
+			ga.drawString(Double.toString(fixedMax), (length+(int)x_pos)-20, (int)y_pos-2);
+		}		
 		return DrawingResult.NORMAL;
 	}
   
