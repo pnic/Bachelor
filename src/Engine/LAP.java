@@ -110,8 +110,8 @@ public class LAP extends RootDrawingNode {
 		addChild(baseline);
 		
 		
-		titleText = new TitleText(TextForTitle);
-		addChild(titleText);
+		//titleText = new TitleText(TextForTitle);
+		//addChild(titleText);
 		
 		
 		//addChild(colorGradientRectangle); in the infobox now

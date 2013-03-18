@@ -12,23 +12,26 @@ public class infoBox extends RootDrawingNode{
 	private ColorGradientRectangle cgr;
 	
 	public infoBox(){
-		title = new TitleText("Titlen");
+		title = new TitleText("Titlenn");
 		title.setBox(this);
 		this.addChild(title);
 	}
 	
 	@Override
 	protected void setSize() {
-		setSize(-110,420,150,150);
+		setSize(-110,420,150,80);
 	}
 
 	/*
 	 * Returns the y position of the visible screen in contrast to the entire canvas. 
 	 */
 	public int getYViewBounds(){
-		ClcScrollPane pane = getCanvas().getScrollPane();
-		List<ViewBounds> pV = pane.getVerticalViewBounds();
-		return (int) pV.get(0).getPosition();
+		if(getCanvas() != null){
+			ClcScrollPane pane = getCanvas().getScrollPane();
+			List<ViewBounds> pV = pane.getVerticalViewBounds();
+			return (int) pV.get(0).getPosition();
+		}
+		else return 0;
 	}
 	
 	
@@ -36,9 +39,12 @@ public class infoBox extends RootDrawingNode{
 	 * Returns the x position of the visible screen in contrast to the entire canvas. 
 	 */
 	public int getXViewBounds(){
-		ClcScrollPane pane = getCanvas().getScrollPane();
-		List<ViewBounds> pH = pane.getHorizontalViewBounds();
-		return (int)pH.get(0).getPosition();
+		if(getCanvas() != null){	
+			ClcScrollPane pane = getCanvas().getScrollPane();
+			List<ViewBounds> pH = pane.getHorizontalViewBounds();
+			return (int)pH.get(0).getPosition();		
+		}
+		return 0;
 	}
 
 	public ColorGradientRectangle getCgr() {

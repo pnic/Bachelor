@@ -1,6 +1,7 @@
 package ViewCanvas;
 
 import java.awt.AlphaComposite;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -15,6 +16,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -25,7 +27,7 @@ import javax.swing.event.MouseInputListener;
 
 import org.apache.batik.gvt.AbstractGraphicsNode;
 
-import Engine.LAP;
+import Engine.*;
 
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
@@ -53,12 +55,14 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	private int arc_y_position;
 	private double contains;
 	private double mouse_limit;
+	private ArrayList<ArcChange> history;
 	
 	public Arc(int p1, int p2, double seqLength, double reliability, LAP root){
 		this.p1=p1;
 		this.p2=p2;
 		this.root = root;
 		mouseListenerSat = false;
+		history = new ArrayList();
 	}
 	
 	private void update(){
@@ -294,6 +298,14 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		showAnnotation = false;
 	}
 
+	
+	public void addChangeToHistory(ArcChange change){
+		history.add(change);
+	}
+	
+	public ArrayList<ArcChange> getHistory(){
+		return history;
+	}
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub

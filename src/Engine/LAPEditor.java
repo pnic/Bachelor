@@ -158,13 +158,12 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         //lapView.setEnabled(true);
         //textView.setEnabled(true);
-        //New linear arc plot
         info = new infoBox();
-        getCanvas().addChild(info);
         lap = new LAP(seq,lapModel.getColorModel(),"The title", this);
         
         getCanvas().addChild(lap);		
-		
+       
+        getCanvas().addChild(info);
 		info.addChild(info.getCgr());
     }
 	

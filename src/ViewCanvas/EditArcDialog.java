@@ -8,7 +8,11 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
+import Engine.*;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -19,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 
 
@@ -56,6 +61,7 @@ public class EditArcDialog extends JDialog{
         editArcFields.add(secondNumber);
         add(editArcFields);
         
+        // History
         JPanel histPanel = new JPanel();
         histPanel.setPreferredSize(new Dimension(299,13));
         
@@ -64,15 +70,30 @@ public class EditArcDialog extends JDialog{
         history_label.setOpaque(true);
         history_label.setBackground(Color.LIGHT_GRAY);
         history_label.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JScrollPane history = new JScrollPane();
-        history.setPreferredSize(new Dimension(290,150));
+        JPanel jt = new JPanel();
+        jt.setLayout(new BoxLayout(jt, BoxLayout.Y_AXIS));
+        
+       	for(ArcChange archist: arc.getHistory()){
+       		JPanel pn = new JPanel();
+       		pn.setLayout(new BoxLayout(pn, BoxLayout.Y_AXIS));
+       		pn.setPreferredSize(new Dimension(290, 100));
+       		JLabel jd = new JLabel("Date: "+ archist.getChangedTime());
+       		JLabel jm = new JLabel("Changes: " + archist.getChangedMessage());
+       		pn.add(jd);
+       		pn.add(jm);
+       		jt.add(pn);
+       	}
+       	JScrollPane history = new JScrollPane(jt);
+       	history.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        history.setPreferredSize(new Dimension(299,150));
+        
         histPanel.add(history_label);
        	this.add(histPanel);
        	this.add(history);
-        
-        //this.add(history);
+       	
+       	
+       	// Buttons
         JPanel btns = new JPanel(new FlowLayout());
-        
         JButton cancelBtn = new JButton("cancel");
         cancelBtn.addActionListener(new ActionListener(){
 			@Override
@@ -101,9 +122,26 @@ public class EditArcDialog extends JDialog{
 					}
 					else{
 						if(arc.canChangeArc(first, second)){
-							arc.p1 = first;
-							arc.p2 = second;
-
+							ArcChange jc = new ArcChange();
+							if(first != arc.p1){
+								jc.setOld_first(arc.p1);
+								jc.setNew_first(first);
+								jc.setFirstChanged(true);
+								arc.p1 = first;
+							}
+							if(arc.p2 != second){
+								jc.setOld_second(arc.p2);
+								jc.setNew_second(second);
+								jc.setSecondChanged(true);
+								arc.p2 = second;
+							}
+							
+							Calendar c = new GregorianCalendar();
+						    c.set(Calendar.HOUR_OF_DAY, 0); //anything 0 - 23
+						    c.set(Calendar.MINUTE, 0);
+						    c.set(Calendar.SECOND, 0);
+							jc.setChangedTime(c.getTime());
+							arc.addChangeToHistory(jc);
 							EditArcDialog.this.dispose();
 						}
 						else{

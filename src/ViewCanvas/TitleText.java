@@ -13,15 +13,10 @@ public class TitleText extends ChildDrawingNode{
 	
 	private String title;
 	private infoBox box;
-	
-	
-
 
 	public TitleText(String title){
 		this.title = title;
 	}
-	
-	
 	
 	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
@@ -30,9 +25,9 @@ public class TitleText extends ChildDrawingNode{
 				//g2.drawString(title, 20, 20);
 				g2.setColor(Color.white);
 				g2.setStroke(new BasicStroke(2));
-				g2.fillRect(box.getXViewBounds()-1, box.getYViewBounds()-1, 200, 130);
+				g2.fillRect(box.getXViewBounds()-1, box.getYViewBounds()-1, 200, 79);
 				g2.setColor(Color.black);
-				g2.drawRect(box.getXViewBounds()-1, box.getYViewBounds()-1, 201, 131);
+				g2.drawRect(box.getXViewBounds()-1, box.getYViewBounds()-1, 201, 80);
 				g2.drawString(title, box.getXViewBounds()+5, box.getYViewBounds() + 20);;
 			}
 		}
@@ -51,8 +46,6 @@ public class TitleText extends ChildDrawingNode{
 	public infoBox getBox() {
 		return box;
 	}
-
-
 
 	public void setBox(infoBox box) {
 		this.box = box;
