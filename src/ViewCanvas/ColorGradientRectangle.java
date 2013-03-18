@@ -71,7 +71,7 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 				ga.fill(rectangles[i]);
 			}
 			ga.setColor(Color.BLACK);
-			ga.drawString(name, (int)x_pos, 35);
+			ga.drawString(name, (int)x_pos, (int)y_pos-20);
 			ga.drawString(Double.toString(fixedMin), (int)x_pos, (int)y_pos-2);
 			ga.drawString(Double.toString((fixedMax+fixedMin)/2), (int)x_pos+length/2-15, (int)y_pos-2);
 			ga.drawString(Double.toString(fixedMax), (length+(int)x_pos)-20, (int)y_pos-2);

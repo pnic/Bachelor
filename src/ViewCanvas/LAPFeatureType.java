@@ -49,6 +49,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	private List<LAPFeatureInterval> intervals;
 	
 	private long prevClick = 0;
+	private long prevHover = 0;
 	
 	private int x;
 	private int typeOffset;
@@ -66,6 +67,9 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	private boolean relevant;
 	
 	private Font myFont = new Font("Serif", Font.BOLD, 12);
+	
+	private boolean hover = false;
+	
 	
 	private Rectangle2D content;
 	
@@ -111,6 +115,12 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 				content = new Rectangle2D.Double(x, root.getBaseXAxis()+typeOffset, width*getScaleX(), height);
 				g2.setColor(Color.LIGHT_GRAY);
 				g2.fill(content);
+				
+				if(hover){
+					g2.setColor(Color.BLACK);
+					g2.draw(content);
+					g2.setColor(Color.LIGHT_GRAY);
+				}
 		//g2.draw(content);
 				g2.drawString(this.name, root.getXViewBounds()+(root.getViewPaneWidth()/2), root.getBaseXAxis()+typeOffset-5);
 				g2.setColor(Color.BLACK);
@@ -118,14 +128,17 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 			//g2.setColor(Color.WHITE);
 				g2.setFont(myFont);
 				//g2.drawString("+", root.getXViewBounds()+5, root.getBaseXAxis()+typeOffset);
+				
+					
+				
 				if(expanded){
 					int inView = 1;
-					g2.drawString("Features:", root.getXViewBounds(), root.getBaseXAxis()+typeOffset+30);
+					g2.drawString("Features:", root.getXViewBounds(), root.getBaseXAxis()+typeOffset+height+15);
 					for(LAPFeatureInterval li : intervals){
 						if(!(li.getEndPos()*getScaleX() < root.getXViewBounds() || li.getStartPos()*getScaleX() > root.getXViewBounds()+root.getViewPaneWidth())){
 							g2.setColor(li.getCol());
-							g2.drawString(li.getName()+", ", root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+30);
-							g2.drawString(li.getStartPos() + " - " + li.getEndPos(), root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+50);
+							g2.drawString(li.getName()+", ", root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+height+15);
+							g2.drawString(li.getStartPos() + " - " + li.getEndPos(), root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+height+35);
 							inView+=1;
 						}
 					}
@@ -141,7 +154,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	public void mouseClicked(MouseEvent arg0) {
 		
 		if(arg0.getWhen() - prevClick < 500 ) return;
-		System.out.println(arg0.getY() + " is Y of arg0 and " + content.getY() + "is Y " + content.getMinY() + " is min y" );
+		//System.out.println(arg0.getY() + " is Y of arg0 and " + content.getY() + "is Y " + content.getMinY() + " is min y" );
 		if(content.getMinY() < arg0.getY()+root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.getYViewBounds()){
 		this.expanded = !expanded;
 		this.changed = true;
@@ -228,7 +241,19 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+	/*	if(lastX != root.getXViewBounds()){ for repainting when zooming 
+			root.setRelevantTypes();
+			repaint();
+		}*/
+		if(content.getMinY() < arg0.getY()+root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.getYViewBounds()){
+		this.hover = true;
+		prevHover = arg0.getWhen();
+		repaint();
+		return;
+		} if(hover){
+			hover = false;
+			repaint();
+		}
 	}
 
 	public boolean isExpanded() {
