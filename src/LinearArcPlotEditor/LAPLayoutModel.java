@@ -15,7 +15,8 @@ public class LAPLayoutModel extends SidePanelModel {
 
 	 private int zoomLevel = 100;
      private State colorstate;
-     private String LAPTitle;
+     private String LAPTitle = "Title";
+     private boolean titleIsVisible = true;
 	    
 	    private ColorGradientModel colormodel = new ColorGradientModel(ColorGradientManager.getGradients()); 
 
@@ -30,7 +31,7 @@ public class LAPLayoutModel extends SidePanelModel {
 	    }
 	    
 	    public LAPLayoutModel(WorkbenchManager manager) {
-	        super("Linear Arcplot format");
+	        super("Infobox");
 
 	    }
 	// Construction and initialization.
@@ -73,7 +74,6 @@ public class LAPLayoutModel extends SidePanelModel {
 		}
 
 		public void updateTitle(String newTitle){
-			System.out.println("This is the model " + newTitle);
 			LAPTitle = newTitle;
 			fireModelChanged();
 		}

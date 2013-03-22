@@ -10,6 +10,7 @@ import com.clcbio.api.clc.graphics.framework.ViewBounds;
 public class infoBox extends RootDrawingNode{
 	private TitleText title;
 	private ColorGradientRectangle cgr;
+	private boolean titleIsVisible = true;
 	
 	public infoBox(){
 		title = new TitleText("Titlenn");

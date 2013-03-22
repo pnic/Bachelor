@@ -76,11 +76,9 @@ public void buildFeatureTypes(LAP root){
 		
 		while(featureIter.hasNext()){
 			Feature fet = featureIter.next(); 
-			System.out.println(fet.getType() + " is the type of the feature and " + cur.getName() + " is the name of the type");
-			if(fet.getType().compareToIgnoreCase(cur.getName()) != 0){
+					if(fet.getType().compareToIgnoreCase(cur.getName()) != 0){
 				cur = changeCurrentType(fet.getType());
 			}
-			System.out.println("Feature type = " + fet.getType() + " Type Name = " + cur.getName());
 			if(fet.getName().length() > 20) continue;
 						
 			Region fetregion = fet.getRegion();
@@ -123,7 +121,7 @@ private void sortTypes() {
 
 public void buildRelevantTypes(){
 	int minusOffset = 0;
-	int startOffset = 50;
+	int startOffset = 60;
 	int curAdded = 0;
 	int expanded = 0;
 	
@@ -143,9 +141,6 @@ public void buildRelevantTypes(){
 	} catch (java.lang.NullPointerException e){
 		curWidth = 100000;
 	}
-	System.out.println(curX + " is current x");
-	System.out.println(curWidth + " is current width");
-	System.out.println(curWidth/root.getScaleX());
 	
 	relevantTypes.clear();
 	for(LAPFeatureType l : types){
@@ -161,8 +156,6 @@ public void buildRelevantTypes(){
 						rel = true;
 					}
 				}
-				System.out.println(li.getStartPos() + " is start pos" + li.getEndPos() + " is end pos ");
-				System.out.println(startPosX + " is start pos" + endPosX + " is end pos ");
 				li.setOffset(startOffset+((typeHeight+20)*curAdded)+(expanded*45));
 			}
 			if(rel) { 
@@ -189,7 +182,6 @@ private LAPFeatureType changeCurrentType(String fetType){
 private void buildTypes(Set<String> s, LAP root){
 	int offset = 50;
 	for(String t : s){
-		System.out.println(t);
 		types.add(new LAPFeatureType(t,0,offset,seq.getLength(),typeHeight,root));
 		offset+=typeHeight+20;
 	}
