@@ -26,6 +26,7 @@ import ViewCanvas.LAPFeatureInterval;
 import ViewCanvas.LAPFeatureType;
 import ViewCanvas.TitleText;
 
+import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.annotation.RnaStructureAnnotation;
 import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
@@ -36,7 +37,9 @@ import com.clcbio.api.clc.graphics.framework.ClcCanvas;
 import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.clc.graphics.framework.ViewBounds;
+import com.clcbio.api.free.datatypes.ClcPair;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
+import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
 import com.clcbio.api.free.gui.components.ObjectMoveable;
 import com.clcbio.api.free.gui.dialog.ClcMessages;
 import com.clcbio.api.free.gui.focus.ClcFocusPanel;
@@ -61,6 +64,7 @@ public class LAP extends RootDrawingNode {
 	
 	private LAPEditor editor;
 	
+
 	private Arc mouseOverArc;
 	private boolean satSize = false;;
 	
@@ -72,8 +76,6 @@ public class LAP extends RootDrawingNode {
 
 		// initialize
 		init();
-		
-		System.out.println("getScaleX() " + getScaleX() + " getScaleY() " + getScaleY() + " pairings length " + pairings.length);
 		
 		scaleX = 700.0/pairings.length;
 		scaleY = scaleX;
@@ -131,7 +133,9 @@ public class LAP extends RootDrawingNode {
 		
 		//setup pairing and reliabilities.
 		pairings = RnaStructures.getStructures(seq).getStructure(0).getPairing();
-    	reliabilities = new float[seq.getLength()];
+		RnaStructures.getStructures(seq).getStructure(0);
+		
+		reliabilities = new float[seq.getLength()];
     	
     	//Our Rna structure
     	List<RnaStructureAnnotation> annotations = RnaStructures.getStructures(seq).getStructure(0).getStructureAnnotations();
@@ -241,6 +245,10 @@ public class LAP extends RootDrawingNode {
 		}
 	}
 	
+	/*
+	 * Checks if an arc can show mouseOver, this is to ensure only 1 arc is shown at a time. 
+	 * It not only checks, but also performs an operation on arc that makes it possible for LAP to control which arc is on mouseover. 
+	 */
 	public boolean canArcShowMouseOver(Arc arc){
 		if(mouseOverArc == null){
 			this.mouseOverArc = arc;
@@ -292,6 +300,9 @@ public class LAP extends RootDrawingNode {
 		return (int)(100+(broadestPair/4)*getScaleY());
 	}
 	
+	/*
+	 * Checks if it is a valid change of positions for a pair. If it is, it also makes the changes in pairings. 
+	 */
 	public boolean canChangeArc(int old_p1, int new_p1, int old_p2, int new_p2){
 		boolean first_same = old_p1 == new_p1;
 		boolean second_same = old_p2 == new_p2; 
@@ -317,11 +328,21 @@ public class LAP extends RootDrawingNode {
 				returner = false;
 			}
 		}
+		//Make changes
 		if(returner == true){
+			seq.startUndoAndEventBlock("Changing arcs");	
+			
 			pairings[old_p1] = -1;
 			pairings[old_p2] = -1;
 			pairings[new_p1] = new_p2;
 			pairings[new_p2] = new_p1;
+			
+			HistoryEntry histEntry = new HistoryEntry("Changed pair positions", editor.getManager());
+			histEntry.addParameterEntry("Changed positions for the arc", "newP1 " + new_p1 + " newP2 " + new_p2);
+			histEntry.addReferredObject(seq);
+			
+			seq.addHistory(histEntry);
+			seq.endUndoAndEventBlock();
 		}
 		return returner;
 		
@@ -344,4 +365,16 @@ public class LAP extends RootDrawingNode {
 		this.baseline = baseline;
 	}
 	
+
+	public LAPEditor getEditor() {
+		return editor;
+	}
+
+	public void setEditor(LAPEditor editor) {
+		this.editor = editor;
+	}
+	
+	public Sequence getSequence(){
+		return seq;
+	}
 }

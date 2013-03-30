@@ -1,5 +1,10 @@
 package ViewCanvas;
 
+/*
+ * Made by: David Korczynski
+ * e: dgeo@itu.dk
+ * May, 2013. 
+ */
 import java.awt.AlphaComposite;
 
 import java.awt.BasicStroke;
@@ -17,6 +22,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -32,6 +39,8 @@ import Engine.*;
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
+import com.clcbio.api.free.editors.framework.MouseMode;
 
 public class Arc extends ChildDrawingNode implements MouseInputListener{
 
@@ -47,22 +56,23 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	private int oldViewX=0;
 	private int oldViewY=0;
 	private boolean drawRect;
-	private int mouse_x;
-	private int mouse_y;
 	private boolean mouseListenerSat;
 	private int arc_width;
 	private int arc_height;
 	private int arc_y_position;
 	private double contains;
 	private double mouse_limit;
-	private ArrayList<ArcChange> history;
+	private Timer mouseOverTimer;
+	private boolean mouseOverTimeEnabled;
+	private double reliability;
 	
 	public Arc(int p1, int p2, double seqLength, double reliability, LAP root){
 		this.p1=p1;
 		this.p2=p2;
 		this.root = root;
+		this.reliability = reliability;
 		mouseListenerSat = false;
-		history = new ArrayList();
+		mouseOverTimer = new Timer();
 	}
 	
 	private void update(){
@@ -86,7 +96,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		if(arc_width < 100){
 			mouse_limit = 0.06;
 		}
-		
+
 		arc = new Arc2D.Double(newp1,arc_y_position,arc_width,arc_height,0,180,Arc2D.OPEN);
 	}
 	
@@ -109,7 +119,10 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 			if(isArcInScreen() && arc_width > 5){
 				BasicStroke backArcStroke = new BasicStroke(3);
 				BasicStroke normalArcStroke = new BasicStroke(1);
-				
+				BasicStroke overArcStroke = new BasicStroke(3);
+				if(mouseOverTimeEnabled){
+					System.out.println("yes sir");
+				}
 				if(!mouseListenerSat && (arc_width > 100 || getScaleX() > 8)){
 					this.addMouseInputListener(this);
 					mouseListenerSat = true;
@@ -118,15 +131,20 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 				if(getScaleX() > 8) {
 					normalArcStroke = new BasicStroke(2);
 					backArcStroke = new BasicStroke(4);
+					overArcStroke = new BasicStroke(6);
 				}
 				if(getScaleX() > 11) {
 					normalArcStroke = new BasicStroke(3);
 					backArcStroke = new BasicStroke(5);
+					overArcStroke = new BasicStroke(7);
 				}
 				
 				if(showAnnotation){
-					g2.setColor(Color.GREEN);
-					g2.setStroke(backArcStroke);
+					//g2.setColor(Color.GREEN);
+					Color cg = new Color(130, 130, 255);
+					g2.setColor(cg);
+					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
+					g2.setStroke(overArcStroke);
 					g2.draw(arc);
 				}
 				else if(!showAnnotation && getScaleX() > 8){
@@ -158,6 +176,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	
 	/*
 	 * Returns whether or not the x and y parameters touches the arc. 
+	 * This method is not used, but I keep it for a bit, because its easier to read - before optimization.
 	 */
 	private boolean touchesArc(int x_pos, int y){
 		int a = (newp2-newp1)/2;
@@ -171,6 +190,9 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		return false;
 	}
 	
+	/*
+	 * Optimized solution of touchersArc().
+	 */
 	private boolean touchesArc2(int x_pos, int y){
 		int a = (newp2-newp1)/2;
 		int b = getArcHeight(newp1, newp2)/2;
@@ -186,9 +208,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 				if(contains > 1-mouse_limit && contains < 1+mouse_limit && mouse_y > 0){
 					return true;
 				}
-				//if(contains < 0.8 || contains > 1.2){ 
-				//	return false;
-				//}
 			}
 		}
 		return false;
@@ -221,14 +240,17 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
+		if(root.getEditor().getMouseMode() == MouseMode.SELECT_MODE){
+		
 		if(isArcInScreen()){
 			int x_pos = arg0.getX()+root.getXViewBounds();
 			int y_pos = arg0.getY()+root.getYViewBounds();
 			if(touchesArc2(x_pos, y_pos)){
 					boolean rt = root.canArcShowMouseOver(this);
-					mouse_x = x_pos;
-					mouse_y = y_pos;
-					repaint();
+					if(rt){
+						repaint();
+						root.getEditor().setToolTip(this, arg0.getX()+10, arg0.getY()+10, AlphabetTools.getRnaAlphabet().getSymbol(root.getSequence().getSymbolIndexAt(p1)).getCharName() + "-" + AlphabetTools.getRnaAlphabet().getSymbol(root.getSequence().getSymbolIndexAt(p2)).getCharName() + " pair at (" +p1 + ","+p2 + ") with PPFold reliability " + reliability);
+					}
 			}
 			else{
 				if(oldViewX == root.getXViewBounds() && oldViewY == root.getYViewBounds() && drawRect == false){
@@ -239,9 +261,13 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 					oldViewX = root.getXViewBounds();
 					oldViewY = root.getYViewBounds();
 					drawRect = false;
+					mouseOverTimer.cancel();
+					mouseOverTimeEnabled = false;
+					root.getEditor().removeToolTip(this);
 					repaint();
 				}
 			}
+		}
 		}
 	}
 	
@@ -285,27 +311,16 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
+		if(root.getEditor().getMouseMode() == MouseMode.SELECT_MODE){
 		if(showAnnotation){
-			System.out.println("Clicked");
 			Container cmp = (Container)this.getComponent();
-
 			EditArcDialog et = new EditArcDialog(this);
 			et.setVisible(true);
-			
-			System.out.println(cmp.getClass());
-			System.out.println("width: " + cmp.getWidth());
 		}
 		showAnnotation = false;
 	}
+	}
 
-	
-	public void addChangeToHistory(ArcChange change){
-		history.add(change);
-	}
-	
-	public ArrayList<ArcChange> getHistory(){
-		return history;
-	}
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub

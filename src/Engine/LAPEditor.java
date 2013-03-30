@@ -16,10 +16,13 @@ import javax.swing.SwingUtilities;
 
 import LinearArcPlotEditor.LAPLayoutModel;
 import LinearArcPlotEditor.LAPLayoutView;
+import LinearArcPlotEditor.ResidueColorModel;
+import LinearArcPlotEditor.ResidueColorView;
 import LinearArcPlotEditor.SequenceModel;
 import LinearArcPlotEditor.SequenceView;
 import LinearArcPlotEditor.TextModel;
 import LinearArcPlotEditor.TextView;
+import ViewCanvas.TitleText;
 import ViewCanvas.infoBox;
 
 import com.clcbio.api.base.persistence.PersistenceException;
@@ -30,6 +33,8 @@ import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.framework.listener.ObjectEvent;
 import com.clcbio.api.free.datatypes.framework.listener.ObjectListener;
 import com.clcbio.api.free.datatypes.framework.listener.SelectionEvent;
+import com.clcbio.api.free.editors.framework.sidepanel.SidePanelException;
+import com.clcbio.api.free.editors.framework.sidepanel.SidePanelGroup;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelListener;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.editors.framework.sidepanel.event.SidePanelEvent;
@@ -62,6 +67,9 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	private SequenceModel seqModel;
 	private SequenceView seqView;
 	
+	private ResidueColorModel colorModel;
+    private ResidueColorView colorView;
+	
 	private Font font = new Font("Monospaced", Font.PLAIN, 12);
     private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };
 	
@@ -77,10 +85,12 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	
 	@Override
     public void initGraphicsEditorInstance(WorkbenchManager manager, ClcObject[] models, Workspace ws) {
-        //super.initGraphicsEditorInstance(manager, models, ws);
-// This method is called whenever an Editor of this type is instantiated. As seen in the Action example, we are fed the the global context object WorkbenchManager. In this method we set up an observer on the sequence we want to edit in order to update the Editor whenever the sequence changes. This is fundamental part of the Model View Controller (MVC) design pattern.
+        super.initGraphicsEditorInstance(manager, models, ws);
+		// This method is called whenever an Editor of this type is instantiated. As seen in the Action example, we are fed the the global context object WorkbenchManager. In this method we set up an observer on the sequence we want to edit in order to update the Editor whenever the sequence changes. This is fundamental part of the Model View Controller (MVC) design pattern.
         //Assume a sequence is selected (otherwise we wouldn't be here) 
         //Set up model listener
+        
+        fillSidePanel();
         seq = (Sequence) models[0];
         sequenceListener = new ObjectListener() {
             public void eventOccurred(ObjectEvent event) {
@@ -92,8 +102,21 @@ public class LAPEditor extends AbstractGraphicsEditor {
         };
         seq.addListener(sequenceListener);
         
+        info = new infoBox();
+        lap = new LAP(seq,lapModel.getColorModel(),"The title", this);
         
-        lapModel = new LAPLayoutModel(manager);
+        getCanvas().addChild(lap);		
+        getCanvas().addChild(info);
+
+		info.addChild(info.getCgr());
+		
+    }
+	
+	/*
+	 * Fills the sidePanel and attaches listeners. 
+	 */
+	private void fillSidePanel(){
+		lapModel = new LAPLayoutModel(manager);
         lapView = new LAPLayoutView(lapModel);
         
         // This states what happens (to the view) when the model changes.
@@ -138,7 +161,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 				SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         if(lap != null){
-                        	System.out.println("hey");
                         	lap.getBaseline().drawNumbers(seqModel.getDrawNumbers());
                         }
                         if(info != null){
@@ -148,23 +170,28 @@ public class LAPEditor extends AbstractGraphicsEditor {
                 });
 			}
         });
+        
+        colorModel = new ResidueColorModel("Residue coloring");
+        colorView = new ResidueColorView(colorModel);
+        
+        
+        colorModel.addSidePanelListener(new SidePanelListener(){
+        	@Override
+        	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
+        		SwingUtilities.invokeLater(new Runnable(){
+        			public void run(){
+        				
+        			}
+        		});
+        	}
+        });
+        
+        
         addSidePanelView(seqView);
         addSidePanelView(textView);        
         addSidePanelView(lapView);
-        
-        //lapView.setEnabled(true);
-        //textView.setEnabled(true);
-        info = new infoBox();
-        lap = new LAP(seq,lapModel.getColorModel(),"The title", this);
-        
-        getCanvas().addChild(lap);		
-       
-        getCanvas().addChild(info);
-		info.addChild(info.getCgr());
-    }
-	
-	
-	
+        addSidePanelView(colorView);
+	}
 	 @Override
 	    public String getSideTitle() {
 	        return "Linear Arcplot";

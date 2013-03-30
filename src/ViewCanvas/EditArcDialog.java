@@ -25,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
 
 
 
@@ -38,7 +39,7 @@ public class EditArcDialog extends JDialog{
 	}
 	
 	public void init(){
-		setSize(300, 300);
+		setSize(300, 200);
 		setTitle("Edit Arc");
 		setBackground(Color.white);
         setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -55,42 +56,14 @@ public class EditArcDialog extends JDialog{
         final JTextField secondNumber = new JTextField(Integer.toString(arc.p2));
         secondNumber.setPreferredSize(new Dimension(60,20));
 
+        
+        TitledBorder border = new TitledBorder("Edit arc positions");
         editArcFields.add(first);
         editArcFields.add(firstNumber);
         editArcFields.add(second);
         editArcFields.add(secondNumber);
+        editArcFields.setBorder(border);
         add(editArcFields);
-        
-        // History
-        JPanel histPanel = new JPanel();
-        histPanel.setPreferredSize(new Dimension(299,13));
-        
-        histPanel.setBackground(Color.lightGray);
-        JLabel history_label = new JLabel("History");
-        history_label.setOpaque(true);
-        history_label.setBackground(Color.LIGHT_GRAY);
-        history_label.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JPanel jt = new JPanel();
-        jt.setLayout(new BoxLayout(jt, BoxLayout.Y_AXIS));
-        
-       	for(ArcChange archist: arc.getHistory()){
-       		JPanel pn = new JPanel();
-       		pn.setLayout(new BoxLayout(pn, BoxLayout.Y_AXIS));
-       		pn.setPreferredSize(new Dimension(290, 100));
-       		JLabel jd = new JLabel("Date: "+ archist.getChangedTime());
-       		JLabel jm = new JLabel("Changes: " + archist.getChangedMessage());
-       		pn.add(jd);
-       		pn.add(jm);
-       		jt.add(pn);
-       	}
-       	JScrollPane history = new JScrollPane(jt);
-       	history.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        history.setPreferredSize(new Dimension(299,150));
-        
-        histPanel.add(history_label);
-       	this.add(histPanel);
-       	this.add(history);
-       	
        	
        	// Buttons
         JPanel btns = new JPanel(new FlowLayout());
@@ -122,26 +95,8 @@ public class EditArcDialog extends JDialog{
 					}
 					else{
 						if(arc.canChangeArc(first, second)){
-							ArcChange jc = new ArcChange();
-							if(first != arc.p1){
-								jc.setOld_first(arc.p1);
-								jc.setNew_first(first);
-								jc.setFirstChanged(true);
-								arc.p1 = first;
-							}
-							if(arc.p2 != second){
-								jc.setOld_second(arc.p2);
-								jc.setNew_second(second);
-								jc.setSecondChanged(true);
-								arc.p2 = second;
-							}
-							
-							Calendar c = new GregorianCalendar();
-						    c.set(Calendar.HOUR_OF_DAY, 0); //anything 0 - 23
-						    c.set(Calendar.MINUTE, 0);
-						    c.set(Calendar.SECOND, 0);
-							jc.setChangedTime(c.getTime());
-							arc.addChangeToHistory(jc);
+							arc.p1 = first;
+							arc.p2 = second;
 							EditArcDialog.this.dispose();
 						}
 						else{

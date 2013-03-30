@@ -20,6 +20,7 @@ import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
 
 public class Baseline extends ChildDrawingNode {
 	
