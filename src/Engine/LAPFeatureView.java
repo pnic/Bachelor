@@ -123,7 +123,7 @@ private void sortTypes() {
 
 public void buildRelevantTypes(){
 	int minusOffset = 0;
-	int startOffset = 50;
+	int startOffset = 60;
 	int curAdded = 0;
 	int expanded = 0;
 	
@@ -187,7 +187,7 @@ private LAPFeatureType changeCurrentType(String fetType){
 
 
 private void buildTypes(Set<String> s, LAP root){
-	int offset = 50;
+	int offset = 70;
 	for(String t : s){
 		System.out.println(t);
 		types.add(new LAPFeatureType(t,0,offset,seq.getLength(),typeHeight,root));
