@@ -61,6 +61,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	
 	private boolean changed = false;
 	private boolean expanded;
+	private boolean isSelected;
 	
 	private LAP root;
 
@@ -71,21 +72,31 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	private boolean hover = false;
 	
 	
+	private boolean asLines;
+	private boolean asArrows;
+	
 	private Rectangle2D content;
 	
 	public LAPFeatureType(String name, LAP root){
 		this.name = name;
 		intervals = new ArrayList<LAPFeatureInterval>();
 	
+		this.asArrows = true;
+		this.asLines = false;
+		
+		this.isSelected = true;
 		this.root = root;
 	}
 	
 	public LAPFeatureType(String name, int x, int offset, int w, int h, LAP root) {
 		this.name = name;
 		intervals = new ArrayList<LAPFeatureInterval>();
+		this.asArrows = true;
+		this.asLines = false;
 		
 		this.root = root;
 		
+		this.isSelected = true;
 		this.x = x;
 		this.typeOffset = offset;
 		this.width = w;
@@ -109,7 +120,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	{
 		if(relevant){
 		//	if(changed || lastX != root.getXViewBounds()){
-				g2.setStroke(new BasicStroke(2));
+				/*g2.setStroke(new BasicStroke(2));
 				g2.setColor(Color.BLACK);
 				this.addMouseInputListener(this);
 				content = new Rectangle2D.Double(x, root.getBaseXAxis()+typeOffset, width*getScaleX(), height);
@@ -120,7 +131,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 					g2.setColor(Color.BLACK);
 					g2.draw(content);
 					g2.setColor(Color.LIGHT_GRAY);
-				}
+				}*/
 		//g2.draw(content);
 				g2.drawString(this.name, root.getXViewBounds()+(root.getViewPaneWidth()/2), root.getBaseXAxis()+typeOffset-5);
 				g2.setColor(Color.BLACK);
@@ -278,6 +289,30 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 
 	public void setLastX(int lastX) {
 		this.lastX = lastX;
+	}
+
+	public boolean isSelected() {
+		return isSelected;
+	}
+
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
+
+	public void setAsLines(boolean asLines) {
+		this.asLines = asLines;
+	}
+
+	public boolean asLines() {
+		return asLines;
+	}
+
+	public void setAsArrows(boolean asArrows) {
+		this.asArrows = asArrows;
+	}
+
+	public boolean asArrows() {
+		return asArrows;
 	}
 	
 }

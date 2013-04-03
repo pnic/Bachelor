@@ -18,10 +18,13 @@ import com.clcbio.api.free.datatypes.ClcString;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.feature.Feature;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.feature.FeatureTypes;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.interval.Interval;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.Region;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.rnasecondary.RnaStructureAnnotationTools;
 import com.clcbio.api.free.gui.dialog.ClcMessages;
+
+import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,10 +46,21 @@ public class LAPFeatureView {
 	private int typeWidth;
 	private LAP root;
 	
+	
+	private boolean showAnnotations;
+	private boolean showArrows;
+	private boolean showGradients;
+	
+	
+	
 	public LAPFeatureView(Sequence seq, LAP root){
 		this.root = root;
 		this.seq = seq;
 		
+		this.showAnnotations = true;
+		this.showArrows = true;
+		this.showGradients = true;
+				
 		features = new ArrayList<LAPFeature>();
 		typeWidth = seq.getLength();
 		buildFeatureTypes(root);
@@ -69,13 +83,13 @@ public void buildFeatureTypes(LAP root){
 		Iterator<LAPFeatureType> typeIter = types.iterator();
 		LAPFeatureType cur = typeIter.next();
 		
-		
 		int curOverlaps = 0;
 		int offset = 60;
 		
 		
 		while(featureIter.hasNext()){
 			Feature fet = featureIter.next(); 
+			
 					if(fet.getType().compareToIgnoreCase(cur.getName()) != 0){
 				cur = changeCurrentType(fet.getType());
 			}
@@ -144,7 +158,9 @@ public void buildRelevantTypes(){
 	
 	relevantTypes.clear();
 	for(LAPFeatureType l : types){
+		if(l.isSelected()){
 		if(l.getIntervals().size() > 0){
+			
 			boolean rel = false;
 			l.setTypeOffset(startOffset+((typeHeight+20)*curAdded)+(expanded*45));
 			for(LAPFeatureInterval li : l.getIntervals()){
@@ -166,6 +182,7 @@ public void buildRelevantTypes(){
 			} else {
 				l.setRelevant(false);
 			}
+		}
 		}
 	}
 	
@@ -254,6 +271,65 @@ public List<LAPFeatureType> getRelevantTypes() {
 
 public void setRelevantTypes(List<LAPFeatureType> relevantTypes) {
 	this.relevantTypes = relevantTypes;
+}
+
+public boolean isShowArrows() {
+	return showArrows;
+}
+
+public void setShowArrows(boolean showArrows) {
+	this.showArrows = showArrows;
+	repaintTypes();
+}
+
+public void setShowAnnotations(boolean b){
+	this.showAnnotations = b;
+	repaintTypes();
+}
+
+public boolean isShowAnnotations() {
+	return showAnnotations;
+}
+
+
+public boolean isShowGradients() {
+	return showGradients;
+}
+
+
+public void setShowGradients(boolean showGradients) {
+	this.showGradients = showGradients;
+	repaintTypes();
+}
+
+public void repaintTypes(){
+	for(LAPFeatureType t : types){
+		for(LAPFeatureInterval i : t.getIntervals()){
+			i.repaintInterval();
+		}
+	}
+}
+
+public void setTypeAcces(String lastUpdated) {
+	for(LAPFeatureType l : types){
+		if(l.getName() == lastUpdated){
+			l.setSelected(!l.isSelected());
+			break;
+		}
+	}
+	repaintTypes();	
+}
+
+public void setTypeColor(String type, Color col){
+	for(LAPFeatureType l : types){
+		if(l.getName() == type){
+			for(LAPFeatureInterval i : l.getIntervals()){
+				i.setCol(col);
+			}
+			break;
+		}
+	}
+	repaintTypes();	
 }
 
 }

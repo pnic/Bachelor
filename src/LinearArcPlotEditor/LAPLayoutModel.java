@@ -81,4 +81,6 @@ public class LAPLayoutModel extends SidePanelModel {
 		public String getLapTitle(){
 			return LAPTitle;
 		}
+		
+		
 }

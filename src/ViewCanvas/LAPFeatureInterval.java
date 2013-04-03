@@ -29,19 +29,28 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 	private int endPos;
 	private int offset;
 	
+	//private int[] xpoints;
+	//private int[] ypoints;
+
 	//Colors for differentiation of intervals
 	private float red;
 	private float green;
 	private float blue;
 	private Color col;
-	
-	
+
+
 	private String name;
-		
+
 	private LAPFeatureType type;
 	private LAP root;
 	
+	private boolean lines;
+	private boolean arrows;
+
 	public LAPFeatureInterval(String name, int startPos, int endPos, int offset, LAP root, LAPFeatureType type){
+		
+		this.lines = false;
+		this.arrows = true;
 		this.name = name;
 		this.startPos = startPos;
 		this.endPos = endPos;
@@ -54,7 +63,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 		
 		calcColors((float)type.getWidth());
 	}
-	
+
 	private void calcColors(float normalizeBound) {
 		this.red = ((float)this.getEndPos()/normalizeBound)*255;
 		this.green = ((float)this.getStartPos()/normalizeBound)*255;
@@ -64,46 +73,87 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 	}
 
 	private void update(){
-		
+
 	}
-	
+
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy)
 	{
-		if(type.isRelevant()){
-		//	if(type.isChanged() || type.getLastX() != root.getXViewBounds()){
+		if(root.getLv().isShowAnnotations() && type.isSelected()){
+
+			if(type.isRelevant()){
+				//	if(type.isChanged() || type.getLastX() != root.getXViewBounds()){
 				g2.setStroke(new BasicStroke(1));
 				g2.setColor(col);
-		
+
 				int lineStart = (int)(startPos*getScaleX());
 				int lineEnd = (int)(endPos*getScaleX());
-		
-				g2.draw(new Line2D.Double(lineStart, root.getBaseXAxis()+offset+type.getHeight()/2, lineEnd, root.getBaseXAxis()+offset+type.getHeight()/2));
-				startLine = new Line2D.Double(lineStart, root.getBaseXAxis()+offset+type.getHeight(), lineStart, root.getBaseXAxis()+offset+type.getHeight()/2);
-				endLine = new Line2D.Double(lineEnd,root.getBaseXAxis()+offset+(type.getHeight()/2),lineEnd,root.getBaseXAxis()+offset);
-				g2.draw(startLine);
-				g2.draw(endLine);
-				
+				if(type.asLines()){
+					
+
+					g2.draw(new Line2D.Double(lineStart, root.getBaseXAxis()+offset+type.getHeight()/2, lineEnd, root.getBaseXAxis()+offset+type.getHeight()/2));
+					startLine = new Line2D.Double(lineStart, root.getBaseXAxis()+offset+type.getHeight(), lineStart, root.getBaseXAxis()+offset+type.getHeight()/2);
+					endLine = new Line2D.Double(lineEnd,root.getBaseXAxis()+offset+(type.getHeight()/2),lineEnd,root.getBaseXAxis()+offset);
+					g2.draw(startLine);
+					g2.draw(endLine);
+				} else if(type.asArrows()) {
+					int points = 7;
+					
+					int x1 = lineStart; //Lowerleft
+					
+					//start of arrow
+					int x2 = lineEnd - (lineEnd-lineStart)/10;
+					int x3 = x2;
+					
+					int x4 = lineEnd; //Tip of arrow
+					
+					//Back to start of arrow
+					int x5 = x3;
+					int x6 = x5;
+					
+					int x7 = x1; //upperleft
+					
+					int y1 = root.getBaseXAxis()+offset+type.getHeight()-type.getHeight()/4; //Lower left
+					
+					int y2 = y1; //Middle start of bottom of arrow
+					
+					int y3 = root.getBaseXAxis()+offset+type.getHeight(); //Bottom of start of arrow
+					
+					int y4 = root.getBaseXAxis()+offset+type.getHeight()/2; //Tip of arrow
+					
+					int y5 = root.getBaseXAxis()+offset; //Back to top of start of arrow
+					
+					int y6 = root.getBaseXAxis()+offset+type.getHeight()/4; //Back to middle start of top of arrow
+					
+					int y7 = y6; //upper left
+					
+					int[] xpoints = {x1,x2,x3,x4,x5,x6,x7};
+					int[] ypoints = {y1,y2,y3,y4,y5,y6,y7};
+					g2.fillPolygon(xpoints, ypoints, points);
+					g2.setColor(Color.BLACK);
+					g2.drawPolygon(xpoints,ypoints,points);
+				}
 			}
+		}
 		//}
 		return DrawingResult.NORMAL;
 	}
-	
+
 	public int getStartPos(){
 		return startPos;
 	}
-	
+
 	public int getEndPos(){
 		return endPos;
 	}
-	
+
 	public int getOffset(){
 		return offset;
 	}
-	
+
 	public void setOffset(int o){
 		this.offset=o;
 	}
-	
+
 	public void addToOffset(int a){
 		this.offset += a;
 	}
@@ -112,7 +162,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 	public int compareTo(Object o) {
 		LAPFeatureInterval li = (LAPFeatureInterval)o;
 		return this.getStartPos() < li.getStartPos() ? 1 : 0;
-		
+
 	}
 
 	public LAPFeatureType getType() {
@@ -138,5 +188,9 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 	public void setCol(Color col) {
 		this.col = col;
 	}
-	
+
+	public void repaintInterval(){
+		this.repaint();
+	}
+
 }

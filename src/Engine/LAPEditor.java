@@ -14,6 +14,10 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
+import LinearArcPlotEditor.AnnotationLayoutModel;
+import LinearArcPlotEditor.AnnotationLayoutView;
+import LinearArcPlotEditor.AnnotationTypeModel;
+import LinearArcPlotEditor.AnnotationTypeView;
 import LinearArcPlotEditor.LAPLayoutModel;
 import LinearArcPlotEditor.LAPLayoutView;
 import LinearArcPlotEditor.ResidueColorModel;
@@ -28,6 +32,7 @@ import ViewCanvas.infoBox;
 import com.clcbio.api.base.persistence.PersistenceException;
 import com.clcbio.api.base.util.State;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
+import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
 import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.framework.listener.ObjectEvent;
@@ -43,6 +48,7 @@ import com.clcbio.api.free.gui.icon.ClcIcon;
 import com.clcbio.api.free.gui.icon.DefaultClcIcon;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 import com.clcbio.api.clc.graphics.AbstractGraphicsEditor;
+import com.clcbio.api.clc.graphics.components.ColorGradientManager;
 import com.clcbio.api.free.editors.framework.MouseMode;
 
 
@@ -54,6 +60,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     }
 	private LAP lap;
 	private infoBox info;
+	private ColorGradientModel colorGradientModel;
 	
 	private Sequence seq;
 	private ObjectListener sequenceListener;
@@ -66,6 +73,12 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	
 	private SequenceModel seqModel;
 	private SequenceView seqView;
+	
+	private AnnotationLayoutModel annotationLayoutModel;
+	private AnnotationLayoutView annotationLayoutView;	
+	
+	private AnnotationTypeModel annotationTypeModel;
+	private AnnotationTypeView annotationTypeView;
 	
 	private ResidueColorModel colorModel;
     private ResidueColorView colorView;
@@ -90,7 +103,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         //Assume a sequence is selected (otherwise we wouldn't be here) 
         //Set up model listener
         
-        fillSidePanel();
+        
         seq = (Sequence) models[0];
         sequenceListener = new ObjectListener() {
             public void eventOccurred(ObjectEvent event) {
@@ -102,14 +115,16 @@ public class LAPEditor extends AbstractGraphicsEditor {
         };
         seq.addListener(sequenceListener);
         
+        colorGradientModel = new ColorGradientModel(ColorGradientManager.getGradients());
+        
         info = new infoBox();
-        lap = new LAP(seq,lapModel.getColorModel(),"The title", this);
+        lap = new LAP(seq,colorGradientModel,"The title", this);
         
         getCanvas().addChild(lap);		
         getCanvas().addChild(info);
 
 		info.addChild(info.getCgr());
-		
+		fillSidePanel();  
     }
 	
 	/*
@@ -175,6 +190,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         colorView = new ResidueColorView(colorModel);
         
         
+        
         colorModel.addSidePanelListener(new SidePanelListener(){
         	@Override
         	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
@@ -186,8 +202,45 @@ public class LAPEditor extends AbstractGraphicsEditor {
         	}
         });
         
+        annotationTypeModel = new AnnotationTypeModel("Annotation Types", lap.getLv().getTypes());
+        annotationTypeView = new AnnotationTypeView(annotationTypeModel);
+        
+        annotationTypeModel.addSidePanelListener(new SidePanelListener(){
+        	@Override
+        	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
+        		SwingUtilities.invokeLater(new Runnable(){
+        			public void run(){
+        				if(lap != null){
+        					if (annotationTypeModel.isLastUpdatedChanged()) lap.getLv().setTypeAcces(annotationTypeModel.getLastUpdated());
+        					if (annotationTypeModel.isLabelChanged()) lap.getLv().setTypeColor(annotationTypeModel.getLastChangedLabelName(), annotationTypeModel.getLastChangedLabel());
+        				}
+        			}
+        		});
+        	}
+        });
+        
+        annotationLayoutModel = new AnnotationLayoutModel("Annotation layout");
+        annotationLayoutView = new AnnotationLayoutView(annotationLayoutModel);
+        
+        
+        annotationLayoutModel.addSidePanelListener(new SidePanelListener(){
+        	@Override
+        	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
+        		SwingUtilities.invokeLater(new Runnable(){
+        			public void run(){
+        				if(lap != null){
+        					lap.getLv().setShowAnnotations(annotationLayoutModel.getshowAnnotations());
+        					lap.getLv().setShowArrows(annotationLayoutModel.getshowArrows());
+        					lap.getLv().setShowGradients(annotationLayoutModel.getshowGradients());
+        				}
+        			}
+        		});
+        	}
+        });
         
         addSidePanelView(seqView);
+        addSidePanelView(annotationLayoutView);
+        addSidePanelView(annotationTypeView);
         addSidePanelView(textView);        
         addSidePanelView(lapView);
         addSidePanelView(colorView);
