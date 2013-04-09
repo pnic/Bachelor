@@ -1,5 +1,7 @@
 package LinearArcPlotEditor;
 
+import javax.swing.ButtonModel;
+
 import com.clcbio.api.base.util.State;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 
@@ -7,11 +9,13 @@ public class AnnotationLayoutModel extends SidePanelModel{
 	private boolean showAnnotations;
 	private boolean showArrows;
 	private boolean showGradients;
+	private String selected;
 	
 	//private static final String[] positions = new String[]{"Next", "Small", "Medium", "Large", "Huge"};
 	 
 	public AnnotationLayoutModel(String title) {
 		super(title);
+		selected = "arrows";
 		showAnnotations = true;
 		showArrows = true;
 		showGradients = true;
@@ -60,6 +64,19 @@ public class AnnotationLayoutModel extends SidePanelModel{
 	
 	public boolean getshowGradients(){
 		return showGradients;
+	}
+
+	public void setChosenView(String selected) {
+		this.setSelected(selected);
+		fireModelChanged();		
+	}
+
+	public void setSelected(String selected) {
+		this.selected = selected;
+	}
+
+	public String getSelected() {
+		return selected;
 	}
 	
 }

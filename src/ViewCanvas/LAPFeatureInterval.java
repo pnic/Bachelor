@@ -1,5 +1,6 @@
 package ViewCanvas;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -128,6 +129,12 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 					
 					int[] xpoints = {x1,x2,x3,x4,x5,x6,x7};
 					int[] ypoints = {y1,y2,y3,y4,y5,y6,y7};
+					if(type.isHover()){
+					Color c = new Color(type.getColor().getRed(),type.getColor().getGreen(),type.getColor().getBlue(),140);
+					g2.setColor(c);
+					} else {
+						g2.setColor(type.getColor());						
+					}
 					g2.fillPolygon(xpoints, ypoints, points);
 					g2.setColor(Color.BLACK);
 					g2.drawPolygon(xpoints,ypoints,points);

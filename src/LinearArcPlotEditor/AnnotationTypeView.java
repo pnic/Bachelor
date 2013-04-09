@@ -16,6 +16,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.FeatureColorMap;
 import com.clcbio.api.free.gui.components.ColorPickerLabel;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelView;
@@ -67,7 +68,7 @@ public class AnnotationTypeView extends SidePanelView{
 				});
 				checkTypes.add(cur);
 				
-				ColorPickerLabel curLab = new ColorPickerLabel(Color.BLACK, s);
+				ColorPickerLabel curLab = new ColorPickerLabel(FeatureColorMap.getColor(s), s);
 				
 				curLab.addActionListener(new ActionListener(){
 						

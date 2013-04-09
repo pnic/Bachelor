@@ -3,9 +3,11 @@ package LinearArcPlotEditor;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelView;
@@ -17,6 +19,10 @@ public class AnnotationLayoutView extends SidePanelView{
 	private JCheckBox showAnnotationsCheckBox;
 	private JCheckBox showArrowsCheckBox;
 	private JCheckBox showGradientsCheckBox;
+	
+	private JRadioButton showAsArrows;
+	private JRadioButton showAsLines;
+	private ButtonGroup menu;
 	
 	public AnnotationLayoutView(SidePanelModel arg0) {
 		super(arg0);
@@ -31,8 +37,10 @@ public class AnnotationLayoutView extends SidePanelView{
 	private void fillUI(){
 		createUI();
 		panel.addComp(showAnnotationsCheckBox);
-		panel.addComp(showArrowsCheckBox);
-		panel.addComp(showGradientsCheckBox);
+		//panel.addComp(showArrowsCheckBox);
+		//panel.addComp(showGradientsCheckBox);
+		panel.addComp(showAsArrows);
+		panel.addComp(showAsLines);
 	}
 	
 	private void createUI(){
@@ -57,6 +65,8 @@ public class AnnotationLayoutView extends SidePanelView{
 				
 			});
 			
+			
+			
 			showGradientsCheckBox = new JCheckBox("Show gradients");
 			showGradientsCheckBox.setSelected(true);
 			showGradientsCheckBox.addItemListener(new ItemListener(){
@@ -66,6 +76,37 @@ public class AnnotationLayoutView extends SidePanelView{
 				}
 				
 			});
+			menu = new ButtonGroup();
+			
+			showAsArrows = new JRadioButton("Show as arrows");
+			showAsArrows.setSelected(true);
+			showAsArrows.addItemListener(new ItemListener(){
+
+				@Override
+				public void itemStateChanged(ItemEvent arg0) {
+					((AnnotationLayoutModel)getModel()).setChosenView("arrows");					
+				}				
+			});
+			
+			
+			showAsLines = new JRadioButton("Show as Lines");
+			showAsLines.setSelected(false);
+			showAsLines.addItemListener(new ItemListener() {
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					((AnnotationLayoutModel)getModel()).setChosenView("lines");
+					
+				}
+				
+			});
+			
+			
+			menu = new ButtonGroup();
+			
+			menu.add(showAsArrows);
+			menu.add(showAsLines);
+			
 			
 			panel = new StandardLayout();
 			fillUI();

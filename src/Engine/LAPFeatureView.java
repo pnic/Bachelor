@@ -277,11 +277,6 @@ public boolean isShowArrows() {
 	return showArrows;
 }
 
-public void setShowArrows(boolean showArrows) {
-	this.showArrows = showArrows;
-	repaintTypes();
-}
-
 public void setShowAnnotations(boolean b){
 	this.showAnnotations = b;
 	repaintTypes();
@@ -323,6 +318,7 @@ public void setTypeAcces(String lastUpdated) {
 public void setTypeColor(String type, Color col){
 	for(LAPFeatureType l : types){
 		if(l.getName() == type){
+			l.setColor(col);
 			for(LAPFeatureInterval i : l.getIntervals()){
 				i.setCol(col);
 			}
@@ -330,6 +326,21 @@ public void setTypeColor(String type, Color col){
 		}
 	}
 	repaintTypes();	
+}
+
+
+public void setShowView(String selected) {
+	if(selected.equals("arrows")){
+		for(LAPFeatureType l : types){
+			l.setAsLines(false);
+			l.setAsArrows(true);
+		}
+	} else if(selected.equals("lines")){
+		for(LAPFeatureType l : types){
+			l.setAsArrows(false);
+			l.setAsLines(true);
+		}	
+	}	
 }
 
 }

@@ -230,7 +230,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         			public void run(){
         				if(lap != null){
         					lap.getLv().setShowAnnotations(annotationLayoutModel.getshowAnnotations());
-        					lap.getLv().setShowArrows(annotationLayoutModel.getshowArrows());
+        					lap.getLv().setShowView(annotationLayoutModel.getSelected());
         					lap.getLv().setShowGradients(annotationLayoutModel.getshowGradients());
         				}
         			}
