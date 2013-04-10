@@ -77,7 +77,7 @@ public class Baseline extends ChildDrawingNode {
 		else{
 			for(int i=0; i<length; i++){
 				if(viewPX < (i*getScaleX()) && i*getScaleX() < (viewPX+viewPWidth)){
-					String s = getNucleotide(nrs[i]);
+					String s = AlphabetTools.getRnaAlphabet().getSymbol(nrs[i]).getShortName() ;
 					int stringHeight = g2.getFontMetrics().getHeight();
 					int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), s);
 					g2.drawString(s, (int)(i*getScaleX())-stringWidth/2, root.getBaseXAxis()+stringHeight);
@@ -126,21 +126,6 @@ public class Baseline extends ChildDrawingNode {
 		if(1.5 < getScaleX() && getScaleX() < 3.0) return 50;
 		if(3.0 < getScaleX() && getScaleX() < 11) return 25;
 		else return 10;
-	}
-	
-	/*
-	 * Returns the nucleotide represented as a string. 
-	 */
-	private String getNucleotide(byte letter){
-		switch(letter){
-			case 0: return "A";
-			case 1: return "C";
-			case 2: return "G";
-			case 3: return "U";
-			case 33: return "T";
-		}
-		
-		return "0";
 	}
 	
 	public int getFontSize() {

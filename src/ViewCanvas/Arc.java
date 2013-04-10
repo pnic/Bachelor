@@ -46,8 +46,8 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 
 	private Arc2D arc;
 	public int broadestPair;
-	int p1;
-	int p2;
+	public int p1;
+	public int p2;
 	int newp1;
 	int newp2;
 	private LAP root;
@@ -65,6 +65,8 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	private Timer mouseOverTimer;
 	private boolean mouseOverTimeEnabled;
 	private double reliability;
+	public int pairNumber;
+	public boolean firstModification = true;
 	
 	public Arc(int p1, int p2, double seqLength, double reliability, LAP root){
 		this.p1=p1;
@@ -112,7 +114,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
 			newp1 = (int)(p1*getScaleX());
 			newp2 = (int) (p2*getScaleX());
-
 
 			update();
 			// Check if arc is in screen. 
@@ -272,7 +273,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	}
 	
 	public boolean canChangeArc(int new_point1, int new_points2){
-		if(root.canChangeArc(p1, new_point1, p2, new_points2)) return true;
+		if(root.canChangeArc(p1, new_point1, p2, new_points2, pairNumber)) return true;
 		return false;
 	}
 	

@@ -12,22 +12,25 @@ import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.SwingUtilities;
 
 import LinearArcPlotEditor.LAPLayoutModel;
 import LinearArcPlotEditor.LAPLayoutView;
-import LinearArcPlotEditor.ResidueColorModel;
-import LinearArcPlotEditor.ResidueColorView;
+import LinearArcPlotEditor.RasmolColorInfoProvider;
 import LinearArcPlotEditor.SequenceModel;
 import LinearArcPlotEditor.SequenceView;
+import LinearArcPlotEditor.StructureValueInfoProvider;
 import LinearArcPlotEditor.TextModel;
 import LinearArcPlotEditor.TextView;
 import ViewCanvas.TitleText;
 import ViewCanvas.infoBox;
 
 import com.clcbio.api.base.persistence.PersistenceException;
+import com.clcbio.api.base.util.CreateList;
 import com.clcbio.api.base.util.State;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
+import com.clcbio.api.clc.editors.graphics.sequence.sidepanel.SequenceInfoView;
 import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.framework.listener.ObjectEvent;
@@ -43,6 +46,12 @@ import com.clcbio.api.free.gui.icon.ClcIcon;
 import com.clcbio.api.free.gui.icon.DefaultClcIcon;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 import com.clcbio.api.clc.graphics.AbstractGraphicsEditor;
+import com.clcbio.api.clc.gui.framework.ParameterPanel;
+import com.clcbio.api.clc.plugins.editors.graphics.sequence.SequenceTypeEditor;
+import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.AbstractInfoProvider;
+import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.InfoProvider;
+import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.SequenceInfoModel;
+import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.SubSequenceInfoModel;
 import com.clcbio.api.free.editors.framework.MouseMode;
 
 
@@ -66,9 +75,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	
 	private SequenceModel seqModel;
 	private SequenceView seqView;
-	
-	private ResidueColorModel colorModel;
-    private ResidueColorView colorView;
 	
 	private Font font = new Font("Monospaced", Font.PLAIN, 12);
     private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };
@@ -171,28 +177,17 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			}
         });
         
-        colorModel = new ResidueColorModel("Residue coloring");
-        colorView = new ResidueColorView(colorModel);
-        
-        
-        colorModel.addSidePanelListener(new SidePanelListener(){
-        	@Override
-        	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
-        		SwingUtilities.invokeLater(new Runnable(){
-        			public void run(){
-        				
-        			}
-        		});
-        	}
-        });
-        
-        
         addSidePanelView(seqView);
         addSidePanelView(textView);        
         addSidePanelView(lapView);
-        addSidePanelView(colorView);
-	}
-	 @Override
+
+        
+        InfoProvider RasmosColors = new RasmolColorInfoProvider(manager, "Rasmol colors");
+        InfoProvider StructureValue = new StructureValueInfoProvider(manager, "Structure values");
+        SubSequenceInfoModel subSequenceInfoModel = new SubSequenceInfoModel(new SequenceInfoModel(
+                new InfoProvider[] {RasmosColors, StructureValue }, null), "Residue Coloring", CreateList.of(RasmosColors, StructureValue));
+        addSidePanelView(new SequenceInfoView(subSequenceInfoModel));	}
+	@Override
 	    public String getSideTitle() {
 	        return "Linear Arcplot";
 	    }
@@ -310,5 +305,4 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	public void setInfo(infoBox info) {
 		this.info = info;
 	}
-
 }

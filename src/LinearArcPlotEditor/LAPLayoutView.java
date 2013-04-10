@@ -74,7 +74,6 @@ public class LAPLayoutView extends SidePanelView {
             });
          
             Title = new JTextField("Title");
-            
             setTitle = new JButton("Set title");
             setTitle.addActionListener(new ActionListener(){
 				@Override

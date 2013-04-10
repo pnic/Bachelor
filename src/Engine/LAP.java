@@ -11,6 +11,8 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -27,6 +29,8 @@ import ViewCanvas.LAPFeatureType;
 import ViewCanvas.TitleText;
 
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
+import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructureElement;
+import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructureTools;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.annotation.RnaStructureAnnotation;
 import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
@@ -37,9 +41,15 @@ import com.clcbio.api.clc.graphics.framework.ClcCanvas;
 import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.clc.graphics.framework.ViewBounds;
+import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.ClcPair;
+import com.clcbio.api.free.datatypes.ClcStackListener;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
+import com.clcbio.api.free.datatypes.framework.history.History;
 import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
+import com.clcbio.api.free.datatypes.framework.history.ParameterEntry;
+import com.clcbio.api.free.datatypes.framework.listener.ObjectEvent;
+import com.clcbio.api.free.datatypes.framework.listener.ObjectListener;
 import com.clcbio.api.free.gui.components.ObjectMoveable;
 import com.clcbio.api.free.gui.dialog.ClcMessages;
 import com.clcbio.api.free.gui.focus.ClcFocusPanel;
@@ -56,7 +66,7 @@ public class LAP extends RootDrawingNode {
 	private TitleText titleText;
 	private Arc [] arcs; 
 	private Baseline baseline;
-	
+	private boolean firstModification = true;
 
 	private Sequence seq;
 	private ColorGradientRectangle colorGradientRectangle;
@@ -68,12 +78,27 @@ public class LAP extends RootDrawingNode {
 	private Arc mouseOverArc;
 	private boolean satSize = false;;
 	
-	public LAP(Sequence seq, ColorGradientModel gradmodel, String title, LAPEditor editor){
+	public LAP(final Sequence seq, ColorGradientModel gradmodel, String title, LAPEditor editor){
 		this.seq = seq;
 		seqLength = seq.getLength();
 		this.editor = editor;
-		
 
+		
+		seq.getHistory().addListener(new ClcStackListener(){
+			@Override
+			public void update(List arg0) {
+				System.out.println("Update");
+				History hist = seq.getHistory();
+				List<HistoryEntry> entries = hist.getEntries();
+				for(int i=0; i<entries.size(); i++){
+					System.out.println(entries.get(i).getSimpleParameterString());
+					System.out.println("-----------------------");
+				}
+				//setNewStructure(RnaStructures.getStructures(seq).getStructure(0));	
+				printPairings();
+			}
+			
+		});
 		// initialize
 		init();
 		
@@ -97,9 +122,9 @@ public class LAP extends RootDrawingNode {
 			for(int i = 0; i<pairings.length; i++){
 				if(pairings[i]>i){
 					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i], this);
-					//System.out.println("Reliabilities first: " + reliabilities[i] + " reliabilities second " + reliabilities[pairings[i]]);
 					arcs[cnt].broadestPair = broadestPair;
 					addChild(arcs[cnt]);
+					arcs[cnt].pairNumber = cnt;
 					cnt = cnt+1;
 				}
 			}
@@ -120,6 +145,23 @@ public class LAP extends RootDrawingNode {
 		//addChild(colorGradientRectangle); in the infobox now
 		setColors(gradmodel);
 		setSize();
+		
+		
+
+		
+
+		seq.startNoUndoBlock();
+		HistoryEntry histEntry = new HistoryEntry("Changed pair positions", editor.getManager());
+		histEntry.addParameterEntry("Loaded into linear arcplot");
+		seq.addHistory(histEntry);
+		histEntry.addReferredObject(seq);
+		seq.endNoUndoBlock();
+		seq.startNoUndoBlock();
+		histEntry = new HistoryEntry("Changed pair positions", editor.getManager());
+		histEntry.addParameterEntry("creating first stabil");
+		seq.addHistory(histEntry);
+		histEntry.addReferredObject(seq);
+		seq.endNoUndoBlock();
 	}
 	
 	private void init(){
@@ -136,8 +178,7 @@ public class LAP extends RootDrawingNode {
 		RnaStructures.getStructures(seq).getStructure(0);
 		
 		reliabilities = new float[seq.getLength()];
-    	
-    	//Our Rna structure
+		//Our Rna structure
     	List<RnaStructureAnnotation> annotations = RnaStructures.getStructures(seq).getStructure(0).getStructureAnnotations();
 		RnaStructureAnnotation probAnnotation = annotations.get(0);
 		
@@ -149,6 +190,54 @@ public class LAP extends RootDrawingNode {
     	colorGradientRectangle = new ColorGradientRectangle(probAnnotation.getName(),probAnnotation.getFixedMin(),probAnnotation.getFixedMax(), editor.getInfo());
     	
     	this.seqLength = seq.getLength();
+	}
+	
+	private void setNewStructure(RnaStructure structure){
+		for(int i=0; i<arcs.length; i++){
+			this.removeChild(arcs[i]);
+		}
+		
+		arcs = null;
+		
+		pairings = structure.getPairing();
+		int nr=0;
+		for(int i = 0;i<pairings.length; i++){
+			if(pairings[i]>i){
+				nr = nr+1;
+				if(pairings[i]-i > broadestPair){
+					broadestPair = (pairings[i]-i);
+				}
+			}
+		}
+		
+		//Generate arcs
+		int cnt = 0;
+		if(arcs==null){
+			arcs = new Arc[nr];
+			for(int i = 0; i<pairings.length; i++){
+				if(pairings[i]>i){
+					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i], this);
+					arcs[cnt].broadestPair = broadestPair;
+					addChild(arcs[cnt]);
+					arcs[cnt].pairNumber = cnt;
+					cnt = cnt+1;
+				}
+			}
+		}
+		
+		repaint();
+	}
+	
+	private void printPairings(){
+		int[] newPairs = RnaStructures.getStructures(seq).getStructure(0).getPairing();
+		for(int i=0; i<newPairs.length; i++){
+			System.out.print(" " + i);
+		}
+		System.out.println("");
+		for(int n=0; n<newPairs.length; n++){
+			System.out.print(" " + newPairs[n]);
+		}
+		System.out.println("");
 	}
 	
 	public void setRelevantTypes(){
@@ -303,7 +392,7 @@ public class LAP extends RootDrawingNode {
 	/*
 	 * Checks if it is a valid change of positions for a pair. If it is, it also makes the changes in pairings. 
 	 */
-	public boolean canChangeArc(int old_p1, int new_p1, int old_p2, int new_p2){
+	public boolean canChangeArc(int old_p1, int new_p1, int old_p2, int new_p2, int pairNumber){
 		boolean first_same = old_p1 == new_p1;
 		boolean second_same = old_p2 == new_p2; 
 		boolean returner = true;
@@ -330,22 +419,56 @@ public class LAP extends RootDrawingNode {
 		}
 		//Make changes
 		if(returner == true){
-			seq.startUndoAndEventBlock("Changing arcs");	
-			
-			pairings[old_p1] = -1;
-			pairings[old_p2] = -1;
-			pairings[new_p1] = new_p2;
-			pairings[new_p2] = new_p1;
-			
-			HistoryEntry histEntry = new HistoryEntry("Changed pair positions", editor.getManager());
-			histEntry.addParameterEntry("Changed positions for the arc", "newP1 " + new_p1 + " newP2 " + new_p2);
-			histEntry.addReferredObject(seq);
-			
-			seq.addHistory(histEntry);
-			seq.endUndoAndEventBlock();
+			if(firstModification){
+				//changeArc(old_p1, old_p1, old_p2, old_p2, pairNumber, true, true);
+				//firstModification = false;
+			}
+			changeArc(old_p1, new_p1, old_p2, new_p2, pairNumber, true, true);
 		}
+		
 		return returner;
 		
+	}
+	
+	private void changeArc(int old_p1, int new_p1, int old_p2, int new_p2, int pairNumber, boolean changePairings, boolean canUndo){
+		
+		int[] newPairings = pairings;
+		newPairings[old_p1] = -1;
+		newPairings[old_p2] = -1;
+		newPairings[new_p1] = new_p2;
+		newPairings[new_p2] = new_p1;
+		
+		// structure annotations
+		List<RnaStructureAnnotation> annotations = RnaStructures.getStructures(seq).getStructure(0).getStructureAnnotations();
+		RnaStructureAnnotation probAnnotation = annotations.get(0);
+		
+		// old structures
+		RnaStructures manager = RnaStructures.getStructures(seq);
+		List<RnaStructure> oldStructures = manager.getStructures();
+
+		System.out.println("oldstructures length: " + oldStructures.size());
+
+		// new structures
+		List<RnaStructure> newStructures = new ArrayList<RnaStructure>();
+		List<RnaStructureElement> elements = RnaStructureTools.createStructureElements(newPairings);
+		
+		// create rnaStructure with new pairings
+		RnaStructure structureout = new RnaStructure("PPfold prediction", pairings, elements, new Date(), 1);
+		
+		// add the old annotations - these will stay the same. 
+		structureout.addStructureAnnotation(probAnnotation);
+		
+		seq.startUndoAndEventBlock("Changing arcs");	
+
+			RnaStructures.setStructures(seq, new RnaStructures(structureout));
+			HistoryEntry histEntry = new HistoryEntry("Changed pair positions", editor.getManager());
+			histEntry.addParameterEntry("new first", ""+new_p1);
+			histEntry.addParameterEntry("new second", ""+new_p2);
+			histEntry.addParameterEntry("pair number", ""+pairNumber);
+			
+			histEntry.addReferredObject(seq);
+			seq.addHistory(histEntry);
+			seq.endUndoAndEventBlock();
 	}
 
 	public ColorGradientRectangle getColorGradientRectangle() {
@@ -377,4 +500,12 @@ public class LAP extends RootDrawingNode {
 	public Sequence getSequence(){
 		return seq;
 	}
+	
+	  private double[] toDoubleArray(float[] input){
+	    	double[] output = new double[input.length];
+	    	for(int i = 0; i<input.length; i++){
+	    		output[i] = (double)input[i];
+	    	}
+	    	return output; 
+	    }
 }
