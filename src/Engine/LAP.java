@@ -500,7 +500,16 @@ public class LAP extends RootDrawingNode {
 	public Sequence getSequence(){
 		return seq;
 	}
-	
+
+
+	public LAPFeatureView getLv() {
+		return lv;
+	}
+
+	public void setLv(LAPFeatureView lv) {
+		this.lv = lv;
+	}
+
 	  private double[] toDoubleArray(float[] input){
 	    	double[] output = new double[input.length];
 	    	for(int i = 0; i<input.length; i++){
