@@ -27,6 +27,7 @@ import LinearArcPlotEditor.SequenceView;
 import LinearArcPlotEditor.StructureValueInfoProvider;
 import LinearArcPlotEditor.TextModel;
 import LinearArcPlotEditor.TextView;
+import ViewCanvas.ColorGradientRectangle;
 import ViewCanvas.TitleText;
 import ViewCanvas.infoBox;
 
@@ -34,6 +35,7 @@ import com.clcbio.api.base.persistence.PersistenceException;
 import com.clcbio.api.base.util.CreateList;
 import com.clcbio.api.base.util.State;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
+import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
 import com.clcbio.api.clc.editors.graphics.sequence.sidepanel.SequenceInfoView;
 import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
@@ -50,9 +52,11 @@ import com.clcbio.api.free.gui.icon.ClcIcon;
 import com.clcbio.api.free.gui.icon.DefaultClcIcon;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 import com.clcbio.api.clc.graphics.AbstractGraphicsEditor;
+import com.clcbio.api.clc.graphics.components.ColorGradientManager;
 import com.clcbio.api.clc.gui.framework.ParameterPanel;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.SequenceTypeEditor;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.AbstractInfoProvider;
+import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.InfoListener;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.InfoProvider;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.SequenceInfoModel;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.SubSequenceInfoModel;
@@ -86,9 +90,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	
 	private AnnotationTypeModel annotationTypeModel;
 	private AnnotationTypeView annotationTypeView;
-	
-	private ResidueColorModel colorModel;
-    private ResidueColorView colorView;
 	
 	private Font font = new Font("Monospaced", Font.PLAIN, 12);
     private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };
@@ -184,6 +185,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
                     public void run() {
                         if(lap != null){
                         	lap.getBaseline().drawNumbers(seqModel.getDrawNumbers());
+                        	lap.getBaseline().setIndexNumber(seqModel.getIntervalNumbers());
                         }
                         if(info != null){
                         	info.setVisible(seqModel.getShowInfoBox());
@@ -193,21 +195,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			}
         });
         
-        colorModel = new ResidueColorModel("Residue coloring");
-        colorView = new ResidueColorView(colorModel);
         
-        
-        
-        colorModel.addSidePanelListener(new SidePanelListener(){
-        	@Override
-        	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
-        		SwingUtilities.invokeLater(new Runnable(){
-        			public void run(){
-        				
-        			}
-        		});
-        	}
-        });
         
         annotationTypeModel = new AnnotationTypeModel("Annotation Types", lap.getLv().getTypes());
         annotationTypeView = new AnnotationTypeView(annotationTypeModel);
@@ -252,19 +240,41 @@ public class LAPEditor extends AbstractGraphicsEditor {
         addSidePanelView(lapView);
 
         
-        InfoProvider RasmosColors = new RasmolColorInfoProvider(manager, "Rasmol colors");
+        final RasmolColorInfoProvider RasmosColors = new RasmolColorInfoProvider(manager, "Rasmol colors");
+        RasmosColors.addInfoListener(new InfoListener(){
+			@Override
+			public void changeEnding() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void changeStarting() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void colorsChanged() {	
+				lap.getBaseline().showRasmolColors(RasmosColors.getForeground(), 0);
+				lap.getBaseline().showRasmolColors(RasmosColors.getBackground(), 1);
+			}
+
+			@Override
+			public void graphChanged(boolean arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+        	
+        });
         InfoProvider StructureValue = new StructureValueInfoProvider(manager, "Structure values");
-        SubSequenceInfoModel subSequenceInfoModel = new SubSequenceInfoModel(new SequenceInfoModel(
-                new InfoProvider[] {RasmosColors, StructureValue }, null), "Residue Coloring", CreateList.of(RasmosColors, StructureValue));
-        addSidePanelView(new SequenceInfoView(subSequenceInfoModel));	}
-	@Override
-	    public String getSideTitle() {
-	        return "Linear Arcplot";
-	    }
-	// This method returns a title for the sidepanel. More about this in the next section, which is about side panels
-
-	//Human readable text string, that will appear in a "View" submenu. The concatenated string will then be "View As Simple Text"
-
+        SubSequenceInfoModel subSequenceInfoModel = new SubSequenceInfoModel(new SequenceInfoModel(new InfoProvider[] {RasmosColors, StructureValue }, null), "Residue Coloring", CreateList.of(RasmosColors, StructureValue));
+        
+        addSidePanelView(new SequenceInfoView(subSequenceInfoModel));	
+        
+		}
+	
+		// This method returns a title for the sidepanel. More about this in the next section, which is about side panels
 	    @Override
 	    public void doPopup(MouseEvent e) {
 	        super.doPopup(e);
@@ -303,7 +313,62 @@ public class LAPEditor extends AbstractGraphicsEditor {
     }
 // And vice versa, when setting the state, we simply load it into the sidepanel state
 
-    public ClcObject[] getEditingObjects(boolean isDragging) {
+    
+// Here we return an icon for the editor. This will appear both in menus and on the editor tab in the view. The icon is loaded from the resources of the plugin. These resource should be built into the final plugin jar when deploying.
+    protected ImageIcon createImageIcon(String path,
+            String description) {
+    	File dir1 = new File ("."); 
+    	try {
+    		System.out.println(dir1.getCanonicalPath());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			System.out.println("Couldn't open directory ");
+			e1.printStackTrace();
+		}
+    	java.net.URL imgURL = getClass().getResource(path);
+    	if (imgURL != null) {
+    		return new ImageIcon(imgURL, description);
+    	} else {
+    		
+    		System.err.println("Couldn't find file: " + path);
+    		return null;
+    	}
+    }
+    
+    /*
+     * Show the rasmol colors on a sequence.
+     * @show = show yes/no
+     * @ground: 1 = foreground, 2 = background. 
+     */
+    public void showRasmolColors(boolean show, int ground){
+    	
+    }
+
+	public boolean canDoMode(MouseMode arg0) {
+		// TODO Auto-generated method stub
+		//pan & zoom enabled
+		return true;
+	}
+
+	@Override
+	protected void setScales(boolean arg0) {
+	}
+
+	@Override
+	public String getName() {
+		
+		return "As Linear ArcPlot";
+	}
+
+	public infoBox getInfo() {
+		return info;
+	}
+
+	public void setInfo(infoBox info) {
+		this.info = info;
+	}
+	
+	public ClcObject[] getEditingObjects(boolean isDragging) {
         return new ClcObject[] { seq };
     }
 // Here we return an array of the object being edited. The parameter should almost always be ignored
@@ -327,52 +392,15 @@ public class LAPEditor extends AbstractGraphicsEditor {
     	//ImageIcon menuIcon = createImageIcon("res/arcplotIcon.png","arcplot");
     	//return new DefaultClcIcon(menuIcon);
         //return EmptyIcon.getInstance();
-    	return new DefaultClcIcon("editors/linear");
+    	return new DefaultClcIcon("arc-icon");
     }
-// Here we return an icon for the editor. This will appear both in menus and on the editor tab in the view. The icon is loaded from the resources of the plugin. These resource should be built into the final plugin jar when deploying.
-    protected ImageIcon createImageIcon(String path,
-            String description) {
-    	File dir1 = new File ("."); 
-    	try {
-    		System.out.println(dir1.getCanonicalPath());
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			System.out.println("Couldn't open directory ");
-			e1.printStackTrace();
-		}
-    	java.net.URL imgURL = getClass().getResource(path);
-    	if (imgURL != null) {
-    		return new ImageIcon(imgURL, description);
-    	} else {
-    		
-    		System.err.println("Couldn't find file: " + path);
-    		return null;
-    	}
+    
+    @Override
+    public String getSideTitle() {
+        return "Linear Arcplot";
     }
-
-	public boolean canDoMode(MouseMode arg0) {
-		// TODO Auto-generated method stub
-		//pan & zoom enabled
-		return true;
-	}
-
-	@Override
-	protected void setScales(boolean arg0) {
-	}
+	
+	//Human readable text string, that will appear in a "View" submenu. The concatenated string will then be "View As Simple Text"
 
 
-
-	@Override
-	public String getName() {
-		
-		return "As Linear ArcPlot";
-	}
-
-	public infoBox getInfo() {
-		return info;
-	}
-
-	public void setInfo(infoBox info) {
-		this.info = info;
-	}
 }

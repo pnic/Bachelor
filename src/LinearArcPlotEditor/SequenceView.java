@@ -1,11 +1,19 @@
 package LinearArcPlotEditor;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelView;
@@ -16,6 +24,7 @@ public class SequenceView extends SidePanelView{
 	private JLabel sequenceTitle;
 	private JCheckBox numbersCheckBox;
 	private JCheckBox infoCheckBox;
+	private StandardLayout indexNumberPanel;
 	
 	public SequenceView(SidePanelModel arg0) {
 		super(arg0);
@@ -30,6 +39,7 @@ public class SequenceView extends SidePanelView{
 	private void fillUI(){
 		createUI();
 		panel.addComp(numbersCheckBox);
+		panel.addComp(indexNumberPanel);
 		panel.addComp(infoCheckBox);
 	}
 	
@@ -44,6 +54,26 @@ public class SequenceView extends SidePanelView{
 				}
 
 			});
+			FlowLayout layout = new FlowLayout();
+			indexNumberPanel = new StandardLayout();
+			indexNumberPanel.setLayout(layout);
+			
+			
+			JLabel indexText = new JLabel("Relative to");
+			final JTextField indexField = new JTextField();
+			indexField.setPreferredSize(new Dimension(100, 24));
+			
+			indexField.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					((SequenceModel)getModel()).setNumbers(indexField.getText());
+				}
+			});
+			indexField.setText("0");
+			
+			
+			indexNumberPanel.add(indexText);
+			indexNumberPanel.add(indexField);
 			
 			infoCheckBox = new JCheckBox("Show infobox");
 			infoCheckBox.setSelected(true);

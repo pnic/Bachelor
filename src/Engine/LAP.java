@@ -56,8 +56,6 @@ import com.clcbio.api.free.gui.focus.ClcFocusPanel;
 import com.clcbio.api.free.gui.focus.ClcFocusScrollPane;
 
 public class LAP extends RootDrawingNode {
-
-	
 	private int [] pairings; 
 	private float [] reliabilities; 
 	private int seqLength;
@@ -240,6 +238,15 @@ public class LAP extends RootDrawingNode {
 		System.out.println("");
 	}
 	
+    /*
+     * Show the rasmol colors on a sequence.
+     * @show = show yes/no
+     * @ground: 1 = foreground, 2 = background. 
+     */
+	public void showRasmolColors(boolean show, int ground){
+		baseline.showRasmolColors(show, ground);
+	}
+	
 	public void setRelevantTypes(){
 		for(LAPFeatureType l : lv.getTypes()){
 			removeChild(l);
@@ -371,22 +378,12 @@ public class LAP extends RootDrawingNode {
 		setRelevantTypes();		
 	}
 	
-	public int GetLDHeight(){
-		return 500;
-	}
-	
+
 	public void setBaseLineText(boolean isBold, int textSize, String fontName){
 		baseline.setBold(isBold);
 		baseline.setFontSize(textSize);
 		baseline.setFontName(fontName);
 		baseline.updateFont();
-	}
-	
-	/*
-	 * This returns the Y position of the Base X-axis used for drawing. 
-	 */
-	public int getBaseXAxis(){
-		return (int)(100+(broadestPair/4)*getScaleY());
 	}
 	
 	/*
@@ -517,4 +514,16 @@ public class LAP extends RootDrawingNode {
 	    	}
 	    	return output; 
 	    }
+	  
+	/*
+	 * This returns the Y position of the Base X-axis used for drawing. 
+	 */
+	public int getBaseXAxis(){
+		return (int)(100+(broadestPair/4)*getScaleY());
+	}
+		
+	public int GetLDHeight(){
+		return 500;
+	}
+		
 }

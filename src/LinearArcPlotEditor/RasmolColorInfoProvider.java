@@ -1,5 +1,8 @@
 package LinearArcPlotEditor;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -20,8 +23,25 @@ public class RasmolColorInfoProvider extends AbstractInfoProvider{
 	public RasmolColorInfoProvider(WorkbenchManager manager, String name) {
 		super(manager);
 		this.name = name;
+		fillPanel();
+	}
+	
+	public void fillPanel(){
 		ForegroundColor = new JCheckBox("Foreground color");
+		ForegroundColor.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				fireColorChange();
+			}
+		});
+	
 		BackgroundColor = new JCheckBox("Background color");
+		BackgroundColor.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				fireColorChange();
+			}
+		});
 		infoPanel = new ParameterPanel();
 		infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
 		infoPanel.add(ForegroundColor);
@@ -45,7 +65,15 @@ public class RasmolColorInfoProvider extends AbstractInfoProvider{
     
     @Override
     protected void setToFactoryInternal() {
-        
+    	
+    }
+    
+    public boolean getForeground(){
+    	return ForegroundColor.isSelected();
+    }
+    
+    public boolean getBackground(){
+    	return BackgroundColor.isSelected();
     }
 
 }

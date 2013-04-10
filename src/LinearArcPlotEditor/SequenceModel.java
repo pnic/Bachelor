@@ -6,6 +6,7 @@ import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 public class SequenceModel extends SidePanelModel{
 	private boolean drawNumbers;
 	private boolean showInfoBox;
+	private int startValue;
 	
 	public SequenceModel(String title) {
 		super(title);
@@ -34,6 +35,28 @@ public class SequenceModel extends SidePanelModel{
 	public void drawNumbers(boolean drawNumbers){
 		this.drawNumbers = drawNumbers;
 		fireModelChanged();
+	}
+	
+	public void setNumbers(String numbers){
+		if(tryParseInt(numbers)){
+			startValue = Integer.parseInt(numbers);
+		}
+		fireModelChanged();
+	}
+	
+	public int getIntervalNumbers(){
+		return startValue;
+	}
+	
+	public boolean tryParseInt(String text){
+		try  
+	     {  
+	         Integer.parseInt(text);  
+	         return true;  
+	      } catch(NumberFormatException nfe)  
+	      {  
+	          return false;  
+	      }  
 	}
 	
 	public boolean getDrawNumbers(){

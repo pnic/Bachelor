@@ -35,6 +35,9 @@ public class Baseline extends ChildDrawingNode {
 	private String fontName;
 	private LAP root;
 	private boolean drawNumbers; 
+	private boolean rasmolFront;
+	private boolean rasmolBack;
+	private int startingIndexNumber;
 	
 	/*
 	 * A baseline represents the x-axis of the linearArcDiagram.
@@ -76,16 +79,29 @@ public class Baseline extends ChildDrawingNode {
 		// If scaleX() is over 12, draw sequence instead.
 		else{
 			for(int i=0; i<length; i++){
+				
+				// Only if number is in the screen. 
 				if(viewPX < (i*getScaleX()) && i*getScaleX() < (viewPX+viewPWidth)){
-					String s = AlphabetTools.getRnaAlphabet().getSymbol(nrs[i]).getShortName() ;
+					String s = AlphabetTools.getRnaAlphabet().getSymbol(nrs[i]).getShortName();
+					
 					int stringHeight = g2.getFontMetrics().getHeight();
 					int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), s);
+					Color backColor = getRasmolColor(s);
+					g2.setColor(backColor);
+					if(rasmolBack){
+						g2.fillRect((int)(i*getScaleX())-(stringWidth/2), root.getBaseXAxis()+4, stringWidth, stringHeight-2);
+					}
+					
+					if(!rasmolFront){
+						g2.setColor(new Color(0,0,0));
+					}
 					g2.drawString(s, (int)(i*getScaleX())-stringWidth/2, root.getBaseXAxis()+stringHeight);
-			
 				}
 			}
 		}
 		
+		
+		g2.setColor(new Color(0,0,0));
 		//Draw numbers and number lines
 		if(drawNumbers){
 			int interval = getIntervalNumber();
@@ -99,20 +115,40 @@ public class Baseline extends ChildDrawingNode {
 					int stringHeight = g2.getFontMetrics().getHeight();
 					int stringx_pos = (int)(i*getScaleX()-stringWidth/2);
 					int lineX_pos = (int)(i*getScaleX());
-				
+					int firstGap = 6;
+					
+					// Even though its 0 - keep it, it will make further changes easier. 
+					int secondGap = 0;
+					int intervalHeight = 10;
 					// If scale is above 11, we need more space since nucleotides are shown instead of just a line. 
 					if(getScaleX() < 11){
-						g2.drawString(Integer.toString(i), stringx_pos, root.getBaseXAxis()+stringHeight+14);
-						g2.drawLine(lineX_pos, root.getBaseXAxis()+5, lineX_pos, root.getBaseXAxis()+stringHeight);
+						g2.drawString(Integer.toString(i-startingIndexNumber), stringx_pos, root.getBaseXAxis()+stringHeight+firstGap + secondGap + intervalHeight);
+						g2.drawLine(lineX_pos, root.getBaseXAxis()+firstGap, lineX_pos, root.getBaseXAxis()+firstGap + intervalHeight);
 					}
 					else{
-						g2.drawString(Integer.toString(i), stringx_pos, root.getBaseXAxis()+stringHeight+25);
-						g2.drawLine(lineX_pos, root.getBaseXAxis()+stringHeight+2, lineX_pos, root.getBaseXAxis()+stringHeight+10);
+						g2.drawString(Integer.toString(i-startingIndexNumber), stringx_pos, root.getBaseXAxis()+(2*stringHeight)+firstGap + secondGap + intervalHeight);
+						g2.drawLine(lineX_pos, root.getBaseXAxis()+stringHeight+firstGap, lineX_pos, root.getBaseXAxis()+stringHeight+firstGap+intervalHeight);
 					}
 				}
 			}
 		}
 		return DrawingResult.NORMAL;
+	}
+	
+	public Color getRasmolColor(String nucleotide){
+		if(nucleotide == "A"){
+			return new Color(210, 45, 45);
+		}
+		if(nucleotide == "C"){
+			return new Color(45, 45, 210);
+		}
+		if(nucleotide == "T" || nucleotide == "U"){
+			return new Color(45, 210, 45);
+		}
+		if(nucleotide == "G"){
+			return new Color(211, 211, 50);
+		}
+		return new Color(0,0,0);
 	}
 	
 	/*
@@ -173,5 +209,20 @@ public class Baseline extends ChildDrawingNode {
 		System.out.println("base: " + drawNum);
 		this.drawNumbers = drawNum;
 		this.repaint();
+	}
+	
+	public void showRasmolColors(boolean show, int ground){
+		if(ground == 0){
+			rasmolFront = show;
+		}
+		if(ground == 1){
+			rasmolBack = show;
+		}
+		this.repaint();
+	}
+	
+	public void setIndexNumber(int index){
+		this.startingIndexNumber = index;
+		repaint();
 	}
 }
