@@ -111,7 +111,8 @@ public class Baseline extends ChildDrawingNode {
 			for(int i=0; i<length; i++){
 				if(i%interval == 0){
 					// variables used for calculating positions of numbers and number lines.
-					int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), Integer.toString(i));
+					
+					int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), Integer.toString(i-startingIndexNumber));
 					int stringHeight = g2.getFontMetrics().getHeight();
 					int stringx_pos = (int)(i*getScaleX()-stringWidth/2);
 					int lineX_pos = (int)(i*getScaleX());

@@ -141,7 +141,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 				}
 				
 				if(showAnnotation){
-					//g2.setColor(Color.GREEN);
 					Color cg = new Color(130, 130, 255);
 					g2.setColor(cg);
 					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));

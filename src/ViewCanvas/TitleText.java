@@ -2,6 +2,7 @@ package ViewCanvas;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 
 
@@ -29,6 +30,7 @@ public class TitleText extends ChildDrawingNode{
 					g2.setStroke(new BasicStroke(2));
 					g2.fillRect(box.getXViewBounds()-1, box.getYViewBounds()-1, 200, 79);
 					g2.setColor(Color.black);
+					g2.setFont(new Font("sansserif", Font.BOLD, 12));
 					g2.drawRect(box.getXViewBounds()-1, box.getYViewBounds()-1, 201, 80);
 					g2.drawString(title, box.getXViewBounds()+5, box.getYViewBounds() + 20);;
 				}

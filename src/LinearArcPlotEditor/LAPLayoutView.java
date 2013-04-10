@@ -1,5 +1,7 @@
 package LinearArcPlotEditor;
 
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -34,7 +36,9 @@ public class LAPLayoutView extends SidePanelView {
     
 
     private JTextField Title;
+    private JLabel titleLabel;
     private JButton setTitle;
+    private StandardLayout titlePanel;
     
 //Here have the three Swing components representing our model properties. Furthermore we use the CLC component StandardLayout to do the layout of our UI.
     
@@ -72,17 +76,22 @@ public class LAPLayoutView extends SidePanelView {
 				}
 				public void stringsChanged() {}
             });
-         
-            Title = new JTextField("Title");
-            setTitle = new JButton("Set title");
-            setTitle.addActionListener(new ActionListener(){
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					((LAPLayoutModel) getModel()).updateTitle(Title.getText());
-				}
-            	
-            });
             
+            titlePanel = new StandardLayout();
+            titlePanel.setLayout(new FlowLayout());
+            
+            titleLabel = new JLabel("Set title");
+            Title = new JTextField("");
+            Title.setPreferredSize(new Dimension(100, 24));
+            Title.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					((LAPLayoutModel) getModel()).updateTitle(Title.getText());	
+				}
+			});
+            
+            titlePanel.add(titleLabel);
+            titlePanel.add(Title);
             
             colorChoose = new JLabel("Color of arcs");
             panel = new StandardLayout();
@@ -95,8 +104,7 @@ public class LAPLayoutView extends SidePanelView {
     private void fillPanel() {
         createUI();
         panel.removeAll();  
-        panel.addComp(Title);
-        panel.addComp(setTitle);
+        panel.addComp(titlePanel);
         panel.addComp(colorChoose);
         panel.addComp(gradchooser);
         
