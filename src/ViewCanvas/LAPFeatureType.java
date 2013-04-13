@@ -172,11 +172,9 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	public void mouseClicked(MouseEvent arg0) {
 		
 		if(arg0.getWhen() - prevClick < 500 ) return;
-		//System.out.println(arg0.getY() + " is Y of arg0 and " + content.getY() + "is Y " + content.getMinY() + " is min y" );
 		if(content.getMinY() < arg0.getY()+root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.getYViewBounds()){
 		this.expanded = !expanded;
 		this.changed = true;
-		System.out.println(this.name + " pressed");
 		root.setRelevantTypes();
 		prevClick = arg0.getWhen();
 		repaint();

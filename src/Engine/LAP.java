@@ -1,29 +1,11 @@
 package Engine;
 
-import java.awt.BasicStroke;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.event.MouseListener;
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.PriorityQueue;
-
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
-
 import ViewCanvas.Arc;
 import ViewCanvas.Baseline;
-import ViewCanvas.ColorGradientRectangle;
 import ViewCanvas.LAPFeatureInterval;
 import ViewCanvas.LAPFeatureType;
 import ViewCanvas.TitleText;
@@ -34,26 +16,14 @@ import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStr
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.annotation.RnaStructureAnnotation;
 import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
-import com.clcbio.api.clc.graphics.DrawingContext;
-import com.clcbio.api.clc.graphics.components.ColorGradientManager;
-import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.ClcCanvas;
 import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.clc.graphics.framework.ViewBounds;
-import com.clcbio.api.free.datatypes.ClcObject;
-import com.clcbio.api.free.datatypes.ClcPair;
 import com.clcbio.api.free.datatypes.ClcStackListener;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.framework.history.History;
 import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
-import com.clcbio.api.free.datatypes.framework.history.ParameterEntry;
-import com.clcbio.api.free.datatypes.framework.listener.ObjectEvent;
-import com.clcbio.api.free.datatypes.framework.listener.ObjectListener;
-import com.clcbio.api.free.gui.components.ObjectMoveable;
-import com.clcbio.api.free.gui.dialog.ClcMessages;
-import com.clcbio.api.free.gui.focus.ClcFocusPanel;
-import com.clcbio.api.free.gui.focus.ClcFocusScrollPane;
 
 public class LAP extends RootDrawingNode {
 	private int [] pairings; 
@@ -67,20 +37,19 @@ public class LAP extends RootDrawingNode {
 	private boolean firstModification = true;
 
 	private Sequence seq;
-	private ColorGradientRectangle colorGradientRectangle;
+	private ColorGradientModel gradmodel;
 	private LAPFeatureView lv;
 	
 	private LAPEditor editor;
 	
+	
 
 	private Arc mouseOverArc;
-	private boolean satSize = false;;
-	
 	public LAP(final Sequence seq, ColorGradientModel gradmodel, String title, LAPEditor editor){
 		this.seq = seq;
-		seqLength = seq.getLength();
+		this.seqLength = seq.getLength();
 		this.editor = editor;
-
+		this.gradmodel = gradmodel;
 		
 		seq.getHistory().addListener(new ClcStackListener(){
 			@Override
@@ -95,7 +64,6 @@ public class LAP extends RootDrawingNode {
 				//setNewStructure(RnaStructures.getStructures(seq).getStructure(0));	
 				printPairings();
 			}
-			
 		});
 		// initialize
 		init();
@@ -135,31 +103,8 @@ public class LAP extends RootDrawingNode {
 		baseline = new Baseline(seq, this);
 		addChild(baseline);
 		
-		
-		//titleText = new TitleText(TextForTitle);
-		//addChild(titleText);
-		
-		
-		//addChild(colorGradientRectangle); in the infobox now
-		setColors(gradmodel);
+		setColor();
 		setSize();
-		
-		
-
-		
-
-		seq.startNoUndoBlock();
-		HistoryEntry histEntry = new HistoryEntry("Changed pair positions", editor.getManager());
-		histEntry.addParameterEntry("Loaded into linear arcplot");
-		seq.addHistory(histEntry);
-		histEntry.addReferredObject(seq);
-		seq.endNoUndoBlock();
-		seq.startNoUndoBlock();
-		histEntry = new HistoryEntry("Changed pair positions", editor.getManager());
-		histEntry.addParameterEntry("creating first stabil");
-		seq.addHistory(histEntry);
-		histEntry.addReferredObject(seq);
-		seq.endNoUndoBlock();
 	}
 	
 	private void init(){
@@ -173,7 +118,7 @@ public class LAP extends RootDrawingNode {
 		
 		//setup pairing and reliabilities.
 		pairings = RnaStructures.getStructures(seq).getStructure(0).getPairing();
-		RnaStructures.getStructures(seq).getStructure(0);
+		
 		
 		reliabilities = new float[seq.getLength()];
 		//Our Rna structure
@@ -185,7 +130,6 @@ public class LAP extends RootDrawingNode {
 			//get reliability of structure at that position
 			reliabilities[i] = (float)probAnnotation.getValue(i);
 		}
-    	colorGradientRectangle = new ColorGradientRectangle(probAnnotation.getName(),probAnnotation.getFixedMin(),probAnnotation.getFixedMax(), editor.getInfo());
     	
     	this.seqLength = seq.getLength();
 	}
@@ -258,7 +202,6 @@ public class LAP extends RootDrawingNode {
 		lv.buildRelevantTypes();
 		for(LAPFeatureType l : lv.getRelevantTypes()){
 			addChild(l);
-			System.out.println(l.getName());
 			for(LAPFeatureInterval li : l.getIntervals()){
 				addChild(li);
 			}
@@ -269,18 +212,16 @@ public class LAP extends RootDrawingNode {
 		titleText.setTitle(title);
 	}
 	
-	public void setColors(ColorGradientModel gradmodel){  
-		int cnt = 0; 
-		for(int i = 0; i<pairings.length; i++){
-			if(pairings[i]>i){
-				arcs[cnt].setColor(gradmodel.getColor(reliabilities[i]));
-				cnt = cnt+1;
+	
+	public void setColor(){
+		int cnt2=0;
+		for(int j=0; j<pairings.length; j++){
+			if(pairings[j] > j){
+				arcs[cnt2].setColor(gradmodel.getColor(reliabilities[j]));
+				cnt2++;
 			}
 		}
-		colorGradientRectangle.setColors(gradmodel);
-		editor.getInfo().setCgr(colorGradientRectangle);
 	}
-
 	
 	public boolean canArcShow(){
 		return false;
@@ -305,6 +246,9 @@ public class LAP extends RootDrawingNode {
 		return (int)pH.get(0).getPosition();
 	}
 	
+	/*
+	 * Returns the width of the screen.  
+	 */
 	public int getViewPaneWidth(){
 		ClcScrollPane pane = getCanvas().getScrollPane();
 		return pane.getWidth();
@@ -321,15 +265,11 @@ public class LAP extends RootDrawingNode {
 		if(cv != null){
 			ClcScrollPane pane = cv.getScrollPane();
 			if(pane != null){
-				System.out.println("pane width " + pane.getViewWidth());
 				List<ViewBounds> pp = pane.getHorizontalViewBounds();
-				ViewBounds bb = pp.get(0);
+				pp.get(0);
 				
-				List<ViewBounds> pV = pane.getVerticalViewBounds();
-				System.out.println("Viewbounds position x: " + bb.getPosition() + " y: " +  pV.get(0).getPosition());
-				System.out.println("Viewbounds position x: " + pane.getViewWidth()/getScaleX());
-				Rectangle rg = pane.getVisibleRect();
-				System.out.println("rectangle x: " + rg.x + " rg.width " + rg.width + " center x " + rg.getCenterX());
+				pane.getVerticalViewBounds();
+				pane.getVisibleRect();
 			}	
 		}
 		
@@ -371,13 +311,11 @@ public class LAP extends RootDrawingNode {
 		arc.showAnnotation(false);
 		return false;
 	}
-
-	public void refresh(ColorGradientModel colorGradientModel) {
-		setColors(colorGradientModel);
-		System.out.println("refreshing");
-		setRelevantTypes();		
-	}
 	
+	public void refresh2(){
+		setColor();
+		setRelevantTypes();
+	}
 
 	public void setBaseLineText(boolean isBold, int textSize, String fontName){
 		baseline.setBold(isBold);
@@ -410,7 +348,6 @@ public class LAP extends RootDrawingNode {
 				}
 				if(new_p1 > pairings[i]) continue;
 				if(new_p2 < i) continue;
-				System.out.println("i " + i + " pairings[i] " + pairings[i] + " oldp1 " + old_p1 + " p1 " + new_p1 + " oldp2 " + old_p2 + " p2 " + new_p2);
 				returner = false;
 			}
 		}
@@ -441,12 +378,9 @@ public class LAP extends RootDrawingNode {
 		
 		// old structures
 		RnaStructures manager = RnaStructures.getStructures(seq);
-		List<RnaStructure> oldStructures = manager.getStructures();
+		manager.getStructures();
 
-		System.out.println("oldstructures length: " + oldStructures.size());
-
-		// new structures
-		List<RnaStructure> newStructures = new ArrayList<RnaStructure>();
+		new ArrayList<RnaStructure>();
 		List<RnaStructureElement> elements = RnaStructureTools.createStructureElements(newPairings);
 		
 		// create rnaStructure with new pairings
@@ -466,15 +400,6 @@ public class LAP extends RootDrawingNode {
 			histEntry.addReferredObject(seq);
 			seq.addHistory(histEntry);
 			seq.endUndoAndEventBlock();
-	}
-
-	public ColorGradientRectangle getColorGradientRectangle() {
-		return colorGradientRectangle;
-	}
-
-	public void setColorGradientRectangle(
-			ColorGradientRectangle colorGradientRectangle) {
-		this.colorGradientRectangle = colorGradientRectangle;
 	}
 	
 	public Baseline getBaseline() {

@@ -31,10 +31,6 @@ public class LAPLayoutView extends SidePanelView {
 
 	private StandardLayout panel = null;
 
-	private JLabel colorChoose;
-    private GradientChooser gradchooser;
-    
-
     private JTextField Title;
     private JLabel titleLabel;
     private JButton setTitle;
@@ -58,25 +54,6 @@ public class LAPLayoutView extends SidePanelView {
     	final LAPLayoutModel lapModel = (LAPLayoutModel) getModel();
     	
         if (panel == null) {
-            
-            final ColorGradientModel gradmodel = lapModel.getColorModel();
-            gradchooser = new GradientChooser(gradmodel);
-            gradmodel.addListener(new GradientModelListener(){
-				public void changeEnding() {
-					((LAPLayoutModel) getModel()).updateColors(gradmodel);
-				}
-				public void changeStarting() {
-					((LAPLayoutModel) getModel()).updateColors(gradmodel);
-				}
-				public void gradientChanged() {
-					((LAPLayoutModel) getModel()).updateColors(gradmodel);
-				}
-				public void limitChanged() {
-					((LAPLayoutModel) getModel()).updateColors(gradmodel);
-				}
-				public void stringsChanged() {}
-            });
-            
             titlePanel = new StandardLayout();
             titlePanel.setLayout(new FlowLayout());
             
@@ -93,7 +70,6 @@ public class LAPLayoutView extends SidePanelView {
             titlePanel.add(titleLabel);
             titlePanel.add(Title);
             
-            colorChoose = new JLabel("Color of arcs");
             panel = new StandardLayout();
             
             fillPanel();
@@ -105,9 +81,6 @@ public class LAPLayoutView extends SidePanelView {
         createUI();
         panel.removeAll();  
         panel.addComp(titlePanel);
-        panel.addComp(colorChoose);
-        panel.addComp(gradchooser);
-        
     }
 //And here we do the layout of the components in our StandardLayout. Notice how the fontNameBox and isBoldBox are only added if their respective "include" flags are set.
 

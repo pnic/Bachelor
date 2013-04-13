@@ -34,10 +34,12 @@ import ViewCanvas.infoBox;
 import com.clcbio.api.base.persistence.PersistenceException;
 import com.clcbio.api.base.util.CreateList;
 import com.clcbio.api.base.util.State;
+import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
 import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
 import com.clcbio.api.clc.editors.graphics.sequence.sidepanel.SequenceInfoView;
 import com.clcbio.api.free.datatypes.ClcObject;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.NucleotideSequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.framework.listener.ObjectEvent;
 import com.clcbio.api.free.datatypes.framework.listener.ObjectListener;
@@ -95,18 +97,20 @@ public class LAPEditor extends AbstractGraphicsEditor {
     private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };
 	
 	public boolean canEdit(Class[] types) {
-        if (types == null || types.length != 1) {
+		if (types == null || types.length != 1) {
             return false;
         }
-        if (!(Sequence.class.isAssignableFrom(types[0]))) {
+        if (!(NucleotideSequence.class.isAssignableFrom(types[0]))) {
             return false;
         }
         return true;
     }
 	
+	public ClcObject[] models;
+	
 	@Override
     public void initGraphicsEditorInstance(WorkbenchManager manager, ClcObject[] models, Workspace ws) {
-        super.initGraphicsEditorInstance(manager, models, ws);
+		super.initGraphicsEditorInstance(manager, models, ws);
 		// This method is called whenever an Editor of this type is instantiated. As seen in the Action example, we are fed the the global context object WorkbenchManager. In this method we set up an observer on the sequence we want to edit in order to update the Editor whenever the sequence changes. This is fundamental part of the Model View Controller (MVC) design pattern.
         //Assume a sequence is selected (otherwise we wouldn't be here) 
         //Set up model listener
@@ -125,13 +129,13 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         colorGradientModel = new ColorGradientModel(ColorGradientManager.getGradients());
         
-        info = new infoBox();
+        info = new infoBox("David", colorGradientModel);
+        System.out.println("bredde: " + getCanvas().getScrollPane().getWidth());
         lap = new LAP(seq,colorGradientModel,"The title", this);
         
         getCanvas().addChild(lap);		
         getCanvas().addChild(info);
 
-		info.addChild(info.getCgr());
 		fillSidePanel();  
     }
 	
@@ -147,9 +151,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
             public void modelChanged(SidePanelModel model, SidePanelEvent event) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                    	if(lap!=null){
-                    		lap.refresh(lapModel.getColorModel());
-                    	}
                         if(info != null){
                         	info.getTitleText().setTitle(lapModel.getLapTitle());
                         }
@@ -267,7 +268,35 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			}
         	
         });
-        InfoProvider StructureValue = new StructureValueInfoProvider(manager, "Structure values");
+        InfoProvider StructureValue = new StructureValueInfoProvider(manager, "Structure values", colorGradientModel);
+        StructureValue.addInfoListener(new InfoListener(){
+
+			@Override
+			public void changeEnding() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void changeStarting() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void colorsChanged() {
+				lap.refresh2();
+				info.refresh();
+				repaint();
+			}
+
+			@Override
+			public void graphChanged(boolean arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+        	
+        });
         SubSequenceInfoModel subSequenceInfoModel = new SubSequenceInfoModel(new SequenceInfoModel(new InfoProvider[] {RasmosColors, StructureValue }, null), "Residue Coloring", CreateList.of(RasmosColors, StructureValue));
         
         addSidePanelView(new SequenceInfoView(subSequenceInfoModel));	
@@ -400,6 +429,17 @@ public class LAPEditor extends AbstractGraphicsEditor {
         return "Linear Arcplot";
     }
 	
+    @Override
+    protected boolean validateInit(WorkbenchManager arg0, ClcObject[] arg1){
+    	NucleotideSequence sequence = (NucleotideSequence)arg1[0];
+    	
+    	if(RnaStructures.getStructures(sequence) == null || RnaStructures.getStructures(sequence).getStructureCount() < 1){
+    		setErrorView("This is not a secondary structure");
+    		return false;
+    	}
+    	
+    	return true;
+    }
 	//Human readable text string, that will appear in a "View" submenu. The concatenated string will then be "View As Simple Text"
 
 

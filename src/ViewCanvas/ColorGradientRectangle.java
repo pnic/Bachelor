@@ -41,11 +41,7 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 	Stroke stroke = new BasicStroke(1f); 
 	private infoBox box;
 	public boolean visible = true;
-	
-	public ColorGradientRectangle(){
 		
-	}
-	
 	public ColorGradientRectangle(String name, double fixedMin, double fixedMax, infoBox box){		
 		this.name=name;
 		this.fixedMin = fixedMin;
@@ -89,8 +85,11 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 	public void update(){
 		  //This method is called when the user eg. changes color gradient
 		//circ_r = ArcplotDraw.radiusfactor*getScaleX();
-		y_pos = box.getYViewBounds()+50; 
-		x_pos = box.getXViewBounds(); 
+		if(box != null){
+			y_pos = box.getYViewBounds()+50; 
+			x_pos = box.getXViewBounds(); 	
+			this.repaint();
+		}
 	}
 	  
 }

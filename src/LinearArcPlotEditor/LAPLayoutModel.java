@@ -18,17 +18,12 @@ public class LAPLayoutModel extends SidePanelModel {
      private String LAPTitle = "Title";
      private boolean titleIsVisible = true;
 	    
-	    private ColorGradientModel colormodel = new ColorGradientModel(ColorGradientManager.getGradients()); 
 
 	    private static final String ZOOM_LEVEL = "100%";
 	    private static final String KEY_COLORSTATE = "colorstate";
 	    
 	//Here we define some keys for later use in usersettings of the sidepanel model.
 
-
-	    public ColorGradientModel getColorModel(){
-	    	return colormodel;
-	    }
 	    
 	    public LAPLayoutModel(WorkbenchManager manager) {
 	        super("Infobox");
@@ -37,13 +32,12 @@ public class LAPLayoutModel extends SidePanelModel {
 	// Construction and initialization.
 
 	    public void loadModel(State model) {
-	        colormodel.setState(model.getChild(KEY_COLORSTATE));
+	      
 	    }
 
 	    public State saveModel() {
 	        State model = new State();
 	        model.put(ZOOM_LEVEL, zoomLevel);
-	        model.put(KEY_COLORSTATE, colormodel.getState());
 	        return model;
 	    }
 	    
@@ -66,12 +60,6 @@ public class LAPLayoutModel extends SidePanelModel {
 	        zoomLevel = 100;
 	    }
 	//The user has the option to apply some default settings on a sidepanel. When this is done this method is called, and here we reset the model to our chosen default value
-
-		public void updateColors(ColorGradientModel colmodel) {
-			// TODO Auto-generated method stub
-			this.colormodel = colmodel;
-			fireModelChanged();
-		}
 
 		public void updateTitle(String newTitle){
 			LAPTitle = newTitle;

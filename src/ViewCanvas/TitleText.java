@@ -15,6 +15,7 @@ public class TitleText extends ChildDrawingNode{
 	private String title;
 	private infoBox box;
 	public boolean visible;
+	
 	public TitleText(String title){
 		this.title = title;
 		this.visible = true;

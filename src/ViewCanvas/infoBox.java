@@ -3,19 +3,27 @@ package ViewCanvas;
 import java.util.List;
 
 
+import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
 import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.clc.graphics.framework.ViewBounds;
 
 public class infoBox extends RootDrawingNode{
-	private TitleText title;
+	private TitleText titleText;
 	private ColorGradientRectangle cgr;
+	private ColorGradientModel colorModel;
 	private boolean titleIsVisible = true;
+	private String title;
 	
-	public infoBox(){
-		title = new TitleText("Titlenn");
-		title.setBox(this);
-		this.addChild(title);
+	public infoBox(String title, ColorGradientModel colorModel){
+		this.title = title;
+		this.titleText = new TitleText(title);
+		titleText.setBox(this);
+		this.colorModel = colorModel;
+		cgr = new ColorGradientRectangle("Color of pairs", 0, 0, this);
+		cgr.setColors(this.colorModel);
+		this.addChild(titleText);
+		this.addChild(cgr);
 	}
 	
 	@Override
@@ -57,11 +65,15 @@ public class infoBox extends RootDrawingNode{
 	}
 	
 	public void setVisible(boolean visible){
-		title.visible = visible;
+		titleText.visible = visible;
 		cgr.visible = visible;
 	}
 	
 	public TitleText getTitleText(){
-		return title;
+		return titleText;
+	}
+	
+	public void refresh(){
+		cgr.setColors(colorModel);
 	}
 }

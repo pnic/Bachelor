@@ -56,7 +56,6 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 		this.startPos = startPos;
 		this.endPos = endPos;
 		this.offset = offset;
-		System.out.println("offset: " + offset + " \n");
 		this.startLine = new Line2D.Double(startPos*getScaleX(), offset+30, startPos*getScaleX(), offset+15);
 		this.endLine = new Line2D.Double(endPos*getScaleX(),offset+30,endPos*getScaleX(), offset);
 		this.root = root;		
@@ -69,7 +68,6 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 		this.red = ((float)this.getEndPos()/normalizeBound)*255;
 		this.green = ((float)this.getStartPos()/normalizeBound)*255;
 		this.blue = 0;
-		System.out.println("red: " + (int)red + " green: " + (int)green);
 		col = new Color((int)red, (int)green,(int) blue);
 	}
 
