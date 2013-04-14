@@ -22,6 +22,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,8 +38,10 @@ import org.apache.batik.gvt.AbstractGraphicsNode;
 import Engine.*;
 
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
+import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
+import com.clcbio.api.clc.graphics.framework.ViewBounds;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
 import com.clcbio.api.free.editors.framework.MouseMode;
 

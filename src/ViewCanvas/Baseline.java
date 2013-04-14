@@ -59,17 +59,14 @@ public class Baseline extends ChildDrawingNode {
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
 		// If scaleX() is under 12, draw a line.
 		int viewPX = root.getXViewBounds();
-		int viewPY = root.getYViewBounds();
 		
 		int viewPWidth = root.getViewPaneWidth();
-		int viewPHeight = root.getViewPaneHeight();
 		
 		if(font != null) {
 			g2.setFont(font);
 		}
 		
 		if(getScaleX() < 11){
-			int end = (int)(length*getScaleX());
 			baseLine.setLine(0,root.getBaseXAxis(), (int)(length*getScaleX()), root.getBaseXAxis());
 			
 			g2.setStroke(stroke);

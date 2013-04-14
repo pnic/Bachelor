@@ -41,6 +41,7 @@ import com.clcbio.api.clc.editors.graphics.sequence.sidepanel.SequenceInfoView;
 import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.NucleotideSequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
 import com.clcbio.api.free.datatypes.framework.listener.ObjectEvent;
 import com.clcbio.api.free.datatypes.framework.listener.ObjectListener;
 import com.clcbio.api.free.datatypes.framework.listener.SelectionEvent;
@@ -78,34 +79,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	private Sequence seq;
 	private ObjectListener sequenceListener;
 	
-	private LAPLayoutView lapView;
-	private LAPLayoutModel lapModel;
-	
-	private TextModel textModel;
-	private TextView textView;
-	
-	private SequenceModel seqModel;
-	private SequenceView seqView;
-	
-	private AnnotationLayoutModel annotationLayoutModel;
-	private AnnotationLayoutView annotationLayoutView;	
-	
-	private AnnotationTypeModel annotationTypeModel;
-	private AnnotationTypeView annotationTypeView;
-	
 	private Font font = new Font("Monospaced", Font.PLAIN, 12);
-    private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };
-	
-	public boolean canEdit(Class[] types) {
-		if (types == null || types.length != 1) {
-            return false;
-        }
-        if (!(NucleotideSequence.class.isAssignableFrom(types[0]))) {
-            return false;
-        }
-        return true;
-    }
-	
+    private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };	
 	public ClcObject[] models;
 	
 	@Override
@@ -117,20 +92,13 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         
         seq = (Sequence) models[0];
-        sequenceListener = new ObjectListener() {
-            public void eventOccurred(ObjectEvent event) {
-                if (event instanceof SelectionEvent) {
-                    return;
-                }
-                update();
-            }
-        };
+        
         seq.addListener(sequenceListener);
+        
         
         colorGradientModel = new ColorGradientModel(ColorGradientManager.getGradients());
         
         info = new infoBox("David", colorGradientModel);
-        System.out.println("bredde: " + getCanvas().getScrollPane().getWidth());
         lap = new LAP(seq,colorGradientModel,"The title", this);
         
         getCanvas().addChild(lap);		
@@ -143,8 +111,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	 * Fills the sidePanel and attaches listeners. 
 	 */
 	private void fillSidePanel(){
-		lapModel = new LAPLayoutModel(manager);
-        lapView = new LAPLayoutView(lapModel);
+		final LAPLayoutModel lapModel = new LAPLayoutModel(manager);
+        LAPLayoutView lapView = new LAPLayoutView(lapModel);
         
         // This states what happens (to the view) when the model changes.
         lapModel.addSidePanelListener(new SidePanelListener() {
@@ -160,8 +128,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
             }
         });
         
-        textModel = new TextModel(manager);
-        textView = new TextView(textModel);
+        final TextModel textModel = new TextModel(manager);
+        TextView textView = new TextView(textModel);
         
         textModel.addSidePanelListener(new SidePanelListener(){
 			@Override
@@ -179,8 +147,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			}
         });
         
-        seqModel = new SequenceModel("SequenceLayout");
-        seqView = new SequenceView(seqModel);
+        final SequenceModel seqModel = new SequenceModel("SequenceLayout");
+        SequenceView seqView = new SequenceView(seqModel);
         
         seqModel.addSidePanelListener(new SidePanelListener(){
 			@Override
@@ -201,8 +169,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         
         
-        annotationTypeModel = new AnnotationTypeModel("Annotation Types", lap.getLv().getTypes());
-        annotationTypeView = new AnnotationTypeView(annotationTypeModel);
+        final AnnotationTypeModel annotationTypeModel = new AnnotationTypeModel("Annotation Types", lap.getLv().getTypes());
+        AnnotationTypeView annotationTypeView = new AnnotationTypeView(annotationTypeModel);
         
         annotationTypeModel.addSidePanelListener(new SidePanelListener(){
         	@Override
@@ -218,8 +186,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
         	}
         });
         
-        annotationLayoutModel = new AnnotationLayoutModel("Annotation layout");
-        annotationLayoutView = new AnnotationLayoutView(annotationLayoutModel);
+        final AnnotationLayoutModel annotationLayoutModel = new AnnotationLayoutModel("Annotation layout");
+        AnnotationLayoutView annotationLayoutView = new AnnotationLayoutView(annotationLayoutModel);
         
         
         annotationLayoutModel.addSidePanelListener(new SidePanelListener(){
@@ -314,25 +282,10 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	    }
 	// This method is invoked when the user triggers popup on the editor. In this case we use a standard popup the API offers
 
-	    private void update() {
-	        SwingUtilities.invokeLater(new Runnable() {
-	            public void run() {
-	            	if(RnaStructures.getStructures(seq)==null||RnaStructures.getStructures(seq).getStructureCount() != 1){
-	            		lapView.setEnabled(false);
-	            	}
-	            	else{
-	            		lapView.setEnabled(false);
-	            	}
-	            }
-	        });
-	    }
-	
-
 	@Override
     public State getState() {
         State s = super.getState();
-        s.putAll(lapModel.save());
-        s.putAll(textModel.save());
+
         return s;
     }
 // In this case the user state of the editor is the state of the sidepanel. More about this later
@@ -340,8 +293,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     @Override
     public void setState(State s) {
         super.setState(s);
-        lapModel.load(s);
-        textModel.load(s);
+
     }
 // And vice versa, when setting the state, we simply load it into the sidepanel state
 
@@ -434,16 +386,33 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	
     @Override
     protected boolean validateInit(WorkbenchManager arg0, ClcObject[] arg1){
-    	NucleotideSequence sequence = (NucleotideSequence)arg1[0];
+    	if(Alignment.class.isAssignableFrom(arg1[0].getClass())){
+    		System.out.println("Det er en alignment");
+    		return true;
+    	}
     	
+    	NucleotideSequence sequence = (NucleotideSequence)arg1[0];
     	if(RnaStructures.getStructures(sequence) == null || RnaStructures.getStructures(sequence).getStructureCount() < 1){
     		setErrorView("This is not a secondary structure");
     		return false;
     	}
     	
+    	System.out.println("Den gŒr igennem");
+    	
     	return true;
     }
 	//Human readable text string, that will appear in a "View" submenu. The concatenated string will then be "View As Simple Text"
+    
+	public boolean canEdit(Class[] types) {
+		if (types == null || types.length != 1) {
+            return false;
+        }
+        if ((NucleotideSequence.class.isAssignableFrom(types[0])) || Alignment.class.isAssignableFrom(types[0])) {
+            return true;
+        }
+        
+        return false;
+    }
 
 
 }

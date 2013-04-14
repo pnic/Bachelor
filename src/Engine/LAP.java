@@ -149,10 +149,6 @@ public class LAP extends RootDrawingNode {
 		}
 	}
 	
-	public boolean canArcShow(){
-		return false;
-	}
-	
 	/*
 	 * Returns the y position of the visible screen in contrast to the entire canvas. 
 	 */
@@ -161,7 +157,6 @@ public class LAP extends RootDrawingNode {
 		List<ViewBounds> pV = pane.getVerticalViewBounds();
 		return (int) pV.get(0).getPosition();
 	}
-	
 	
 	/*
 	 * Returns the x position of the visible screen in contrast to the entire canvas. 
