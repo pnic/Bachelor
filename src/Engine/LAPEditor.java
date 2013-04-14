@@ -169,7 +169,10 @@ public class LAPEditor extends AbstractGraphicsEditor {
 				SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         if(lap != null){
-                        	lap.setBaseLineText(textModel.isBold(), sizeLookup[textModel.getTextSize()], textModel.getFontName());
+                        	lap.getBaseline().setBold(textModel.isBold());
+                        	lap.getBaseline().setFontSize(sizeLookup[textModel.getTextSize()]);
+                        	lap.getBaseline().setFontName(textModel.getFontName());
+                        	lap.getBaseline().updateFont();
                         }
                     }
                 });

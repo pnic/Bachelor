@@ -68,7 +68,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	public int pairNumber;
 	public boolean firstModification = true;
 	
-	public Arc(int p1, int p2, double seqLength, double reliability, LAP root){
+	public Arc(int p1, int p2, double reliability, LAP root){
 		this.p1=p1;
 		this.p2=p2;
 		this.root = root;

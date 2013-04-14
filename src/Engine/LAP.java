@@ -8,7 +8,6 @@ import ViewCanvas.Arc;
 import ViewCanvas.Baseline;
 import ViewCanvas.LAPFeatureInterval;
 import ViewCanvas.LAPFeatureType;
-import ViewCanvas.TitleText;
 
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructureElement;
@@ -28,45 +27,41 @@ import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
 public class LAP extends RootDrawingNode {
 	private int [] pairings; 
 	private float [] reliabilities; 
-	private int seqLength;
-	//Used to specify height of size. 
 	private int broadestPair;
-	private TitleText titleText;
 	private Arc [] arcs; 
 	private Baseline baseline;
 	private boolean firstModification = true;
-
 	private Sequence seq;
 	private ColorGradientModel gradmodel;
 	private LAPFeatureView lv;
-	
 	private LAPEditor editor;
-	
-	
-
 	private Arc mouseOverArc;
+	
 	public LAP(final Sequence seq, ColorGradientModel gradmodel, String title, LAPEditor editor){
 		this.seq = seq;
-		this.seqLength = seq.getLength();
 		this.editor = editor;
 		this.gradmodel = gradmodel;
 		
-		seq.getHistory().addListener(new ClcStackListener(){
-			@Override
-			public void update(List arg0) {
-				System.out.println("Update");
-				History hist = seq.getHistory();
-				List<HistoryEntry> entries = hist.getEntries();
-				for(int i=0; i<entries.size(); i++){
-					System.out.println(entries.get(i).getSimpleParameterString());
-					System.out.println("-----------------------");
-				}
-				//setNewStructure(RnaStructures.getStructures(seq).getStructure(0));	
-				printPairings();
-			}
-		});
 		// initialize
 		init();
+		
+		// set structure
+		setStructure(RnaStructures.getStructures(seq).getStructure(0));
+		
+		baseline = new Baseline(seq, this);
+		addChild(baseline);
+		
+		setColor();
+		setSize();
+	}
+	
+	
+	/*
+	 * Sets the RNA structure visualized by the diagram. 
+	 */
+	private void setStructure(RnaStructure structure){
+		pairings = structure.getPairing();
+		reliabilities = new float[structure.getLength()];
 		
 		scaleX = 700.0/pairings.length;
 		scaleY = scaleX;
@@ -83,28 +78,29 @@ public class LAP extends RootDrawingNode {
 		
 		//Generate arcs
 		int cnt = 0;
-		if(arcs==null){
 			arcs = new Arc[nr];
 			for(int i = 0; i<pairings.length; i++){
 				if(pairings[i]>i){
-					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i], this);
+					arcs[cnt] = new Arc(i,pairings[i], reliabilities[i], this);
 					arcs[cnt].broadestPair = broadestPair;
 					addChild(arcs[cnt]);
 					arcs[cnt].pairNumber = cnt;
 					cnt = cnt+1;
 				}
-			}
 		}
-
+		
+		//Our Rna structure
+    	List<RnaStructureAnnotation> annotations = structure.getStructureAnnotations();
+		RnaStructureAnnotation probAnnotation = annotations.get(0);
+		
+		//Set reliability values
+    	for(int i = 0; i<structure.getLength(); i++){
+			//get reliability of structure at that position
+			reliabilities[i] = (float)probAnnotation.getValue(i);
+		}
+    	
 		lv = new LAPFeatureView(seq,this);
 		setRelevantTypes();
-
-	
-		baseline = new Baseline(seq, this);
-		addChild(baseline);
-		
-		setColor();
-		setSize();
 	}
 	
 	private void init(){
@@ -115,71 +111,6 @@ public class LAP extends RootDrawingNode {
 		setMinScaleY(0.05);
 		setMinScaleRatio(1.0);
 		setMaxScaleRatio(1.0);
-		
-		//setup pairing and reliabilities.
-		pairings = RnaStructures.getStructures(seq).getStructure(0).getPairing();
-		
-		
-		reliabilities = new float[seq.getLength()];
-		//Our Rna structure
-    	List<RnaStructureAnnotation> annotations = RnaStructures.getStructures(seq).getStructure(0).getStructureAnnotations();
-		RnaStructureAnnotation probAnnotation = annotations.get(0);
-		
-		//Set reliability values
-    	for(int i = 0; i<seq.getLength(); i++){
-			//get reliability of structure at that position
-			reliabilities[i] = (float)probAnnotation.getValue(i);
-		}
-    	
-    	this.seqLength = seq.getLength();
-	}
-	
-	private void setNewStructure(RnaStructure structure){
-		for(int i=0; i<arcs.length; i++){
-			this.removeChild(arcs[i]);
-		}
-		
-		arcs = null;
-		
-		pairings = structure.getPairing();
-		int nr=0;
-		for(int i = 0;i<pairings.length; i++){
-			if(pairings[i]>i){
-				nr = nr+1;
-				if(pairings[i]-i > broadestPair){
-					broadestPair = (pairings[i]-i);
-				}
-			}
-		}
-		
-		//Generate arcs
-		int cnt = 0;
-		if(arcs==null){
-			arcs = new Arc[nr];
-			for(int i = 0; i<pairings.length; i++){
-				if(pairings[i]>i){
-					arcs[cnt] = new Arc(i,pairings[i],seqLength, reliabilities[i], this);
-					arcs[cnt].broadestPair = broadestPair;
-					addChild(arcs[cnt]);
-					arcs[cnt].pairNumber = cnt;
-					cnt = cnt+1;
-				}
-			}
-		}
-		
-		repaint();
-	}
-	
-	private void printPairings(){
-		int[] newPairs = RnaStructures.getStructures(seq).getStructure(0).getPairing();
-		for(int i=0; i<newPairs.length; i++){
-			System.out.print(" " + i);
-		}
-		System.out.println("");
-		for(int n=0; n<newPairs.length; n++){
-			System.out.print(" " + newPairs[n]);
-		}
-		System.out.println("");
 	}
 	
     /*
@@ -207,12 +138,7 @@ public class LAP extends RootDrawingNode {
 			}
 		}
 	}
-	
-	public void setTitle(String title){
-		titleText.setTitle(title);
-	}
-	
-	
+		
 	public void setColor(){
 		int cnt2=0;
 		for(int j=0; j<pairings.length; j++){
@@ -316,13 +242,6 @@ public class LAP extends RootDrawingNode {
 		setColor();
 		setRelevantTypes();
 	}
-
-	public void setBaseLineText(boolean isBold, int textSize, String fontName){
-		baseline.setBold(isBold);
-		baseline.setFontSize(textSize);
-		baseline.setFontName(fontName);
-		baseline.updateFont();
-	}
 	
 	/*
 	 * Checks if it is a valid change of positions for a pair. If it is, it also makes the changes in pairings. 
@@ -406,11 +325,6 @@ public class LAP extends RootDrawingNode {
 		return baseline;
 	}
 
-	public void setBaseline(Baseline baseline) {
-		this.baseline = baseline;
-	}
-	
-
 	public LAPEditor getEditor() {
 		return editor;
 	}
@@ -422,7 +336,6 @@ public class LAP extends RootDrawingNode {
 	public Sequence getSequence(){
 		return seq;
 	}
-
 
 	public LAPFeatureView getLv() {
 		return lv;
