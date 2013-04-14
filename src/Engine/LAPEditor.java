@@ -128,7 +128,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 
                         	info.getTitleText().setTitle(lapModel.getLapTitle());
                         }
-                        System.out.println("1");
                         repaint();
                     }
                 });
@@ -144,7 +143,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 				SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         if(lap != null){
-                        	System.out.println("2");
                         	lap.getBaseline().setBold(textModel.isBold());
                         	lap.getBaseline().setFontSize(sizeLookup[textModel.getTextSize()]);
                         	lap.getBaseline().setFontName(textModel.getFontName());
@@ -163,7 +161,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
 				SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                    	System.out.println("3");
                         if(lap != null){
                         	lap.getBaseline().drawNumbers(seqModel.getDrawNumbers());
                         	lap.getBaseline().setIndexNumber(seqModel.getIntervalNumbers());
@@ -186,7 +183,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
         	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
         		SwingUtilities.invokeLater(new Runnable(){
         			public void run(){
-        				System.out.println("5");
         				if(lap != null){
         					if (annotationTypeModel.isLastUpdatedChanged()) lap.getLv().setTypeAcces(annotationTypeModel.getLastUpdated());
         					if (annotationTypeModel.isLabelChanged()) lap.getLv().setTypeColor(annotationTypeModel.getLastChangedLabelName(), annotationTypeModel.getLastChangedLabel());
@@ -205,7 +201,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
         	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
         		SwingUtilities.invokeLater(new Runnable(){
         			public void run(){
-        				System.out.println("6");
         				if(lap != null){
         					lap.getLv().setShowAnnotations(annotationLayoutModel.getshowAnnotations());
         					lap.getLv().setShowView(annotationLayoutModel.getSelected());
@@ -239,7 +234,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 
 			@Override
 			public void colorsChanged() {	
-				System.out.println("7");
 				lap.getBaseline().showRasmolColors(RasmosColors.getForeground(), 0);
 				lap.getBaseline().showRasmolColors(RasmosColors.getBackground(), 1);
 			}
@@ -268,7 +262,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 
 			@Override
 			public void colorsChanged() {
-				System.out.println("8");
 				lap.refresh2();
 				info.refresh();
 				repaint();
@@ -298,7 +291,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	@Override
     public State getState() {
         State s = super.getState();
-        System.out.println("getState");
         return s;
     }
 // In this case the user state of the editor is the state of the sidepanel. More about this later
@@ -306,7 +298,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
     @Override
     public void setState(State s) {
         super.setState(s);
-        System.out.println("setState");
     }
 // And vice versa, when setting the state, we simply load it into the sidepanel state
 
@@ -410,7 +401,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
     		return false;
     	}
     	
-    	System.out.println("Den går igennem");
     	
     	return true;
     }

@@ -120,7 +120,6 @@ public class Baseline extends ChildDrawingNode {
 			}
 		}
 		
-		System.out.println("drawing");
 		g2.setColor(new Color(0,0,0));
 		//Draw numbers and number lines
 		if(drawNumbers){

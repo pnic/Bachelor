@@ -62,7 +62,6 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 		if(visible){
 			y_pos = box.getYViewBounds()+50; 
 			x_pos = box.getXViewBounds(); 	
-			System.out.println("visible");
 			ga.setStroke(stroke);
 			for(int i = 0; i<colorResolution; i++){
 				rectangles[i].setFrame((float)i*(float)length/(float)colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);
