@@ -21,6 +21,7 @@ import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.clc.graphics.framework.ViewBounds;
 import com.clcbio.api.free.datatypes.ClcStackListener;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
 import com.clcbio.api.free.datatypes.framework.history.History;
 import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
 
@@ -37,7 +38,8 @@ public class LAP extends RootDrawingNode {
 	private LAPEditor editor;
 	private Arc mouseOverArc;
 	
-	public LAP(final Sequence seq, ColorGradientModel gradmodel, String title, LAPEditor editor){
+	public LAP(Alignment align, ColorGradientModel gradmodel, String title, LAPEditor editor){
+		this.seq = align.getSequence(0);
 		this.seq = seq;
 		this.editor = editor;
 		this.gradmodel = gradmodel;

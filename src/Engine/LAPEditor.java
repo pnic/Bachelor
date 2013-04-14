@@ -32,6 +32,7 @@ import ViewCanvas.TitleText;
 import ViewCanvas.infoBox;
 
 import com.clcbio.api.base.persistence.PersistenceException;
+import com.clcbio.api.base.session.FactoryManager;
 import com.clcbio.api.base.util.CreateList;
 import com.clcbio.api.base.util.State;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
@@ -42,7 +43,9 @@ import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.NucleotideSequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
-import com.clcbio.api.free.datatypes.framework.listener.ObjectEvent;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentBuilder;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentFactory;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
 import com.clcbio.api.free.datatypes.framework.listener.ObjectListener;
 import com.clcbio.api.free.datatypes.framework.listener.SelectionEvent;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelException;
@@ -74,10 +77,10 @@ public class LAPEditor extends AbstractGraphicsEditor {
     }
 	private LAP lap;
 	private infoBox info;
-	private ColorGradientModel colorGradientModel;
-	
+	private ColorGradientModel colorGradientModel;	
 	private Sequence seq;
-	private ObjectListener sequenceListener;
+	private boolean inputIsAlignment;
+	private Alignment alignment;
 	
 	private Font font = new Font("Monospaced", Font.PLAIN, 12);
     private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };	
@@ -90,16 +93,18 @@ public class LAPEditor extends AbstractGraphicsEditor {
         //Assume a sequence is selected (otherwise we wouldn't be here) 
         //Set up model listener
         
-        
-        seq = (Sequence) models[0];
-        
-        seq.addListener(sequenceListener);
-        
+        if(inputIsAlignment){
+        	alignment = (Alignment)models[0];
+        }
+        else{
+        	AlignmentFactory alignmentFactory = FactoryManager.getInstance().getAlignmentFactory();
+        	alignment = alignmentFactory.createAlignment((Sequence)(models[0]));
+        }
         
         colorGradientModel = new ColorGradientModel(ColorGradientManager.getGradients());
         
         info = new infoBox("David", colorGradientModel);
-        lap = new LAP(seq,colorGradientModel,"The title", this);
+        lap = new LAP(alignment,colorGradientModel,"The title", this);
         
         getCanvas().addChild(lap);		
         getCanvas().addChild(info);
@@ -387,7 +392,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     @Override
     protected boolean validateInit(WorkbenchManager arg0, ClcObject[] arg1){
     	if(Alignment.class.isAssignableFrom(arg1[0].getClass())){
-    		System.out.println("Det er en alignment");
+    		inputIsAlignment = true;
     		return true;
     	}
     	
