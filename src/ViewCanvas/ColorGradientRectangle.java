@@ -42,24 +42,27 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 	private infoBox box;
 	public boolean visible = true;
 		
-	public ColorGradientRectangle(String name, double fixedMin, double fixedMax, infoBox box){		
+	public ColorGradientRectangle(String name, double fixedMin, double fixedMax, infoBox box, ColorGradientModel colorModel){		
 		this.name=name;
 		this.fixedMin = fixedMin;
 		this.fixedMax = fixedMax;
 		this.box = box;
-		update();	
+
 		
 		//Create rectangle array
 		for(int i = 0; i<colorResolution; i++){
 			rectangles[i] = new Rectangle2D.Double((float)i*(float)length/(float)colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);			
-			colors[i] = Color.GREEN;
 		}
+		this.setColors(colorModel);
+		
 	}
 	
 	@Override
 	protected DrawingResult internalDraw(Graphics2D ga, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy) {
 		if(visible){
-			update();
+			y_pos = box.getYViewBounds()+50; 
+			x_pos = box.getXViewBounds(); 	
+			System.out.println("visible");
 			ga.setStroke(stroke);
 			for(int i = 0; i<colorResolution; i++){
 				rectangles[i].setFrame((float)i*(float)length/(float)colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);
@@ -72,6 +75,9 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 			ga.drawString(Double.toString((fixedMax+fixedMin)/2), (int)x_pos+length/2-15, (int)y_pos-2);
 			ga.drawString(Double.toString(fixedMax), (length+(int)x_pos)-20, (int)y_pos-2);
 		}		
+		else{
+			System.out.println("not visible");
+		}
 		return DrawingResult.NORMAL;
 	}
   
@@ -79,17 +85,7 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 		for(int i = 0; i<colorResolution; i++){
 			colors[i] = model.getColor((float)i/(float)colorResolution);
 		}
-		update();
-	}
-	
-	public void update(){
-		  //This method is called when the user eg. changes color gradient
-		//circ_r = ArcplotDraw.radiusfactor*getScaleX();
-		if(box != null){
-			y_pos = box.getYViewBounds()+50; 
-			x_pos = box.getXViewBounds(); 	
-			this.repaint();
-		}
+		this.repaint();
 	}
 	  
 }

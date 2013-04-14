@@ -195,6 +195,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 	}
 
 	public void repaintInterval(){
+		System.out.println("repaint int");
 		this.repaint();
 	}
 

@@ -177,6 +177,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 		this.changed = true;
 		root.setRelevantTypes();
 		prevClick = arg0.getWhen();
+		System.out.println("mouse clicked");
 		repaint();
 		}
 	}
@@ -264,10 +265,12 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 		if(content.getMinY() < arg0.getY()+root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.getYViewBounds()){
 		this.hover = true;
 		prevHover = arg0.getWhen();
+		System.out.println("mouse moved");
 		repaint();
 		return;
 		} if(hover){
 			hover = false;
+
 			repaint();
 		}
 	}

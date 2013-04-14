@@ -20,8 +20,7 @@ public class infoBox extends RootDrawingNode{
 		this.titleText = new TitleText(title);
 		titleText.setBox(this);
 		this.colorModel = colorModel;
-		cgr = new ColorGradientRectangle("Color of pairs", 0, 0, this);
-		cgr.setColors(this.colorModel);
+		cgr = new ColorGradientRectangle("Color of pairs", 0, 0, this, this.colorModel);
 		this.addChild(titleText);
 		this.addChild(cgr);
 	}

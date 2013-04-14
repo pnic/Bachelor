@@ -32,15 +32,14 @@ public class LAP extends RootDrawingNode {
 	private Arc [] arcs; 
 	private Baseline baseline;
 	private boolean firstModification = true;
-	private Sequence seq;
+	private Sequence current_sequence;
 	private ColorGradientModel gradmodel;
 	private LAPFeatureView lv;
 	private LAPEditor editor;
 	private Arc mouseOverArc;
 	
 	public LAP(Alignment align, ColorGradientModel gradmodel, String title, LAPEditor editor){
-		this.seq = align.getSequence(0);
-		this.seq = seq;
+		this.current_sequence = align.getSequence(0);
 		this.editor = editor;
 		this.gradmodel = gradmodel;
 		
@@ -48,9 +47,9 @@ public class LAP extends RootDrawingNode {
 		init();
 		
 		// set structure
-		setStructure(RnaStructures.getStructures(seq).getStructure(0));
+		setStructure(RnaStructures.getStructures(current_sequence).getStructure(0));
 		
-		baseline = new Baseline(seq, this);
+		baseline = new Baseline(align, this);
 		addChild(baseline);
 		
 		setColor();
@@ -101,7 +100,7 @@ public class LAP extends RootDrawingNode {
 			reliabilities[i] = (float)probAnnotation.getValue(i);
 		}
     	
-		lv = new LAPFeatureView(seq,this);
+		lv = new LAPFeatureView(current_sequence,this);
 		setRelevantTypes();
 	}
 	
@@ -289,11 +288,11 @@ public class LAP extends RootDrawingNode {
 		newPairings[new_p2] = new_p1;
 		
 		// structure annotations
-		List<RnaStructureAnnotation> annotations = RnaStructures.getStructures(seq).getStructure(0).getStructureAnnotations();
+		List<RnaStructureAnnotation> annotations = RnaStructures.getStructures(current_sequence).getStructure(0).getStructureAnnotations();
 		RnaStructureAnnotation probAnnotation = annotations.get(0);
 		
 		// old structures
-		RnaStructures manager = RnaStructures.getStructures(seq);
+		RnaStructures manager = RnaStructures.getStructures(current_sequence);
 		manager.getStructures();
 
 		new ArrayList<RnaStructure>();
@@ -305,17 +304,17 @@ public class LAP extends RootDrawingNode {
 		// add the old annotations - these will stay the same. 
 		structureout.addStructureAnnotation(probAnnotation);
 		
-		seq.startUndoAndEventBlock("Changing arcs");	
+		current_sequence.startUndoAndEventBlock("Changing arcs");	
 
-			RnaStructures.setStructures(seq, new RnaStructures(structureout));
+			RnaStructures.setStructures(current_sequence, new RnaStructures(structureout));
 			HistoryEntry histEntry = new HistoryEntry("Changed pair positions", editor.getManager());
 			histEntry.addParameterEntry("new first", ""+new_p1);
 			histEntry.addParameterEntry("new second", ""+new_p2);
 			histEntry.addParameterEntry("pair number", ""+pairNumber);
 			
-			histEntry.addReferredObject(seq);
-			seq.addHistory(histEntry);
-			seq.endUndoAndEventBlock();
+			histEntry.addReferredObject(current_sequence);
+			current_sequence.addHistory(histEntry);
+			current_sequence.endUndoAndEventBlock();
 	}
 	
 	public Baseline getBaseline() {
@@ -331,7 +330,7 @@ public class LAP extends RootDrawingNode {
 	}
 	
 	public Sequence getSequence(){
-		return seq;
+		return current_sequence;
 	}
 
 	public LAPFeatureView getLv() {
