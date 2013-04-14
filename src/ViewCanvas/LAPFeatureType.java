@@ -154,7 +154,8 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 					g2.drawString("Features:", root.getXViewBounds(), root.getBaseXAxis()+typeOffset+height+15);
 					for(LAPFeatureInterval li : intervals){
 						if(!(li.getEndPos()*getScaleX() < root.getXViewBounds() || li.getStartPos()*getScaleX() > root.getXViewBounds()+root.getViewPaneWidth())){
-							g2.setColor(li.getCol());
+							//g2.setColor(li.getCol());
+							g2.setColor(color);
 							g2.drawString(li.getName()+", ", root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+height+15);
 							g2.drawString(li.getStartPos() + " - " + li.getEndPos(), root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+height+35);
 							inView+=1;

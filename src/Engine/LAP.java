@@ -22,6 +22,7 @@ import com.clcbio.api.clc.graphics.framework.ViewBounds;
 import com.clcbio.api.free.datatypes.ClcStackListener;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.Region;
 import com.clcbio.api.free.datatypes.framework.history.History;
 import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
 
@@ -51,7 +52,7 @@ public class LAP extends RootDrawingNode {
 		
 		baseline = new Baseline(align, this);
 		addChild(baseline);
-		
+			
 		setColor();
 		setSize();
 	}

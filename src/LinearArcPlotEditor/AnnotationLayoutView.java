@@ -61,8 +61,7 @@ public class AnnotationLayoutView extends SidePanelView{
 				@Override
 				public void itemStateChanged(ItemEvent arg0) {
 					((AnnotationLayoutModel)getModel()).showArrows(showArrowsCheckBox.isSelected());
-				}
-				
+				}				
 			});
 			
 			
@@ -74,7 +73,6 @@ public class AnnotationLayoutView extends SidePanelView{
 				public void itemStateChanged(ItemEvent arg0) {
 					((AnnotationLayoutModel)getModel()).showGradients(showGradientsCheckBox.isSelected());
 				}
-				
 			});
 			menu = new ButtonGroup();
 			
@@ -96,12 +94,9 @@ public class AnnotationLayoutView extends SidePanelView{
 				@Override
 				public void itemStateChanged(ItemEvent e) {
 					((AnnotationLayoutModel)getModel()).setChosenView("lines");
-					
 				}
-				
 			});
-			
-			
+						
 			menu = new ButtonGroup();
 			
 			menu.add(showAsArrows);

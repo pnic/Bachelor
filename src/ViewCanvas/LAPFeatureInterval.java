@@ -100,7 +100,8 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 					int x1 = lineStart; //Lowerleft
 					
 					//start of arrow
-					int x2 = lineEnd - (lineEnd-lineStart)/10;
+					int x2 = (lineEnd-lineStart < 20) ? lineStart : lineEnd-20;
+					
 					int x3 = x2;
 					
 					int x4 = lineEnd; //Tip of arrow
