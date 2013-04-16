@@ -54,7 +54,7 @@ public class LAP extends RootDrawingNode {
 		
 		// initialize
 		init();
-		System.out.println("Konstruktor k¿res");
+		
 		// set structure
 		setStructure(RnaStructures.getStructures(current_sequence).getStructure(0));
 	}
@@ -90,9 +90,6 @@ public class LAP extends RootDrawingNode {
 		for(int i = 0;i<pairings.length; i++){
 			if(pairings[i]>i){
 				nr = nr+1;
-				//if(pairings[i]-i > broadestPair){
-					///broadestPair = (pairings[i]-i);
-				//}
 			}
 		}
 		
@@ -100,10 +97,13 @@ public class LAP extends RootDrawingNode {
 		float[] seqReliabillities = new float[align.getLength()];
 		int isFound = 0;
 		
+		
+		
 		//Generate arcs
 		BasicIndexer indexer = new AlignmentSequenceIndexer(align, oldSequence);
 		int alignCounter = 0;
 		if(!indexer.knowsAlignmentPositions()){
+			System.out.println("Den ved ikke");
 			for(int i=0; i<pairings.length; i++){
 				if(pairings[i] > i){
 					int arrIndex = 0;
@@ -123,7 +123,6 @@ public class LAP extends RootDrawingNode {
 					isFound = 0;
 					seqNumbers[arrNumber] = arrIndex;
 					seqNumbers[arrIndex] = arrNumber;
-					
 				}
 			}
 		}
@@ -172,6 +171,8 @@ public class LAP extends RootDrawingNode {
 		}
 			
 		setColor();
+		System.out.println("SŒ s¾tter vi den hurtig hurtig");
+		setSize();
 		repaint();
 		//setRelevantTypes();
 	}
@@ -277,10 +278,18 @@ public class LAP extends RootDrawingNode {
 		}
 		
 		if(align != null && baseline != null){
-			setSize(0, align.getLength()*getScaleX()+50, 0, 300+((broadestPair/4)*getScaleY())+baseline.getHeight());
+			System.out.println("vi er inde i rigtig");
+			setSize(0, (align.getLength()*getScaleX())+50, 0, 100+(getBaseXAxis())+baseline.getHeight());
 		}
 		else{
-			setSize(0,1200*getScaleX(),0,600);
+			if(align != null){
+				System.out.println("Vi er i 2'eren");
+				setSize(0, (align.getLength()*getScaleX())+50, 0, 100+(getBaseXAxis())+(align.getSequenceCount()+1)*14);
+			}
+			else{
+				System.out.println("NOOOOOT");
+				setSize(0,1200*getScaleX(),0,600);	
+			}
 		}
 	}
 	

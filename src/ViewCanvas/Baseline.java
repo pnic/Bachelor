@@ -45,6 +45,7 @@ public class Baseline extends ChildDrawingNode {
 	private int startingIndexNumber;
 	private Alignment alignment;
 	private String[][] nucleotideSequences;
+	private int[] sequenceLengths;
 	
 	/*
 	 * A baseline represents the x-axis of the linearArcDiagram.
@@ -57,6 +58,7 @@ public class Baseline extends ChildDrawingNode {
 		
 		drawNumbers = true;
 		fontSize = 14;
+		stringHeight = 15;
 		font = new Font("SansSerif", Font.BOLD, fontSize);
 		numbersFont = new Font("SansSerif", Font.PLAIN, fontSize);
 		this.root = root;
@@ -64,6 +66,10 @@ public class Baseline extends ChildDrawingNode {
 	
 	private void init(){
 		nucleotideSequences = new String[alignment.getSequenceCount()][alignment.getLength()];
+		sequenceLengths = new int[alignment.getSequenceCount()];
+		for(int i=0; i<alignment.getSequenceCount(); i++){
+			sequenceLengths[i] = alignment.getSequence(i).getLength();
+		}
 		String s;
 		
 		for(int j=0; j<alignment.getSequenceCount(); j++){
@@ -157,6 +163,10 @@ public class Baseline extends ChildDrawingNode {
 					}
 				}
 			}
+			for(int i=0; i<sequenceLengths.length; i++){
+				int seqLength = sequenceLengths[i];
+				g2.drawString(Integer.toString(seqLength), (int)((length)*root.getScaleX() + 10),root.getBaseXAxis()+(i*stringHeight));
+			}
 		}
 		return DrawingResult.NORMAL;
 	}
@@ -210,7 +220,7 @@ public class Baseline extends ChildDrawingNode {
 	public void updateFontWithFont(Font font){
 		this.font = font;
 		System.out.println("updateFontWithFont");
-		repaint();
+		repaint();		
 	}
 	
 	public void updateFont(){
@@ -259,7 +269,7 @@ public class Baseline extends ChildDrawingNode {
 	
 	public int getHeight(){
 		if(root.getScaleX() < 11){
-			return 2*stringHeight + gapHeight;
+			return  (2+sequenceLengths.length*stringHeight) + gapHeight;
 		}
 		else{
 			return alignment.getSequenceCount()*stringHeight + gapHeight;	
