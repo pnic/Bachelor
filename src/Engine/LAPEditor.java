@@ -15,6 +15,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.SwingUtilities;
 
+import LinearArcPlotEditor.AlignmentModel;
+import LinearArcPlotEditor.AlignmentView;
 import LinearArcPlotEditor.AnnotationLayoutModel;
 import LinearArcPlotEditor.AnnotationLayoutView;
 import LinearArcPlotEditor.AnnotationTypeModel;
@@ -134,6 +136,18 @@ public class LAPEditor extends AbstractGraphicsEditor {
             }
         });
         
+        final AlignmentModel alignModel = new AlignmentModel("Alignment Layout");
+        AlignmentView alignView = new AlignmentView(alignModel, alignment.getSequenceCount());
+        alignModel.addSidePanelListener(new SidePanelListener(){
+			@Override
+			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
+				if(lap != null){
+					lap.drawArcsFromSequence(alignModel.getSequenceNumber());
+				}
+			}
+        	
+        });
+        
         final TextModel textModel = new TextModel(manager);
         TextView textView = new TextView(textModel);
         
@@ -211,7 +225,10 @@ public class LAPEditor extends AbstractGraphicsEditor {
         	}
         });
         
+        
+        // Add all the views. 
         addSidePanelView(seqView);
+        addSidePanelView(alignView);
         addSidePanelView(annotationLayoutView);
         addSidePanelView(annotationTypeView);
         addSidePanelView(textView);        

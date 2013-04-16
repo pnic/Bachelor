@@ -18,6 +18,6 @@
 	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/logback-classic-1.0.1.jar"/>
 	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/logback-core-1.0.1.jar"/>
 	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/slf4j-api-1.6.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Peter Skovgaard/Desktop/6. semester/Bachelor Projekt/New CLC 932/CLCDeveloperKit/CLCWorkbench.jar"/>
+	<classpathentry kind="lib" path="/Users/dvddaver/Documents/ITU/6 semester/Bachelor/CLCDeveloperKit_3_9_2/CLCDeveloperKit/CLCWorkbench.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

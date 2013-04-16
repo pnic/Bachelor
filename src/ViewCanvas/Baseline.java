@@ -31,7 +31,8 @@ public class Baseline extends ChildDrawingNode {
 	Line2D baseLine = new Line2D.Double(0,0,300,0);
 	Stroke stroke = new BasicStroke(2); 
 	private int length;
-	private byte[] nrs;
+	private int gapHeight;
+	private int stringHeight;
 	private Font font;
 	private Font numbersFont;
 	private boolean isBold;
@@ -52,11 +53,8 @@ public class Baseline extends ChildDrawingNode {
 		this.alignment = alignment; 
 		init();
 		Sequence seq = alignment.getSequence(0);
-		this.length = seq.getLength();
-		nrs = new byte[length];
-		for(int i=0; i<length; i++){
-			nrs[i] = seq.getSymbolIndexAt(i);
-		}
+		this.length = alignment.getLength();
+		
 		drawNumbers = true;
 		fontSize = 14;
 		font = new Font("SansSerif", Font.BOLD, fontSize);
@@ -89,12 +87,15 @@ public class Baseline extends ChildDrawingNode {
 		int viewPX = root.getXViewBounds();
 		int viewPWidth = root.getViewPaneWidth();
 		
+		System.out.println("BASELINE PRINT GET SCALEX " + getScaleX());
+		System.out.println("Root getsacleX " + root.getScaleX());
+		
 		if(font != null) {
 			g2.setFont(font);
 		}
 		
-		if(getScaleX() < 11){
-			baseLine.setLine(0,root.getBaseXAxis(), (int)(length*getScaleX()), root.getBaseXAxis());
+		if(root.getScaleX() < 11){
+			baseLine.setLine(0,root.getBaseXAxis(), (int)(length*root.getScaleX()), root.getBaseXAxis());
 			
 			g2.setStroke(stroke);
 			g2.draw(baseLine);
@@ -102,19 +103,19 @@ public class Baseline extends ChildDrawingNode {
 		}
 		// If scaleX() is over 12, draw sequence instead.
 		else{
-			int stringHeight = g2.getFontMetrics().getHeight();
+			stringHeight = g2.getFontMetrics().getHeight();
 			int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), "U");
 			for(int j=0; j<alignment.getSequenceCount(); j++){
 				for(int i=0; i<alignment.getLength(); i++){	
 					// Only if number is in the screen. 
-					if(viewPX < (i*getScaleX()) && i*getScaleX() < (viewPX+viewPWidth)){
+					if(viewPX < (i*root.getScaleX()) && i*root.getScaleX() < (viewPX+viewPWidth)){
 						//String s = AlphabetTools.getRnaAlphabet().getSymbol(nrs[i]).getShortName();
 						String s = nucleotideSequences[j][i];
 						g2.setColor(getRasmolColor(s));
 						
-						if(rasmolBack) g2.fillRect((int)(i*getScaleX())-(stringWidth/2), root.getBaseXAxis()+4+(j*stringHeight), stringWidth, stringHeight-2);
+						if(rasmolBack && s != "-") g2.fillRect((int)(i*root.getScaleX())-(stringWidth/2), root.getBaseXAxis()+4+(j*stringHeight), stringWidth, stringHeight-2);
 						if(!rasmolFront) g2.setColor(new Color(0,0,0));
-						g2.drawString(s, (int)(i*getScaleX())-stringWidth/2, root.getBaseXAxis()+stringHeight+(j*stringHeight));
+						g2.drawString(s, (int)(i*root.getScaleX())-stringWidth/2, root.getBaseXAxis()+stringHeight+(j*stringHeight));
 					}
 				}	
 			}
@@ -127,8 +128,7 @@ public class Baseline extends ChildDrawingNode {
 			if(numbersFont != null) {
 				g2.setFont(numbersFont);
 			}
-			int stringHeight = g2.getFontMetrics().getHeight();
-			int stringWidth;
+			
 			
 			// Y positions to calcualte where number and line should be. 
 			int firstGap = 6;
@@ -136,20 +136,24 @@ public class Baseline extends ChildDrawingNode {
 			int secondGap = 0;
 			int intervalHeight = 10;
 			
+			stringHeight = g2.getFontMetrics().getHeight();
+			gapHeight = firstGap + secondGap + intervalHeight;
+			int stringWidth;
+			
 			for(int i=0; i<length; i++){
 				if(i%interval == 0){
 					stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), Integer.toString(i-startingIndexNumber));
-					int stringx_pos = (int)(i*getScaleX()-stringWidth/2);
-					int lineX_pos = (int)(i*getScaleX());
+					int stringx_pos = (int)(i*root.getScaleX()-stringWidth/2);
+					int lineX_pos = (int)(i*root.getScaleX());
 					
-					if(getScaleX() < 11){
+					if(root.getScaleX() < 11){
 						g2.drawString(Integer.toString(i-startingIndexNumber), stringx_pos, root.getBaseXAxis()+stringHeight+firstGap + secondGap + intervalHeight);
 						g2.drawLine(lineX_pos, root.getBaseXAxis()+firstGap, lineX_pos, root.getBaseXAxis()+firstGap + intervalHeight);
 					}
 					// If scale is above 11, we need more space since nucleotides are shown instead of just a line. 
 					else{
-						g2.drawString(Integer.toString(i-startingIndexNumber), stringx_pos, root.getBaseXAxis()+(2*stringHeight)+firstGap + secondGap + intervalHeight);
-						g2.drawLine(lineX_pos, root.getBaseXAxis()+stringHeight+firstGap, lineX_pos, root.getBaseXAxis()+stringHeight+firstGap+intervalHeight);
+						g2.drawString(Integer.toString(i-startingIndexNumber), stringx_pos, root.getBaseXAxis()+((alignment.getSequenceCount()+1)*stringHeight)+firstGap + secondGap + intervalHeight);
+						g2.drawLine(lineX_pos, root.getBaseXAxis()+(stringHeight*alignment.getSequenceCount())+firstGap, lineX_pos, root.getBaseXAxis()+(stringHeight*alignment.getSequenceCount())+firstGap+intervalHeight);
 					}
 				}
 			}
@@ -177,12 +181,12 @@ public class Baseline extends ChildDrawingNode {
 	 * Returns the interval for when an index number should be shown. 
 	 */
 	private int getIntervalNumber(){
-		if(getScaleX() < 0.2 && length > 1000) return 500;
-		if(getScaleX() < 0.3) return 300;
-		if(getScaleX() < 0.8) return 150;
-		if(0.8 < getScaleX() && getScaleX() < 1.5) return 100;
-		if(1.5 < getScaleX() && getScaleX() < 3.0) return 50;
-		if(3.0 < getScaleX() && getScaleX() < 11) return 25;
+		if(root.getScaleX() < 0.2 && length > 1000) return 500;
+		if(root.getScaleX() < 0.3) return 300;
+		if(root.getScaleX() < 0.8) return 150;
+		if(0.8 < root.getScaleX() && root.getScaleX() < 1.5) return 100;
+		if(1.5 < root.getScaleX() && root.getScaleX() < 3.0) return 50;
+		if(3.0 < root.getScaleX() && root.getScaleX() < 11) return 25;
 		else return 10;
 	}
 	
@@ -251,5 +255,14 @@ public class Baseline extends ChildDrawingNode {
 		this.startingIndexNumber = index;
 		System.out.println("setIndexNumber");
 		repaint();
+	}
+	
+	public int getHeight(){
+		if(root.getScaleX() < 11){
+			return 2*stringHeight + gapHeight;
+		}
+		else{
+			return alignment.getSequenceCount()*stringHeight + gapHeight;	
+		}
 	}
 }

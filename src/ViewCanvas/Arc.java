@@ -65,8 +65,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	private int arc_y_position;
 	private double contains;
 	private double mouse_limit;
-	private Timer mouseOverTimer;
-	private boolean mouseOverTimeEnabled;
 	private double reliability;
 	public int pairNumber;
 	public boolean firstModification = true;
@@ -77,7 +75,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		this.root = root;
 		this.reliability = reliability;
 		mouseListenerSat = false;
-		mouseOverTimer = new Timer();
 	}
 	
 	private void update(){
@@ -115,18 +112,16 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	}
 	
 	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
-			newp1 = (int)(p1*getScaleX());
-			newp2 = (int) (p2*getScaleX());
-
+			newp1 = (int)(p1*root.getScaleX());
+			newp2 = (int) (p2*root.getScaleX());
+			
 			update();
 			// Check if arc is in screen. 
 			if(isArcInScreen() && arc_width > 5){
 				BasicStroke backArcStroke = new BasicStroke(3);
 				BasicStroke normalArcStroke = new BasicStroke(1);
 				BasicStroke overArcStroke = new BasicStroke(3);
-				if(mouseOverTimeEnabled){
-					System.out.println("yes sir");
-				}
+
 				if(!mouseListenerSat && (arc_width > 100 || getScaleX() > 8)){
 					this.addMouseInputListener(this);
 					mouseListenerSat = true;
@@ -264,8 +259,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 					oldViewX = root.getXViewBounds();
 					oldViewY = root.getYViewBounds();
 					drawRect = false;
-					mouseOverTimer.cancel();
-					mouseOverTimeEnabled = false;
+
 					root.getEditor().removeToolTip(this);
 					repaint();
 				}

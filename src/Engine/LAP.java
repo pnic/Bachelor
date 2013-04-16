@@ -22,6 +22,9 @@ import com.clcbio.api.clc.graphics.framework.ViewBounds;
 import com.clcbio.api.free.datatypes.ClcStackListener;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentIndexer;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentSequenceIndexer;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.index.BasicIndexer;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.Region;
 import com.clcbio.api.free.datatypes.framework.history.History;
 import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
@@ -29,6 +32,7 @@ import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
 public class LAP extends RootDrawingNode {
 	private int [] pairings; 
 	private float [] reliabilities; 
+	private Alignment align;
 	private int broadestPair;
 	private Arc [] arcs; 
 	private Baseline baseline;
@@ -38,58 +42,116 @@ public class LAP extends RootDrawingNode {
 	private LAPFeatureView lv;
 	private LAPEditor editor;
 	private Arc mouseOverArc;
+	private int oldSequence;
 	
 	public LAP(Alignment align, ColorGradientModel gradmodel, String title, LAPEditor editor){
+		this.align = align;
+		
 		this.current_sequence = align.getSequence(0);
+		oldSequence = 0;
 		this.editor = editor;
 		this.gradmodel = gradmodel;
 		
 		// initialize
 		init();
-		
+		System.out.println("Konstruktor k¿res");
 		// set structure
 		setStructure(RnaStructures.getStructures(current_sequence).getStructure(0));
-		
-		baseline = new Baseline(align, this);
-		addChild(baseline);
-			
-		setColor();
-		setSize();
 	}
 	
+	public void drawArcsFromSequence(int sequenceNumber){
+		System.out.println("Changes to sequence: " + sequenceNumber);
+		if(sequenceNumber >= 0 && sequenceNumber < align.getSequenceCount() && sequenceNumber != oldSequence){
+			current_sequence = align.getSequence(sequenceNumber);
+			oldSequence = sequenceNumber;
+			setStructure(RnaStructures.getStructures(current_sequence).getStructure(0));
+			
+		}
+		else{
+			System.out.println("Nothing actually happens");	
+		}
+	}
 	
 	/*
 	 * Sets the RNA structure visualized by the diagram. 
 	 */
 	private void setStructure(RnaStructure structure){
+		System.out.println("Drawing structure, chd count " + this.getChildCount());
+		removeArcs();
+		//removeAllChildren();
 		pairings = structure.getPairing();
 		reliabilities = new float[structure.getLength()];
 		
-		scaleX = 700.0/pairings.length;
-		scaleY = scaleX;
-		
+		if(baseline == null){
+			scaleX = 700.0/pairings.length;
+			scaleY = scaleX;
+		}
 		int nr=0;
 		for(int i = 0;i<pairings.length; i++){
 			if(pairings[i]>i){
 				nr = nr+1;
-				if(pairings[i]-i > broadestPair){
-					broadestPair = (pairings[i]-i);
-				}
+				//if(pairings[i]-i > broadestPair){
+					///broadestPair = (pairings[i]-i);
+				//}
 			}
 		}
 		
+		int[] seqNumbers = new int[align.getLength()];
+		float[] seqReliabillities = new float[align.getLength()];
+		int isFound = 0;
+		
 		//Generate arcs
+		BasicIndexer indexer = new AlignmentSequenceIndexer(align, oldSequence);
+		int alignCounter = 0;
+		if(!indexer.knowsAlignmentPositions()){
+			for(int i=0; i<pairings.length; i++){
+				if(pairings[i] > i){
+					int arrIndex = 0;
+					int arrNumber = 0;
+					for(int j=alignCounter; j<align.getLength() && isFound <= 1; j++){
+						int alignPos = indexer.getSequencePosition(j);
+						if(alignPos == pairings[i]){
+							arrIndex = j;
+							isFound++;
+						}
+						if(alignPos == i){
+							arrNumber = j;
+							alignCounter = j;
+							isFound++;
+						}
+					}
+					isFound = 0;
+					seqNumbers[arrNumber] = arrIndex;
+					seqNumbers[arrIndex] = arrNumber;
+					
+				}
+			}
+		}
 		int cnt = 0;
 			arcs = new Arc[nr];
-			for(int i = 0; i<pairings.length; i++){
-				if(pairings[i]>i){
-					arcs[cnt] = new Arc(i,pairings[i], reliabilities[i], this);
-					arcs[cnt].broadestPair = broadestPair;
-					addChild(arcs[cnt]);
-					arcs[cnt].pairNumber = cnt;
-					cnt = cnt+1;
+			if(indexer.knowsAlignmentPositions()){
+				for(int i = 0; i<pairings.length; i++){
+					if(pairings[i]>i){
+						//System.out.println("alignment position: " + indexer.getAlignmentPosition(i, false) + " seq position: " + i);
+						arcs[cnt] = new Arc(i,pairings[i], reliabilities[i], this);
+						arcs[cnt].broadestPair = broadestPair;
+						addChild(arcs[cnt]);
+						arcs[cnt].pairNumber = cnt;
+						cnt = cnt+1;
+					}
 				}
-		}
+			}
+			else{
+				for(int i=0; i<seqNumbers.length; i++){
+					if(seqNumbers[i] > i){
+						arcs[cnt] = new Arc(i, seqNumbers[i], seqReliabillities[i], this);
+						arcs[cnt].broadestPair = broadestPair;
+						addChild(arcs[cnt]);
+						arcs[cnt].pairNumber = cnt;
+						cnt = cnt+1;
+					}
+				}
+			}
 		
 		//Our Rna structure
     	List<RnaStructureAnnotation> annotations = structure.getStructureAnnotations();
@@ -102,7 +164,25 @@ public class LAP extends RootDrawingNode {
 		}
     	
 		lv = new LAPFeatureView(current_sequence,this);
-		setRelevantTypes();
+		
+		if(baseline == null){
+			baseline = new Baseline(align, this);
+			addChild(baseline);
+			
+		}
+			
+		setColor();
+		repaint();
+		//setRelevantTypes();
+	}
+	
+	private void removeArcs(){
+		if(arcs != null){
+			for(Arc arc: arcs){
+				this.removeChild(arc);
+			}
+		}
+		System.out.println("Antallet af children: " + this.getChildCount());
 	}
 	
 	private void init(){
@@ -134,9 +214,9 @@ public class LAP extends RootDrawingNode {
 
 		lv.buildRelevantTypes();
 		for(LAPFeatureType l : lv.getRelevantTypes()){
-			addChild(l);
+			//addChild(l);
 			for(LAPFeatureInterval li : l.getIntervals()){
-				addChild(li);
+				//addChild(li);
 			}
 		}
 	}
@@ -196,8 +276,8 @@ public class LAP extends RootDrawingNode {
 			}	
 		}
 		
-		if(pairings != null){
-			setSize(0, pairings.length*getScaleX()+50, 0, 600+(broadestPair/4)*getScaleY());
+		if(align != null && baseline != null){
+			setSize(0, align.getLength()*getScaleX()+50, 0, 300+((broadestPair/4)*getScaleY())+baseline.getHeight());
 		}
 		else{
 			setSize(0,1200*getScaleX(),0,600);
@@ -237,7 +317,7 @@ public class LAP extends RootDrawingNode {
 	
 	public void refresh2(){
 		setColor();
-		setRelevantTypes();
+		//setRelevantTypes();
 	}
 	
 	/*
@@ -354,7 +434,7 @@ public class LAP extends RootDrawingNode {
 	 * This returns the Y position of the Base X-axis used for drawing. 
 	 */
 	public int getBaseXAxis(){
-		return (int)(100+(broadestPair/4)*getScaleY());
+		return (int)(250+(broadestPair/4)*getScaleY());
 	}
 		
 	public int GetLDHeight(){

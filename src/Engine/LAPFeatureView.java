@@ -75,11 +75,17 @@ public void buildFeatureTypes(LAP root){
 		
 		
 		if(featureIter.hasNext()) types = new ArrayList<LAPFeatureType>();
+		else{
+			return;
+		}
 		
 		//Build LAPFeatureType elements for each different type of feature in the sequence.
 		buildTypes(seq.getFeatureTypes(),root);
 		
 		//Get type iterator
+		if(types == null){
+			System.out.println("types er null");
+		}
 		Iterator<LAPFeatureType> typeIter = types.iterator();
 		LAPFeatureType cur = typeIter.next();
 		
