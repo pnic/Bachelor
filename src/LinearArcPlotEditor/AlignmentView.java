@@ -3,6 +3,7 @@ package LinearArcPlotEditor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -27,7 +28,7 @@ public class AlignmentView extends SidePanelView {
 	
 	private void fillPanel(){
 		if(panel == null){
-			JLabel showAnnotations = new JLabel("Show annotations");
+			JLabel showAnnotations = new JLabel("Show alignment nr");
 			String[] numbers = new String[alignmentLength];
 			for(int i=0; i<numbers.length; i++){
 				numbers[i] = ""+(i+1);
@@ -49,7 +50,17 @@ public class AlignmentView extends SidePanelView {
 				}
 				
 			});
+			
+			final JCheckBox showAlignments = new JCheckBox("Show alignments");
+			showAlignments.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					((AlignmentModel)getModel()).setShowAlignments(showAlignments.isSelected());
+				}
+			});
+			
 			panel = new StandardLayout();
+			panel.addComp(showAlignments);
 			panel.addComps(showAnnotations, alignmentNumber);
 		}
 	}

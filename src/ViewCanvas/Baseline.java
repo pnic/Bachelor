@@ -1,5 +1,9 @@
 package ViewCanvas;
-
+/*
+ * David Korczynski
+ * dgeo@itu.dk
+ * May, 2013
+ */
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -40,23 +44,23 @@ public class Baseline extends ChildDrawingNode {
 	private Alignment alignment;
 	private String[][] nucleotideSequences;
 	private int[] sequenceLengths;
+	private boolean showAlignments;
 	
 	/*
 	 * A baseline represents the x-axis of the linearArcDiagram.
 	 */
 	public Baseline(Alignment alignment, LAP root){
 		this.alignment = alignment; 
-		init();
+		this.root = root;
 		this.length = alignment.getLength();
 		
-		drawNumbers = true;
-		fontSize = 14;
-		stringHeight = 15;
-		font = new Font("SansSerif", Font.BOLD, fontSize);
-		numbersFont = new Font("SansSerif", Font.PLAIN, fontSize);
-		this.root = root;
+		init();
 	}
 	
+	/*
+	 * Initializes sequence arrays, with correct symbols. 
+	 * Initializes the font attributes. 
+	 */
 	private void init(){
 		nucleotideSequences = new String[alignment.getSequenceCount()][alignment.getLength()];
 		sequenceLengths = new int[alignment.getSequenceCount()];
@@ -65,6 +69,7 @@ public class Baseline extends ChildDrawingNode {
 		}
 		String s;
 		
+		// Put all the sequences into string arrays, then it is faster to draw them. 
 		for(int j=0; j<alignment.getSequenceCount(); j++){
 			BasicIndexer indexer = new AlignmentSequenceIndexer(alignment, j);
 			Sequence seq = alignment.getSequence(j);
@@ -78,6 +83,14 @@ public class Baseline extends ChildDrawingNode {
 				nucleotideSequences[j][i] = s;
 			}
 		}
+		
+		drawNumbers = true;
+		showAlignments = true;
+		fontSize = 14;
+		stringHeight = 15;
+		isBold = true;
+		fontName = "SansSerif";
+		updateFont();
 	}
 	
 	@Override
@@ -91,15 +104,14 @@ public class Baseline extends ChildDrawingNode {
 		int intervalHeight = 10;
 		gapHeight = firstGap + secondGap + intervalHeight;
 		
-		if(font != null) g2.setFont(font);
+		g2.setFont(font);
 		stringHeight = g2.getFontMetrics().getHeight();
 		g2.setStroke(stroke);
-		
 		
 		int numbersGap = 50;
 		
 		if(root.getScaleX() < 11){
-			baseLine.setLine(0, root.getBaseXAxis(), length*root.getScaleX(), root.getBaseXAxis());
+			baseLine.setLine(0, root.getBaseXAxis()+2, length*root.getScaleX(), root.getBaseXAxis()+2);
 			g2.draw(baseLine);
 			for(int i=0; i<sequenceLengths.length; i++){
 				baseLine.setLine(0,root.getBaseXAxis()+(i*stringHeight)+numbersGap, (int)(length*root.getScaleX()), root.getBaseXAxis()+(i*stringHeight)+numbersGap);		
@@ -124,10 +136,7 @@ public class Baseline extends ChildDrawingNode {
 				}	
 			}
 		}
-		
-		
 		g2.setColor(new Color(0,0,0));
-		
 		
 		// Draw sequence lengths to the right.
 		int seqLength, number_y_pos, number_x_pos;
@@ -174,18 +183,11 @@ public class Baseline extends ChildDrawingNode {
 	}
 	
 	public Color getRasmolColor(String nucleotide){
-		if(nucleotide == "A"){
-			return new Color(210, 45, 45);
-		}
-		if(nucleotide == "C"){
-			return new Color(45, 45, 210);
-		}
-		if(nucleotide == "T" || nucleotide == "U"){
-			return new Color(45, 210, 45);
-		}
-		if(nucleotide == "G"){
-			return new Color(211, 211, 50);
-		}
+		if(nucleotide == "A") 						return new Color(210, 45, 45);
+		if(nucleotide == "C") 						return new Color(45, 45, 210);
+		if(nucleotide == "T" || nucleotide == "U") 	return new Color(45, 210, 45);
+		if(nucleotide == "G") 						return new Color(211, 211, 50);
+
 		return new Color(0,0,0);
 	}
 	
@@ -193,13 +195,13 @@ public class Baseline extends ChildDrawingNode {
 	 * Returns the interval for when an index number should be shown. 
 	 */
 	private int getIntervalNumber(){
-		if(root.getScaleX() < 0.12 && length > 1000) return 1000;
-		if(root.getScaleX() < 0.2 && length > 1000) return 500;
-		if(root.getScaleX() < 0.3) return 300;
-		if(root.getScaleX() < 0.8) return 150;
-		if(0.8 < root.getScaleX() && root.getScaleX() < 1.5) return 100;
-		if(1.5 < root.getScaleX() && root.getScaleX() < 3.0) return 50;
-		if(3.0 < root.getScaleX() && root.getScaleX() < 11) return 25;
+		if(root.getScaleX() < 0.12 && length > 1000) 			return 1000;
+		if(root.getScaleX() < 0.2 && length > 1000) 			return 500;
+		if(root.getScaleX() < 0.3) 								return 300;
+		if(root.getScaleX() < 0.8) 								return 150;
+		if(0.8 < root.getScaleX() && root.getScaleX() < 1.5) 	return 100;
+		if(1.5 < root.getScaleX() && root.getScaleX() < 3.0) 	return 50;
+		if(3.0 < root.getScaleX() && root.getScaleX() < 11) 	return 25;
 		else return 10;
 	}
 	
@@ -208,7 +210,6 @@ public class Baseline extends ChildDrawingNode {
 	}
 
 	public void setFontSize(int fontSize) {
-		System.out.println("Font size: " + fontSize);
 		this.fontSize = fontSize;
 	}
 
@@ -222,7 +223,6 @@ public class Baseline extends ChildDrawingNode {
 	
 	public void updateFontWithFont(Font font){
 		this.font = font;
-		System.out.println("updateFontWithFont");
 		repaint();		
 	}
 	
@@ -234,7 +234,7 @@ public class Baseline extends ChildDrawingNode {
 			font = new Font(fontName, Font.PLAIN, fontSize);
 		}
 		numbersFont = new Font(fontName, Font.PLAIN, fontSize);
-		System.out.println("updateFont arc");
+	
 		repaint();
 	}
 	
@@ -247,20 +247,14 @@ public class Baseline extends ChildDrawingNode {
 	}
 	
 	public void drawNumbers(boolean drawNum){
-		System.out.println("base: " + drawNum);
 		this.drawNumbers = drawNum;
-		System.out.println("drawNumbers");
 		this.repaint();
 	}
 	
 	public void showRasmolColors(boolean show, int ground){
-		if(ground == 0){
-			rasmolFront = show;
-		}
-		if(ground == 1){
-			rasmolBack = show;
-		}
-		System.out.println("showRasmolColors");
+		if(ground == 0)	rasmolFront = show;
+		if(ground == 1) rasmolBack = show;
+
 		this.repaint();
 	}
 	
@@ -277,4 +271,14 @@ public class Baseline extends ChildDrawingNode {
 			return alignment.getSequenceCount()*stringHeight + gapHeight;	
 		}
 	}
+
+	public boolean isShowAlignments() {
+		return showAlignments;
+	}
+
+	public void setShowAlignments(boolean showAlignments) {
+		this.showAlignments = showAlignments;
+	}
+	
+	
 }

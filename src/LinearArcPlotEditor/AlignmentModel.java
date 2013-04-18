@@ -6,6 +6,7 @@ import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 public class AlignmentModel extends SidePanelModel{
 
 	private int sequenceNumber;
+	private boolean showAlignments;
 	
 	public AlignmentModel(String arg0) {
 		super(arg0);
@@ -20,6 +21,15 @@ public class AlignmentModel extends SidePanelModel{
 	
 	public int getSequenceNumber(){
 		return sequenceNumber;
+	}
+
+	public boolean isShowAlignments() {
+		return showAlignments;
+	}
+
+	public void setShowAlignments(boolean showAlignments) {
+		this.showAlignments = showAlignments;
+		this.fireModelChanged();
 	}
 
 	@Override

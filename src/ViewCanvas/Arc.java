@@ -1,8 +1,8 @@
 package ViewCanvas;
 
 /*
- * Made by: David Korczynski
- * e: dgeo@itu.dk
+ * David Korczynski
+ * dgeo@itu.dk
  * May, 2013. 
  */
 import java.awt.AlphaComposite;
@@ -219,6 +219,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		if(root.getEditor().getMouseMode() == MouseMode.SELECT_MODE){
 		
 		if(isArcInScreen()){
+			if(arg0.getY() < (root.getBaseXAxis() + 5)){
 			int x_pos = arg0.getX()+root.getXViewBounds();
 			int y_pos = arg0.getY()+root.getYViewBounds();
 			if(touchesArc2(x_pos, y_pos)){
@@ -242,6 +243,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 					repaint();
 				}
 			}
+		}
 		}
 		}
 	}
