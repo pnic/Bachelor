@@ -1,10 +1,8 @@
 package LinearArcPlotEditor;
 
-import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -15,6 +13,7 @@ import com.clcbio.api.free.gui.StandardLayout;
 
 public class AlignmentView extends SidePanelView {
 
+	private static final long serialVersionUID = 1L;
 	private StandardLayout panel;
 	private int alignmentLength;
 	private int oldValue;

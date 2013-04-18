@@ -2,20 +2,9 @@ package ViewCanvas;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.event.MouseListener;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-
-import javax.swing.JComponent;
-
-
 
 import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
@@ -35,7 +24,6 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 	int width = 20; 
 	private double x_pos; 
 	private double y_pos; 
-	private double circ_r; 
 	Rectangle2D[] rectangles = new Rectangle2D[colorResolution];
 	Color[] colors = new Color[colorResolution];
 	Stroke stroke = new BasicStroke(1f); 

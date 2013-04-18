@@ -1,18 +1,11 @@
 package Engine;
 
-import java.awt.BorderLayout;
-import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.SwingUtilities;
 
 import LinearArcPlotEditor.AlignmentModel;
@@ -29,15 +22,11 @@ import LinearArcPlotEditor.SequenceView;
 import LinearArcPlotEditor.StructureValueInfoProvider;
 import LinearArcPlotEditor.TextModel;
 import LinearArcPlotEditor.TextView;
-import ViewCanvas.ColorGradientRectangle;
-import ViewCanvas.TitleText;
 import ViewCanvas.infoBox;
 
-import com.clcbio.api.base.persistence.PersistenceException;
 import com.clcbio.api.base.session.FactoryManager;
 import com.clcbio.api.base.util.CreateList;
 import com.clcbio.api.base.util.State;
-import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
 import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
 import com.clcbio.api.clc.editors.graphics.sequence.sidepanel.SequenceInfoView;
@@ -45,13 +34,7 @@ import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.NucleotideSequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentBuilder;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentFactory;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
-import com.clcbio.api.free.datatypes.framework.listener.ObjectListener;
-import com.clcbio.api.free.datatypes.framework.listener.SelectionEvent;
-import com.clcbio.api.free.editors.framework.sidepanel.SidePanelException;
-import com.clcbio.api.free.editors.framework.sidepanel.SidePanelGroup;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelListener;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.editors.framework.sidepanel.event.SidePanelEvent;
@@ -61,9 +44,6 @@ import com.clcbio.api.free.gui.icon.DefaultClcIcon;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 import com.clcbio.api.clc.graphics.AbstractGraphicsEditor;
 import com.clcbio.api.clc.graphics.components.ColorGradientManager;
-import com.clcbio.api.clc.gui.framework.ParameterPanel;
-import com.clcbio.api.clc.plugins.editors.graphics.sequence.SequenceTypeEditor;
-import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.AbstractInfoProvider;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.InfoListener;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.InfoProvider;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.SequenceInfoModel;
@@ -84,7 +64,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	private boolean inputIsAlignment;
 	private Alignment alignment;
 	
-	private Font font = new Font("Monospaced", Font.PLAIN, 12);
     private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };	
 	public ClcObject[] models;
 	

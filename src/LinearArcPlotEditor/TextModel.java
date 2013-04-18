@@ -5,7 +5,6 @@ import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 
 import com.clcbio.api.base.util.State;
-import com.clcbio.api.clc.editors.graphics.sequence.sidepanel.TextLayoutModel;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 

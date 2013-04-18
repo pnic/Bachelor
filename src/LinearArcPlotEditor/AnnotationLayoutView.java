@@ -6,7 +6,6 @@ import java.awt.event.ItemListener;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;

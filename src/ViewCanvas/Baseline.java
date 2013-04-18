@@ -3,14 +3,10 @@ package ViewCanvas;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
 
-import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import Engine.LAP;
@@ -18,13 +14,11 @@ import Engine.LAP;
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
-import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentSequenceIndexer;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.index.BasicIndexer;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.RegionTools;
 
 public class Baseline extends ChildDrawingNode {
 	
@@ -53,7 +47,6 @@ public class Baseline extends ChildDrawingNode {
 	public Baseline(Alignment alignment, LAP root){
 		this.alignment = alignment; 
 		init();
-		Sequence seq = alignment.getSequence(0);
 		this.length = alignment.getLength();
 		
 		drawNumbers = true;
@@ -92,24 +85,29 @@ public class Baseline extends ChildDrawingNode {
 		// If scaleX() is under 12, draw a line.
 		int viewPX = root.getXViewBounds();
 		int viewPWidth = root.getViewPaneWidth();
+		int interval = getIntervalNumber();
+		int firstGap = 6;
+		int secondGap = 0;
+		int intervalHeight = 10;
+		gapHeight = firstGap + secondGap + intervalHeight;
 		
-		System.out.println("BASELINE PRINT GET SCALEX " + getScaleX());
-		System.out.println("Root getsacleX " + root.getScaleX());
+		if(font != null) g2.setFont(font);
+		stringHeight = g2.getFontMetrics().getHeight();
+		g2.setStroke(stroke);
 		
-		if(font != null) {
-			g2.setFont(font);
-		}
+		
+		int numbersGap = 50;
 		
 		if(root.getScaleX() < 11){
-			baseLine.setLine(0,root.getBaseXAxis(), (int)(length*root.getScaleX()), root.getBaseXAxis());
-			
-			g2.setStroke(stroke);
+			baseLine.setLine(0, root.getBaseXAxis(), length*root.getScaleX(), root.getBaseXAxis());
 			g2.draw(baseLine);
-			g2.fill(baseLine);
+			for(int i=0; i<sequenceLengths.length; i++){
+				baseLine.setLine(0,root.getBaseXAxis()+(i*stringHeight)+numbersGap, (int)(length*root.getScaleX()), root.getBaseXAxis()+(i*stringHeight)+numbersGap);		
+				g2.draw(baseLine);
+			}
 		}
 		// If scaleX() is over 12, draw sequence instead.
 		else{
-			stringHeight = g2.getFontMetrics().getHeight();
 			int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), "U");
 			for(int j=0; j<alignment.getSequenceCount(); j++){
 				for(int i=0; i<alignment.getLength(); i++){	
@@ -127,45 +125,49 @@ public class Baseline extends ChildDrawingNode {
 			}
 		}
 		
+		
 		g2.setColor(new Color(0,0,0));
-		//Draw numbers and number lines
+		
+		
+		// Draw sequence lengths to the right.
+		int seqLength, number_y_pos, number_x_pos;
+		number_x_pos = (int) (length*root.getScaleX() + 10);
+		if(root.getScaleX() < 11){ g2.drawString(Integer.toString(alignment.getLength()), number_x_pos, root.getBaseXAxis()+stringHeight/2); }
+		
+		for(int i=0; i<sequenceLengths.length; i++){
+			seqLength = sequenceLengths[i];
+			//Depending on zoom level, we need to adjust the y_pos of the number. 
+			if(root.getScaleX() < 11){ 	number_y_pos = root.getBaseXAxis()+(i*stringHeight)+(stringHeight/3)+50; }
+			else{ 						number_y_pos = root.getBaseXAxis()+(i*stringHeight)+(stringHeight);}
+			
+			g2.drawString(Integer.toString(seqLength), number_x_pos ,number_y_pos);
+		}
+		
+		//Draw numbers
 		if(drawNumbers){
-			int interval = getIntervalNumber();
-			if(numbersFont != null) {
-				g2.setFont(numbersFont);
+			if(numbersFont != null) { g2.setFont(numbersFont); }
+
+			// Making variables ready who wont change during the loop, e.g. y-coordinate of texts. 
+			int stringWidth, YPosition_text, YPosition_line_start, YPosition_line_end;
+			//Under 11
+			if(root.getScaleX() < 11){
+				YPosition_text = root.getBaseXAxis()+stringHeight+firstGap + secondGap + intervalHeight;
+				YPosition_line_end = root.getBaseXAxis()+firstGap + intervalHeight;
+				YPosition_line_start = root.getBaseXAxis()+firstGap;
+			}//Over 11
+			else{
+				YPosition_text = root.getBaseXAxis()+((alignment.getSequenceCount()+1)*stringHeight)+firstGap + secondGap + intervalHeight;
+				YPosition_line_start = root.getBaseXAxis()+(stringHeight*alignment.getSequenceCount())+firstGap;
+				YPosition_line_end = root.getBaseXAxis()+(stringHeight*alignment.getSequenceCount())+firstGap+intervalHeight;
 			}
 			
-			
-			// Y positions to calcualte where number and line should be. 
-			int firstGap = 6;
-			// Even though its 0 - keep it, it will make further changes easier. 
-			int secondGap = 0;
-			int intervalHeight = 10;
-			
-			stringHeight = g2.getFontMetrics().getHeight();
-			gapHeight = firstGap + secondGap + intervalHeight;
-			int stringWidth;
-			
-			for(int i=0; i<length; i++){
-				if(i%interval == 0){
+			for(int i=0; i<length; i+= interval){
 					stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), Integer.toString(i-startingIndexNumber));
-					int stringx_pos = (int)(i*root.getScaleX()-stringWidth/2);
 					int lineX_pos = (int)(i*root.getScaleX());
 					
-					if(root.getScaleX() < 11){
-						g2.drawString(Integer.toString(i-startingIndexNumber), stringx_pos, root.getBaseXAxis()+stringHeight+firstGap + secondGap + intervalHeight);
-						g2.drawLine(lineX_pos, root.getBaseXAxis()+firstGap, lineX_pos, root.getBaseXAxis()+firstGap + intervalHeight);
-					}
-					// If scale is above 11, we need more space since nucleotides are shown instead of just a line. 
-					else{
-						g2.drawString(Integer.toString(i-startingIndexNumber), stringx_pos, root.getBaseXAxis()+((alignment.getSequenceCount()+1)*stringHeight)+firstGap + secondGap + intervalHeight);
-						g2.drawLine(lineX_pos, root.getBaseXAxis()+(stringHeight*alignment.getSequenceCount())+firstGap, lineX_pos, root.getBaseXAxis()+(stringHeight*alignment.getSequenceCount())+firstGap+intervalHeight);
-					}
-				}
-			}
-			for(int i=0; i<sequenceLengths.length; i++){
-				int seqLength = sequenceLengths[i];
-				g2.drawString(Integer.toString(seqLength), (int)((length)*root.getScaleX() + 10),root.getBaseXAxis()+(i*stringHeight));
+					// Draw number and line. 
+					g2.drawString(Integer.toString(i-startingIndexNumber), lineX_pos-(stringWidth/2), YPosition_text);
+					g2.drawLine(lineX_pos, YPosition_line_start, lineX_pos, YPosition_line_end);
 			}
 		}
 		return DrawingResult.NORMAL;
@@ -191,6 +193,7 @@ public class Baseline extends ChildDrawingNode {
 	 * Returns the interval for when an index number should be shown. 
 	 */
 	private int getIntervalNumber(){
+		if(root.getScaleX() < 0.12 && length > 1000) return 1000;
 		if(root.getScaleX() < 0.2 && length > 1000) return 500;
 		if(root.getScaleX() < 0.3) return 300;
 		if(root.getScaleX() < 0.8) return 150;
@@ -263,13 +266,12 @@ public class Baseline extends ChildDrawingNode {
 	
 	public void setIndexNumber(int index){
 		this.startingIndexNumber = index;
-		System.out.println("setIndexNumber");
 		repaint();
 	}
 	
 	public int getHeight(){
 		if(root.getScaleX() < 11){
-			return  (2+sequenceLengths.length*stringHeight) + gapHeight;
+			return  (2+sequenceLengths.length*stringHeight) + gapHeight+50;
 		}
 		else{
 			return alignment.getSequenceCount()*stringHeight + gapHeight;	

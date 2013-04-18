@@ -1,35 +1,25 @@
 package ViewCanvas;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import Engine.*;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 
 
-public class EditArcDialog extends JDialog{
+public class EditArcDialog extends JDialog{ 
+	
+	private static final long serialVersionUID = 1L;
 	private Arc arc;
 	private final String errorMessage = "An error occured when trying to validate. The error could be caused by: \n";
 	

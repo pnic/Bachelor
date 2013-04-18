@@ -1,26 +1,15 @@
 package LinearArcPlotEditor;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.clcbio.api.base.util.State;
-import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
-import com.clcbio.api.clc.graphics.components.ColorGradientManager;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 
 public class LAPLayoutModel extends SidePanelModel {
 
 	 private int zoomLevel = 100;
-     private State colorstate;
      private String LAPTitle = "Title";
-     private boolean titleIsVisible = true;
-	    
 
 	    private static final String ZOOM_LEVEL = "100%";
-	    private static final String KEY_COLORSTATE = "colorstate";
 	    
 	//Here we define some keys for later use in usersettings of the sidepanel model.
 

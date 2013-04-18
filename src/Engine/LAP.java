@@ -1,6 +1,5 @@
 package Engine;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,14 +18,10 @@ import com.clcbio.api.clc.graphics.framework.ClcCanvas;
 import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.clc.graphics.framework.ViewBounds;
-import com.clcbio.api.free.datatypes.ClcStackListener;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentIndexer;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentSequenceIndexer;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.index.BasicIndexer;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.Region;
-import com.clcbio.api.free.datatypes.framework.history.History;
 import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
 
 public class LAP extends RootDrawingNode {
