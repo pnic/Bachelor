@@ -121,8 +121,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			@Override
 			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
 				if(lap != null){
-					System.out.println("Model changed");
 					lap.drawArcsFromSequence(alignModel.getSequenceNumber());
+					lap.getBaseline().setShowAlignments(alignModel.isShowAlignments());
 				}
 			}
         	
