@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="res"/>
 	<classpathentry kind="lib" path="/CLCDeveloperKit/api/api-base.jar"/>
 	<classpathentry kind="lib" path="/CLCDeveloperKit/api/api-workbench.jar"/>
@@ -19,5 +18,15 @@
 	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/logback-core-1.0.1.jar"/>
 	<classpathentry kind="lib" path="/CLCDeveloperKit/lib-base/slf4j-api-1.6.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Peter Skovgaard/Desktop/6. semester/Bachelor Projekt/New CLC 932/CLCDeveloperKit/CLCWorkbench.jar"/>
+	<classpathentry kind="src" path=".apt_generated">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre6">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

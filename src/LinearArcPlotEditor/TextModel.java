@@ -5,7 +5,6 @@ import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 
 import com.clcbio.api.base.util.State;
-import com.clcbio.api.clc.editors.graphics.sequence.sidepanel.TextLayoutModel;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 
@@ -47,6 +46,7 @@ public class TextModel extends SidePanelModel{
 		textSize = 12;
 	}
 
+	@Override
 	public void loadModel(State model) {
         String s = model.get(KEY_FONT_NAME, String.class);
         if (s != null) {
@@ -56,7 +56,8 @@ public class TextModel extends SidePanelModel{
         textSize = model.get(KEY_TEXT_SIZE, Integer.class, textSize);
     }
 
-    public State saveModel() {
+    @Override
+	public State saveModel() {
         State model = new State();
         model.put(KEY_FONT_NAME, getFontName());
         model.put(KEY_IS_BOLD, isBold);
@@ -135,7 +136,8 @@ public class TextModel extends SidePanelModel{
         fireModelChanged();
     }
     
-    public String getId() {
+    @Override
+	public String getId() {
         return "TextLayoutModel";
     }
     

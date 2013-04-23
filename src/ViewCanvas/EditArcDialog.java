@@ -1,30 +1,18 @@
 package ViewCanvas;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import Engine.*;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SpringLayout;
-import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 
@@ -56,13 +44,13 @@ public class EditArcDialog extends JDialog{
         final JTextField secondNumber = new JTextField(Integer.toString(arc.p2));
         secondNumber.setPreferredSize(new Dimension(60,20));
 
-        
         TitledBorder border = new TitledBorder("Edit arc positions");
         editArcFields.add(first);
         editArcFields.add(firstNumber);
         editArcFields.add(second);
         editArcFields.add(secondNumber);
         editArcFields.setBorder(border);
+        
         add(editArcFields);
        	
        	// Buttons
@@ -75,6 +63,8 @@ public class EditArcDialog extends JDialog{
 			}
         	
         });
+        
+        
         
         JButton confirmBtn = new JButton("confirm");
         confirmBtn.addActionListener(new ActionListener(){
@@ -107,8 +97,20 @@ public class EditArcDialog extends JDialog{
 			}
         });
         
+        JButton showAsSequence = new JButton("Show as planar graph");
+        showAsSequence.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				arc.getRoot().showSub(arc);
+				EditArcDialog.this.dispose();
+			}
+        	
+        });
+        
         btns.add(cancelBtn);
         btns.add(confirmBtn);
+        btns.add(showAsSequence);
         
         add(btns);
         

@@ -1,18 +1,11 @@
 package Engine;
 
-import java.awt.BorderLayout;
-import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.SwingUtilities;
 
 import LinearArcPlotEditor.AnnotationLayoutModel;
@@ -27,15 +20,11 @@ import LinearArcPlotEditor.SequenceView;
 import LinearArcPlotEditor.StructureValueInfoProvider;
 import LinearArcPlotEditor.TextModel;
 import LinearArcPlotEditor.TextView;
-import ViewCanvas.ColorGradientRectangle;
-import ViewCanvas.TitleText;
 import ViewCanvas.infoBox;
 
-import com.clcbio.api.base.persistence.PersistenceException;
 import com.clcbio.api.base.session.FactoryManager;
 import com.clcbio.api.base.util.CreateList;
 import com.clcbio.api.base.util.State;
-import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
 import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
 import com.clcbio.api.clc.editors.graphics.sequence.sidepanel.SequenceInfoView;
@@ -43,13 +32,7 @@ import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.NucleotideSequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentBuilder;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentFactory;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
-import com.clcbio.api.free.datatypes.framework.listener.ObjectListener;
-import com.clcbio.api.free.datatypes.framework.listener.SelectionEvent;
-import com.clcbio.api.free.editors.framework.sidepanel.SidePanelException;
-import com.clcbio.api.free.editors.framework.sidepanel.SidePanelGroup;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelListener;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.editors.framework.sidepanel.event.SidePanelEvent;
@@ -59,9 +42,6 @@ import com.clcbio.api.free.gui.icon.DefaultClcIcon;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 import com.clcbio.api.clc.graphics.AbstractGraphicsEditor;
 import com.clcbio.api.clc.graphics.components.ColorGradientManager;
-import com.clcbio.api.clc.gui.framework.ParameterPanel;
-import com.clcbio.api.clc.plugins.editors.graphics.sequence.SequenceTypeEditor;
-import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.AbstractInfoProvider;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.InfoListener;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.InfoProvider;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.SequenceInfoModel;
@@ -104,7 +84,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         colorGradientModel = new ColorGradientModel(ColorGradientManager.getGradients());
         
         info = new infoBox("David", colorGradientModel);
-        lap = new LAP(alignment,colorGradientModel,"The title", this);
+        lap = new LAP(alignment,colorGradientModel,"The title", this, manager);
         
         getCanvas().addChild(lap);		
         getCanvas().addChild(info);
@@ -121,9 +101,11 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         // This states what happens (to the view) when the model changes.
         lapModel.addSidePanelListener(new SidePanelListener() {
-            public void modelChanged(SidePanelModel model, SidePanelEvent event) {
+            @Override
+			public void modelChanged(SidePanelModel model, SidePanelEvent event) {
                 SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         if(info != null){
 
                         	info.getTitleText().setTitle(lapModel.getLapTitle());
@@ -141,7 +123,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			@Override
 			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
 				SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         if(lap != null){
                         	lap.getBaseline().setBold(textModel.isBold());
                         	lap.getBaseline().setFontSize(sizeLookup[textModel.getTextSize()]);
@@ -160,10 +143,12 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			@Override
 			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
 				SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         if(lap != null){
                         	lap.getBaseline().drawNumbers(seqModel.getDrawNumbers());
                         	lap.getBaseline().setIndexNumber(seqModel.getIntervalNumbers());
+                        	
                         }
                         if(info != null){
                         	info.setVisible(seqModel.getShowInfoBox());
@@ -182,7 +167,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
         	@Override
         	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
         		SwingUtilities.invokeLater(new Runnable(){
-        			public void run(){
+        			@Override
+					public void run(){
         				if(lap != null){
         					if (annotationTypeModel.isLastUpdatedChanged()) lap.getLv().setTypeAcces(annotationTypeModel.getLastUpdated());
         					if (annotationTypeModel.isLabelChanged()) lap.getLv().setTypeColor(annotationTypeModel.getLastChangedLabelName(), annotationTypeModel.getLastChangedLabel());
@@ -200,7 +186,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
         	@Override
         	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
         		SwingUtilities.invokeLater(new Runnable(){
-        			public void run(){
+        			@Override
+					public void run(){
         				if(lap != null){
         					lap.getLv().setShowAnnotations(annotationLayoutModel.getshowAnnotations());
         					lap.getLv().setShowView(annotationLayoutModel.getSelected());
@@ -332,6 +319,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     	
     }
 
+	@Override
 	public boolean canDoMode(MouseMode arg0) {
 		// TODO Auto-generated method stub
 		//pan & zoom enabled
@@ -356,6 +344,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 		this.info = info;
 	}
 	
+	@Override
 	public ClcObject[] getEditingObjects(boolean isDragging) {
         return new ClcObject[] { seq };
     }
@@ -366,11 +355,13 @@ public class LAPEditor extends AbstractGraphicsEditor {
         return getName();
     }
 
-    public double getVersion() {
+    @Override
+	public double getVersion() {
         return 1.0;
     }
 
-    public String getClassKey() {
+    @Override
+	public String getClassKey() {
         return "lap_editor";
     }
 
@@ -406,6 +397,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     }
 	//Human readable text string, that will appear in a "View" submenu. The concatenated string will then be "View As Simple Text"
     
+	@Override
 	public boolean canEdit(Class[] types) {
 		if (types == null || types.length != 1) {
             return false;

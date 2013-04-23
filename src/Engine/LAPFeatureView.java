@@ -5,33 +5,17 @@ import ViewCanvas.LAPFeature;
 import ViewCanvas.LAPFeatureInterval;
 import ViewCanvas.LAPFeatureType;
 
-import com.clcbio.api.base.io.ClcFileFilter;
-import com.clcbio.api.base.io.ExportPlugin;
-import com.clcbio.api.base.persistence.PersistenceException;
-import com.clcbio.api.base.process.Activity;
-import com.clcbio.api.base.util.iterator.MovableIntegerIterator;
-import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
-import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.annotation.RnaStructureAnnotation;
-import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
-import com.clcbio.api.free.datatypes.ClcObject;
-import com.clcbio.api.free.datatypes.ClcString;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.feature.Feature;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.feature.FeatureTypes;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.interval.Interval;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.Region;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.rnasecondary.RnaStructureAnnotationTools;
-import com.clcbio.api.free.gui.dialog.ClcMessages;
+import com.clcbio.api.free.framework.workspace.WorkspaceManager;
+import com.clcbio.api.free.workbench.WorkbenchManager;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
@@ -46,6 +30,9 @@ public class LAPFeatureView {
 	private int typeWidth;
 	private LAP root;
 	
+	private int featuresUpperY;
+	private int featuresLowerY;
+	
 	
 	private boolean showAnnotations;
 	private boolean showArrows;
@@ -56,6 +43,7 @@ public class LAPFeatureView {
 	public LAPFeatureView(Sequence seq, LAP root){
 		this.root = root;
 		this.seq = seq;
+		
 		
 		this.showAnnotations = true;
 		this.showArrows = true;
@@ -185,7 +173,8 @@ public void buildRelevantTypes(){
 		}
 		}
 	}
-	
+	featuresLowerY = (expanded*45)+(relevantTypes.size()*(typeHeight+20))+startOffset+root.getBaseXAxis();
+	featuresUpperY = startOffset+root.getBaseXAxis();	
 }
 
 private LAPFeatureType changeCurrentType(String fetType){
@@ -341,6 +330,26 @@ public void setShowView(String selected) {
 			l.setAsLines(true);
 		}	
 	}	
+}
+
+
+public int getFeaturesUpperY() {
+	return featuresUpperY;
+}
+
+
+public void setGetFeaturesUpperY(int featuresUpperY) {
+	this.featuresUpperY = featuresUpperY;
+}
+
+
+public int getFeaturesLowerY() {
+	return featuresLowerY;
+}
+
+
+public void setFeaturesLowerY(int featuresLowerY) {
+	this.featuresLowerY = featuresLowerY;
 }
 
 }

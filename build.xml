@@ -5,10 +5,10 @@
 	<!-- ### Basic Properties (Update these to suit your environment) ### //-->
 
 	<!-- The name of your plugin //-->
-	<property name="Bachelor Plugin" value="MyPlugin"/>
+	<property name="Bachelor plugin" value="Bachelor_plugin"/>
 
 	<!-- The path to your clcdeveloperkit //-->
-	<property name="sdkDir" value="/Users/dvddaver/Documents/workspace/CLCDeveloperKit"/>
+	<property name="sdkDir" value="/Users/Peter Skovgaard/workspace/CLCDeveloperKit"/>
 
 	<!-- ### Advanced Properties (Normally you should not have to change these) ### //-->
 	<property name="pluginDescFile" value="plugin_description"/>
@@ -69,7 +69,7 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</path>
-		<javac destdir="${buildDir}" debug="on" deprecation="on">
+		<javac destdir="${buildDir}" debug="off" deprecation="off">
 			<src>
 				<path refid="srcPath" />
 			</src>

@@ -1,38 +1,34 @@
 package ViewCanvas;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.Stroke;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.util.Vector;
 
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
+import javax.swing.event.MouseInputListener;
 
 import Engine.LAP;
 
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
-import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 
-public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
+public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, MouseInputListener{
 
 	Line2D startLine;
 	Line2D endLine;
 	private int startPos;
 	private int endPos;
 	private int offset;
-	
+	private Polygon arrowPolygon;
 	//private int[] xpoints;
 	//private int[] ypoints;
-
+	private long prevClick = 0;
 	//Colors for differentiation of intervals
 	private float red;
 	private float green;
@@ -47,6 +43,11 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 	
 	private boolean lines;
 	private boolean arrows;
+	private boolean hover;
+	private long prevHover;
+	private boolean hasMouseListener;
+	private boolean expanded;
+	private boolean changed;
 
 	public LAPFeatureInterval(String name, int startPos, int endPos, int offset, LAP root, LAPFeatureType type){
 		
@@ -61,12 +62,12 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 		this.root = root;		
 		this.type = type;
 		
-		calcColors((float)type.getWidth());
+		calcColors(type.getWidth());
 	}
 
 	private void calcColors(float normalizeBound) {
-		this.red = ((float)this.getEndPos()/normalizeBound)*255;
-		this.green = ((float)this.getStartPos()/normalizeBound)*255;
+		this.red = (this.getEndPos()/normalizeBound)*255;
+		this.green = (this.getStartPos()/normalizeBound)*255;
 		this.blue = 0;
 		col = new Color((int)red, (int)green,(int) blue);
 	}
@@ -75,10 +76,16 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 
 	}
 
+	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy)
 	{
 		if(root.getLv().isShowAnnotations() && type.isSelected()){
-
+			
+			if(!hasMouseListener){
+				this.addMouseInputListener(this);
+				hasMouseListener = true;
+			}
+			
 			if(type.isRelevant()){
 				//	if(type.isChanged() || type.getLastX() != root.getXViewBounds()){
 				g2.setStroke(new BasicStroke(1));
@@ -86,8 +93,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 
 				int lineStart = (int)(startPos*getScaleX());
 				int lineEnd = (int)(endPos*getScaleX());
-				if(type.asLines()){
-					
+				if(type.asLines()){					
 
 					g2.draw(new Line2D.Double(lineStart, root.getBaseXAxis()+offset+type.getHeight()/2, lineEnd, root.getBaseXAxis()+offset+type.getHeight()/2));
 					startLine = new Line2D.Double(lineStart, root.getBaseXAxis()+offset+type.getHeight(), lineStart, root.getBaseXAxis()+offset+type.getHeight()/2);
@@ -128,15 +134,17 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 					
 					int[] xpoints = {x1,x2,x3,x4,x5,x6,x7};
 					int[] ypoints = {y1,y2,y3,y4,y5,y6,y7};
-					if(type.isHover()){
+					if(hover){
 					Color c = new Color(type.getColor().getRed(),type.getColor().getGreen(),type.getColor().getBlue(),140);
 					g2.setColor(c);
 					} else {
 						g2.setColor(type.getColor());						
 					}
-					g2.fillPolygon(xpoints, ypoints, points);
+					arrowPolygon = new Polygon(xpoints, ypoints, points);
+					
+					g2.fillPolygon(arrowPolygon);
 					g2.setColor(Color.BLACK);
-					g2.drawPolygon(xpoints,ypoints,points);
+					g2.drawPolygon(arrowPolygon);
 				}
 			}
 		}
@@ -200,4 +208,82 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable{
 		this.repaint();
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		
+		if(arg0.getWhen() - prevClick < 500 ) return;
+		if(arrowPolygon.contains(new Point(arg0.getX()+root.getXViewBounds(),arg0.getY()+root.getYViewBounds()))){
+		if(!this.expanded){
+			this.expanded = true;
+			type.incrementIntervals();
+			if(type.expandedIntervals() == 1){
+				type.setExpanded(true);
+				root.setRelevantTypes();
+			}
+		} else {
+			this.expanded = false;
+			type.decrementIntervals();
+			if(type.expandedIntervals() == 0){
+				type.setExpanded(false);
+				root.setRelevantTypes();
+			}
+		}
+		this.changed = true;
+		prevClick = arg0.getWhen();
+		repaint();
+		}		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		
+		if(arrowPolygon.contains(new Point(arg0.getX()+root.getXViewBounds(),arg0.getY()+root.getYViewBounds()))){
+			this.hover = true;
+			prevHover = arg0.getWhen();
+			repaint();
+			return;
+		}
+		if(hover){
+			hover = false;
+			repaint();
+		}
+	}
+
+	public boolean isExpanded() {
+		return expanded;
+	}
+
+	public void setExpanded(boolean expanded) {
+		this.expanded = expanded;
+	}
 }

@@ -1,13 +1,6 @@
 package LinearArcPlotEditor;
 
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.clcbio.api.base.util.State;
-import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
-import com.clcbio.api.clc.graphics.components.ColorGradientManager;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 
@@ -31,11 +24,13 @@ public class LAPLayoutModel extends SidePanelModel {
 	    }
 	// Construction and initialization.
 
-	    public void loadModel(State model) {
+	    @Override
+		public void loadModel(State model) {
 	      
 	    }
 
-	    public State saveModel() {
+	    @Override
+		public State saveModel() {
 	        State model = new State();
 	        model.put(ZOOM_LEVEL, zoomLevel);
 	        return model;
@@ -51,7 +46,8 @@ public class LAPLayoutModel extends SidePanelModel {
 	        fireModelChanged();
 	    }
 	  		
-	    public String getId() {
+	    @Override
+		public String getId() {
 	        return "LAPLayoutModel";
 	    }
 	//Returning usersettings id for model.

@@ -1,6 +1,5 @@
 package Engine;
 
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,12 +18,14 @@ import com.clcbio.api.clc.graphics.framework.ClcCanvas;
 import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.clc.graphics.framework.ViewBounds;
-import com.clcbio.api.free.datatypes.ClcStackListener;
+import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.Region;
-import com.clcbio.api.free.datatypes.framework.history.History;
 import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
+import com.clcbio.api.free.editors.framework.Editor;
+import com.clcbio.api.free.framework.workspace.WorkspaceManager;
+import com.clcbio.api.free.workbench.WorkbenchManager;
 
 public class LAP extends RootDrawingNode {
 	private int [] pairings; 
@@ -39,10 +40,13 @@ public class LAP extends RootDrawingNode {
 	private LAPEditor editor;
 	private Arc mouseOverArc;
 	
-	public LAP(Alignment align, ColorGradientModel gradmodel, String title, LAPEditor editor){
+	private WorkbenchManager manager;
+	
+	public LAP(Alignment align, ColorGradientModel gradmodel, String title, LAPEditor editor, WorkbenchManager man){
 		this.current_sequence = align.getSequence(0);
 		this.editor = editor;
 		this.gradmodel = gradmodel;
+		this.manager = man;
 		
 		// initialize
 		init();
@@ -345,7 +349,7 @@ public class LAP extends RootDrawingNode {
 	  private double[] toDoubleArray(float[] input){
 	    	double[] output = new double[input.length];
 	    	for(int i = 0; i<input.length; i++){
-	    		output[i] = (double)input[i];
+	    		output[i] = input[i];
 	    	}
 	    	return output; 
 	    }
@@ -359,6 +363,38 @@ public class LAP extends RootDrawingNode {
 		
 	public int GetLDHeight(){
 		return 500;
+	}
+
+
+	public WorkbenchManager getManager() {
+		return manager;
+	}
+
+
+	public void setManager(WorkbenchManager manager) {
+		this.manager = manager;
+	}
+	
+	public void showSub(Arc arc){
+	System.out.println("trying");
+		Sequence subSeq = current_sequence.getSubsequence(new Region(arc.p1,arc.p2));
+		
+		subSeq.setName("Extract " + arc.p1 + " - " + arc.p2);
+		
+		getManager().getWorkspaceManager().getCurrentObjectsContainer().setCurrentObjects(new ClcObject[]{subSeq});
+		getManager().getWorkspaceManager().getCurrentObjectsContainer().setSelected(true);
+	
+    	try{
+		    Editor editor = getManager().getEditorManager().getEditorClassById("com.clcbio.plugins.rnasecondary.editor.RnaSecondaryStructureEditor").newInstance();
+			getManager().getWorkspaceManager().getCurrentWorkspace().edit(new ClcObject[] { subSeq }, editor);
+		} catch(IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		getManager().getActionManager().getAction("MFoldAction").actionPerformed(null);
 	}
 		
 }

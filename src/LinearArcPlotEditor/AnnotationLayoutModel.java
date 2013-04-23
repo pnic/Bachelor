@@ -1,7 +1,5 @@
 package LinearArcPlotEditor;
 
-import javax.swing.ButtonModel;
-
 import com.clcbio.api.base.util.State;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 

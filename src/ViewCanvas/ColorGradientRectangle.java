@@ -2,20 +2,9 @@ package ViewCanvas;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.Stroke;
-import java.awt.event.MouseListener;
-import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-
-import javax.swing.JComponent;
-
-
 
 import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
@@ -51,7 +40,7 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 		
 		//Create rectangle array
 		for(int i = 0; i<colorResolution; i++){
-			rectangles[i] = new Rectangle2D.Double((float)i*(float)length/(float)colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);			
+			rectangles[i] = new Rectangle2D.Double((float)i*(float)length/colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);			
 		}
 		this.setColors(colorModel);
 		
@@ -64,7 +53,7 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 			x_pos = box.getXViewBounds(); 	
 			ga.setStroke(stroke);
 			for(int i = 0; i<colorResolution; i++){
-				rectangles[i].setFrame((float)i*(float)length/(float)colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);
+				rectangles[i].setFrame((float)i*(float)length/colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);
 				ga.setColor(colors[i]);
 				ga.fill(rectangles[i]);
 			}

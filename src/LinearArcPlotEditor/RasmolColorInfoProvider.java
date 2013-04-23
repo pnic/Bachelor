@@ -5,9 +5,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-
-
 import com.clcbio.api.clc.gui.framework.ParameterPanel;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.SequenceTypeEditor;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.AbstractInfoProvider;

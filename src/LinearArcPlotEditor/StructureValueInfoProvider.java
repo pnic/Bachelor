@@ -1,20 +1,15 @@
 package LinearArcPlotEditor;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.plaf.ColorChooserUI;
-
 import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
 import com.clcbio.api.clc.editors.graphics.components.GradientChooser;
 import com.clcbio.api.clc.editors.graphics.components.GradientModelListener;
-import com.clcbio.api.clc.graphics.components.ColorGradientManager;
 import com.clcbio.api.clc.gui.framework.ParameterPanel;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.SequenceTypeEditor;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.AbstractInfoProvider;

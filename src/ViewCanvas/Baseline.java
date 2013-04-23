@@ -3,14 +3,10 @@ package ViewCanvas;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
 
-import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import Engine.LAP;
@@ -18,13 +14,11 @@ import Engine.LAP;
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
-import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentSequenceIndexer;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.index.BasicIndexer;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.RegionTools;
 
 public class Baseline extends ChildDrawingNode {
 	

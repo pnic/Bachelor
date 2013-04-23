@@ -9,39 +9,18 @@ import java.awt.AlphaComposite;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
-
-import org.apache.batik.gvt.AbstractGraphicsNode;
 
 import Engine.*;
 
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
-import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
-import com.clcbio.api.clc.graphics.framework.ViewBounds;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
 import com.clcbio.api.free.editors.framework.MouseMode;
 
@@ -114,6 +93,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		return root.getBaseXAxis()-(getArcHeight(x1,x2)/2);
 	}
 	
+	@Override
 	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
 			newp1 = (int)(p1*getScaleX());
 			newp2 = (int) (p2*getScaleX());
@@ -352,6 +332,14 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public LAP getRoot() {
+		return root;
+	}
+
+	public void setRoot(LAP root) {
+		this.root = root;
 	}
 	
 }

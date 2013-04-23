@@ -1,28 +1,14 @@
 package ViewCanvas;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 
 import Engine.LAP;
 
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
-import com.clcbio.api.clc.graphics.framework.RootDrawingNode;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.feature.Feature;
 
 public class LAPFeature extends ChildDrawingNode{
 
