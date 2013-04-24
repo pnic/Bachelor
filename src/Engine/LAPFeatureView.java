@@ -63,11 +63,17 @@ public void buildFeatureTypes(LAP root){
 		
 		
 		if(featureIter.hasNext()) types = new ArrayList<LAPFeatureType>();
+		else{
+			return;
+		}
 		
 		//Build LAPFeatureType elements for each different type of feature in the sequence.
 		buildTypes(seq.getFeatureTypes(),root);
 		
 		//Get type iterator
+		if(types == null){
+			System.out.println("types er null");
+		}
 		Iterator<LAPFeatureType> typeIter = types.iterator();
 		LAPFeatureType cur = typeIter.next();
 		
@@ -112,7 +118,7 @@ public void buildFeatureTypes(LAP root){
 		
 		relevantTypes = new ArrayList<LAPFeatureType>();
 		
-		
+		buildRelevantTypes();
 }
 	
 private void sortTypes() {
@@ -173,8 +179,8 @@ public void buildRelevantTypes(){
 		}
 		}
 	}
-	featuresLowerY = (expanded*45)+(relevantTypes.size()*(typeHeight+20))+startOffset+root.getBaseXAxis();
-	featuresUpperY = startOffset+root.getBaseXAxis();	
+	featuresLowerY = (expanded*45)+(relevantTypes.size()*(typeHeight+20))+startOffset;
+	featuresUpperY = startOffset;	
 }
 
 private LAPFeatureType changeCurrentType(String fetType){
@@ -344,7 +350,7 @@ public void setGetFeaturesUpperY(int featuresUpperY) {
 
 
 public int getFeaturesLowerY() {
-	return featuresLowerY;
+	return showAnnotations ? featuresLowerY : 0;
 }
 
 

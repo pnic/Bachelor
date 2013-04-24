@@ -1,8 +1,8 @@
 package ViewCanvas;
 
 /*
- * Made by: David Korczynski
- * e: dgeo@itu.dk
+ * David Korczynski
+ * dgeo@itu.dk
  * May, 2013. 
  */
 import java.awt.AlphaComposite;
@@ -13,7 +13,9 @@ import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Arc2D;
+
 import java.util.Timer;
+
 import javax.swing.event.MouseInputListener;
 
 import Engine.*;
@@ -44,11 +46,16 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	private int arc_y_position;
 	private double contains;
 	private double mouse_limit;
-	private Timer mouseOverTimer;
-	private boolean mouseOverTimeEnabled;
 	private double reliability;
 	public int pairNumber;
 	public boolean firstModification = true;
+	
+	
+	//Strokes
+	private BasicStroke backArcStroke; 
+	private BasicStroke normalArcStroke;
+	private BasicStroke overArcStroke;
+	
 	
 	public Arc(int p1, int p2, double reliability, LAP root){
 		this.p1=p1;
@@ -56,7 +63,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		this.root = root;
 		this.reliability = reliability;
 		mouseListenerSat = false;
-		mouseOverTimer = new Timer();
 	}
 	
 	private void update(){
@@ -64,22 +70,11 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		arc_height = getArcHeight(newp1, newp2);
 		arc_width = newp2-newp1;
 
-		if(arc_width > 1000){
-			mouse_limit = 0.0005;
-		}
-		if(arc_width < 1000 && arc_width > 500){
-			mouse_limit = 0.01;
-		}
-		if(arc_width < 500 && arc_width > 150){
-			mouse_limit = 0.015;
-		}
-		if(arc_width < 150 && arc_width > 100){
-			mouse_limit = 0.04;
-		}
-		
-		if(arc_width < 100){
-			mouse_limit = 0.06;
-		}
+		if(arc_width > 1000)					{ mouse_limit = 0.0005; }
+		if(arc_width < 1000 && arc_width > 500)	{ mouse_limit = 0.01; 	}
+		if(arc_width < 500 && arc_width > 150)	{ mouse_limit = 0.015; 	}
+		if(arc_width < 150 && arc_width > 100)	{ mouse_limit = 0.04; 	}	
+		if(arc_width < 100)						{ mouse_limit = 0.06; 	}
 
 		arc = new Arc2D.Double(newp1,arc_y_position,arc_width,arc_height,0,180,Arc2D.OPEN);
 	}
@@ -93,36 +88,40 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		return root.getBaseXAxis()-(getArcHeight(x1,x2)/2);
 	}
 	
-	@Override
-	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
-			newp1 = (int)(p1*getScaleX());
-			newp2 = (int) (p2*getScaleX());
 
+	
+	public void updateStrokes(){
+		backArcStroke = new BasicStroke(3);
+		normalArcStroke = new BasicStroke(1);
+		overArcStroke = new BasicStroke(3);
+		
+		// If we are close, make arcs thicker.
+		if(root.getScaleX() > 8) {
+			normalArcStroke = new BasicStroke(2);
+			backArcStroke = new BasicStroke(4);
+			overArcStroke = new BasicStroke(6);
+		}
+		if(root.getScaleX() > 11) {
+			normalArcStroke = new BasicStroke(3);
+			backArcStroke = new BasicStroke(5);
+			overArcStroke = new BasicStroke(7);
+		}
+	}
+	
+
+	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
+			newp1 = (int)(p1*root.getScaleX());
+			newp2 = (int) (p2*root.getScaleX());
+			
 			update();
 			// Check if arc is in screen. 
 			if(isArcInScreen() && arc_width > 5){
-				BasicStroke backArcStroke = new BasicStroke(3);
-				BasicStroke normalArcStroke = new BasicStroke(1);
-				BasicStroke overArcStroke = new BasicStroke(3);
-				if(mouseOverTimeEnabled){
-					System.out.println("yes sir");
-				}
+				updateStrokes();
 				if(!mouseListenerSat && (arc_width > 100 || getScaleX() > 8)){
 					this.addMouseInputListener(this);
 					mouseListenerSat = true;
 				}
-				// If we are close, make arcs thicker.
-				if(getScaleX() > 8) {
-					normalArcStroke = new BasicStroke(2);
-					backArcStroke = new BasicStroke(4);
-					overArcStroke = new BasicStroke(6);
-				}
-				if(getScaleX() > 11) {
-					normalArcStroke = new BasicStroke(3);
-					backArcStroke = new BasicStroke(5);
-					overArcStroke = new BasicStroke(7);
-				}
-				
+				//If mouseover. 
 				if(showAnnotation){
 					Color cg = new Color(130, 130, 255);
 					g2.setColor(cg);
@@ -130,12 +129,14 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 					g2.setStroke(overArcStroke);
 					g2.draw(arc);
 				}
+				//If not mouseover, we draw a background for each arc to make it pretty. 
 				else if(!showAnnotation && getScaleX() > 8){
 					g2.setColor(Color.black);
 					g2.setStroke(backArcStroke);
 					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
 					g2.draw(arc);
 				}
+				//Draw the arc
 				g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 				g2.setColor(color);
 				g2.setStroke(normalArcStroke);
@@ -226,12 +227,14 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		if(root.getEditor().getMouseMode() == MouseMode.SELECT_MODE){
 		
 		if(isArcInScreen()){
+			if(arg0.getY() < (root.getBaseXAxis() + 5)){
 			int x_pos = arg0.getX()+root.getXViewBounds();
 			int y_pos = arg0.getY()+root.getYViewBounds();
 			if(touchesArc2(x_pos, y_pos)){
 					boolean rt = root.canArcShowMouseOver(this);
 					if(rt){
 						repaint();
+						root.getEditor().setStatusInformation(this, "David er nice");
 						root.getEditor().setToolTip(this, arg0.getX()+10, arg0.getY()+10, AlphabetTools.getRnaAlphabet().getSymbol(root.getSequence().getSymbolIndexAt(p1)).getCharName() + "-" + AlphabetTools.getRnaAlphabet().getSymbol(root.getSequence().getSymbolIndexAt(p2)).getCharName() + " pair at (" +p1 + ","+p2 + ") with PPFold reliability " + reliability);
 					}
 			}
@@ -244,12 +247,13 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 					oldViewX = root.getXViewBounds();
 					oldViewY = root.getYViewBounds();
 					drawRect = false;
-					mouseOverTimer.cancel();
-					mouseOverTimeEnabled = false;
+
 					root.getEditor().removeToolTip(this);
+					root.getEditor().setStatusInformation(this, "");
 					repaint();
 				}
 			}
+		}
 		}
 		}
 	}
@@ -296,7 +300,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	public void mouseClicked(MouseEvent arg0) {
 		if(root.getEditor().getMouseMode() == MouseMode.SELECT_MODE){
 		if(showAnnotation){
-			Container cmp = (Container)this.getComponent();
 			EditArcDialog et = new EditArcDialog(this);
 			et.setVisible(true);
 		}

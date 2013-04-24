@@ -7,7 +7,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+
 import javax.swing.JButton;
+
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -19,7 +21,6 @@ import com.clcbio.api.free.gui.StandardLayout;
 
 public class SequenceView extends SidePanelView{
 	private StandardLayout panel;
-	private JLabel sequenceTitle;
 	private JCheckBox numbersCheckBox;
 	private JCheckBox infoCheckBox;
 	private JButton showSub;

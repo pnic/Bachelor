@@ -41,13 +41,7 @@ public class AnnotationTypeView extends SidePanelView{
 		createUI();
 		for(JCheckBox jc : checkTypes){
 			panel.addComps(labels.get(jc.getText()),jc);
-			
 		}
-		/*
-		for(ColorPickerLabel l : labels){
-			panel.addComp(l);
-			panel.add(l.getComponent(0));
-		}*/
 	}
 	
 	private void createUI(){

@@ -124,7 +124,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy)
 	{
-		if(relevant){
+		if(relevant && root.getLv().isShowAnnotations() && isSelected){
 			//if(changed || lastX != root.getXViewBounds()){
 				g2.setStroke(new BasicStroke(2));
 				g2.setColor(Color.BLACK);

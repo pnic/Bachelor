@@ -24,7 +24,6 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 	int width = 20; 
 	private double x_pos; 
 	private double y_pos; 
-	private double circ_r; 
 	Rectangle2D[] rectangles = new Rectangle2D[colorResolution];
 	Color[] colors = new Color[colorResolution];
 	Stroke stroke = new BasicStroke(1f); 

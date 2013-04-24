@@ -50,7 +50,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 	private boolean changed;
 
 	public LAPFeatureInterval(String name, int startPos, int endPos, int offset, LAP root, LAPFeatureType type){
-		
+		System.out.println("Creating Interval");
 		this.lines = false;
 		this.arrows = true;
 		this.name = name;

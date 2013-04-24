@@ -12,11 +12,8 @@ public class infoBox extends RootDrawingNode{
 	private TitleText titleText;
 	private ColorGradientRectangle cgr;
 	private ColorGradientModel colorModel;
-	private boolean titleIsVisible = true;
-	private String title;
 	
 	public infoBox(String title, ColorGradientModel colorModel){
-		this.title = title;
 		this.titleText = new TitleText(title);
 		titleText.setBox(this);
 		this.colorModel = colorModel;

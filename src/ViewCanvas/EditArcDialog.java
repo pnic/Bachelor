@@ -17,7 +17,9 @@ import javax.swing.border.TitledBorder;
 
 
 
-public class EditArcDialog extends JDialog{
+public class EditArcDialog extends JDialog{ 
+	
+	private static final long serialVersionUID = 1L;
 	private Arc arc;
 	private final String errorMessage = "An error occured when trying to validate. The error could be caused by: \n";
 	

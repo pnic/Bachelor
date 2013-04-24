@@ -8,6 +8,8 @@ import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
+import LinearArcPlotEditor.AlignmentModel;
+import LinearArcPlotEditor.AlignmentView;
 import LinearArcPlotEditor.AnnotationLayoutModel;
 import LinearArcPlotEditor.AnnotationLayoutView;
 import LinearArcPlotEditor.AnnotationTypeModel;
@@ -62,7 +64,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	private boolean inputIsAlignment;
 	private Alignment alignment;
 	
-	private Font font = new Font("Monospaced", Font.PLAIN, 12);
     private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };	
 	public ClcObject[] models;
 	
@@ -114,6 +115,19 @@ public class LAPEditor extends AbstractGraphicsEditor {
                     }
                 });
             }
+        });
+        
+        final AlignmentModel alignModel = new AlignmentModel("Alignment Layout");
+        AlignmentView alignView = new AlignmentView(alignModel, alignment.getSequenceCount());
+        alignModel.addSidePanelListener(new SidePanelListener(){
+			@Override
+			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
+				if(lap != null){
+					lap.drawArcsFromSequence(alignModel.getSequenceNumber());
+					lap.getBaseline().setShowAlignments(alignModel.isShowAlignments());
+				}
+			}
+        	
         });
         
         final TextModel textModel = new TextModel(manager);
@@ -198,7 +212,10 @@ public class LAPEditor extends AbstractGraphicsEditor {
         	}
         });
         
+        
+        // Add all the views. 
         addSidePanelView(seqView);
+        addSidePanelView(alignView);
         addSidePanelView(annotationLayoutView);
         addSidePanelView(annotationTypeView);
         addSidePanelView(textView);        

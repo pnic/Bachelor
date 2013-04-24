@@ -7,13 +7,9 @@ import com.clcbio.api.free.workbench.WorkbenchManager;
 public class LAPLayoutModel extends SidePanelModel {
 
 	 private int zoomLevel = 100;
-     private State colorstate;
      private String LAPTitle = "Title";
-     private boolean titleIsVisible = true;
-	    
 
 	    private static final String ZOOM_LEVEL = "100%";
-	    private static final String KEY_COLORSTATE = "colorstate";
 	    
 	//Here we define some keys for later use in usersettings of the sidepanel model.
 
