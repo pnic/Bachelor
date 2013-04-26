@@ -235,7 +235,8 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 					if(rt){
 						repaint();
 						root.getEditor().setStatusInformation(this, "David er nice");
-						root.getEditor().setToolTip(this, arg0.getX()+10, arg0.getY()+10, AlphabetTools.getRnaAlphabet().getSymbol(root.getSequence().getSymbolIndexAt(p1)).getCharName() + "-" + AlphabetTools.getRnaAlphabet().getSymbol(root.getSequence().getSymbolIndexAt(p2)).getCharName() + " pair at (" +p1 + ","+p2 + ") with PPFold reliability " + reliability);
+						root.getEditor().setToolTip(this, arg0.getX()+10, arg0.getY()+10, 
+								"pair at (" +p1 + ","+p2 + ") with PPFold reliability " + reliability);
 					}
 			}
 			else{

@@ -149,9 +149,9 @@ public class LAP extends RootDrawingNode {
 				}
 			}
 		}
-		}
 		pairArrais[currentSequenceNumber] = seqNumbers;
 		reliabilityArrays[currentSequenceNumber] = seqReliabillities;
+		}
 		
 		int cnt = 0;
 			arcs = new Arc[nr];
@@ -507,5 +507,5 @@ public class LAP extends RootDrawingNode {
 	public void setAlign(Alignment align) {
 		this.align = align;
 	}	
-
+	
 }
