@@ -3,6 +3,10 @@ package Engine;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
 import javax.swing.ImageIcon;
@@ -286,8 +290,11 @@ public class LAPEditor extends AbstractGraphicsEditor {
         SubSequenceInfoModel subSequenceInfoModel = new SubSequenceInfoModel(new SequenceInfoModel(new InfoProvider[] {RasmosColors, StructureValue }, null), "Residue Coloring", CreateList.of(RasmosColors, StructureValue));
         
         addSidePanelView(new SequenceInfoView(subSequenceInfoModel));	
+    
         
-		}
+        
+        
+	}
 	
 		// This method returns a title for the sidepanel. More about this in the next section, which is about side panels
 	    @Override

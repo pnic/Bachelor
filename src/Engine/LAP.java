@@ -1,5 +1,7 @@
 package Engine;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -81,7 +83,10 @@ public class LAP extends RootDrawingNode {
 	 * Sets the RNA structure visualized by the diagram. 
 	 */
 	private void setStructure(RnaStructure structure){
+		
+		
 		removeArcs();
+        removeTypes();
 
 		pairings = structure.getPairing();
 		reliabilities = new float[structure.getLength()];
@@ -178,8 +183,11 @@ public class LAP extends RootDrawingNode {
 				}
 			}
     	
+    	
 		lv = new LAPFeatureView(current_sequence,this);
-		setRelevantTypes();
+		//if(lv.getRelevantTypes() != null){
+			setRelevantTypes();
+		//}
 		if(baseline == null){
 			baseline = new Baseline(align, this);
 			addChild(baseline);
@@ -502,6 +510,7 @@ public class LAP extends RootDrawingNode {
 		}
 		
 		getManager().getActionManager().getAction("MFoldAction").actionPerformed(null);
+		
 	}
 
 	public Alignment getAlign() {
@@ -512,4 +521,15 @@ public class LAP extends RootDrawingNode {
 		this.align = align;
 	}	
 	
+	public void removeTypes(){
+		if(lv!= null){
+			for(LAPFeatureType l : lv.getTypes()){
+				removeChild(l);
+				for(LAPFeatureInterval li : l.getIntervals()){
+					removeChild(li);
+				}
+			}
+		}
+	}
+		
 }
