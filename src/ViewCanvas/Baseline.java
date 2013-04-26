@@ -114,7 +114,7 @@ public class Baseline extends ChildDrawingNode {
 			baseLine.setLine(0, root.getBaseXAxis()+2, length*root.getScaleX(), root.getBaseXAxis()+2);
 			g2.draw(baseLine);
 			for(int i=0; i<sequenceLengths.length; i++){
-				baseLine.setLine(0,root.getBaseXAxis()+(i*stringHeight)+numbersGap, (int)(length*root.getScaleX()), root.getBaseXAxis()+(i*stringHeight)+numbersGap);		
+				baseLine.setLine(0,root.getBaseXAxis()+(i*stringHeight)+numbersGap+root.getLv().getFeaturesLowerY(), (int)(length*root.getScaleX()), root.getBaseXAxis()+(i*stringHeight)+numbersGap+root.getLv().getFeaturesLowerY());		
 				g2.draw(baseLine);
 			}
 		}
@@ -129,9 +129,9 @@ public class Baseline extends ChildDrawingNode {
 						String s = nucleotideSequences[j][i];
 						g2.setColor(getRasmolColor(s));
 						
-						if(rasmolBack && s != "-") g2.fillRect((int)(i*root.getScaleX())-(stringWidth/2), root.getBaseXAxis()+4+(j*stringHeight), stringWidth, stringHeight-2);
+						if(rasmolBack && s != "-") g2.fillRect((int)(i*root.getScaleX())-(stringWidth/2), root.getBaseXAxis()+4+(j*stringHeight)+root.getLv().getFeaturesLowerY(), stringWidth, stringHeight-2);
 						if(!rasmolFront) g2.setColor(new Color(0,0,0));
-						g2.drawString(s, (int)(i*root.getScaleX())-stringWidth/2, root.getBaseXAxis()+stringHeight+(j*stringHeight));
+						g2.drawString(s, (int)(i*root.getScaleX())-stringWidth/2, root.getBaseXAxis()+stringHeight+(j*stringHeight)+root.getLv().getFeaturesLowerY());
 					}
 				}	
 			}
@@ -149,7 +149,7 @@ public class Baseline extends ChildDrawingNode {
 			if(root.getScaleX() < 11){ 	number_y_pos = root.getBaseXAxis()+(i*stringHeight)+(stringHeight/3)+50; }
 			else{ 						number_y_pos = root.getBaseXAxis()+(i*stringHeight)+(stringHeight);}
 			
-			g2.drawString(Integer.toString(seqLength), number_x_pos ,number_y_pos);
+			g2.drawString(Integer.toString(seqLength), number_x_pos ,number_y_pos+root.getLv().getFeaturesLowerY());
 		}
 		
 		//Draw numbers

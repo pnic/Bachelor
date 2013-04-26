@@ -5,24 +5,11 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JSpinner;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import org.apache.xmlbeans.impl.values.JavaIntegerHolder;
-
 import LinearArcPlotEditor.LAPLayoutModel;
-import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
-import com.clcbio.api.clc.editors.graphics.components.GradientChooser;
-import com.clcbio.api.clc.editors.graphics.components.GradientModelListener;
-import com.clcbio.api.clc.graphics.components.ColorGradientManager;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelView;
 import com.clcbio.api.free.gui.StandardLayout;
@@ -84,13 +71,15 @@ public class LAPLayoutView extends SidePanelView {
     }
 //And here we do the layout of the components in our StandardLayout. Notice how the fontNameBox and isBoldBox are only added if their respective "include" flags are set.
 
-    public JComponent getComponent() {
+    @Override
+	public JComponent getComponent() {
         createUI();
         return panel;
     }
 //And this call back should return a Container holding all our UI.
 
-    public void updateUI(SidePanelModel m) {
+    @Override
+	public void updateUI(SidePanelModel m) {
         createUI();        
     }
 //This method is ensured to be called whenever the model changes. Thus it should update the view according to the model.

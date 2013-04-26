@@ -20,11 +20,13 @@ public class LAPLayoutModel extends SidePanelModel {
 	    }
 	// Construction and initialization.
 
-	    public void loadModel(State model) {
+	    @Override
+		public void loadModel(State model) {
 	      
 	    }
 
-	    public State saveModel() {
+	    @Override
+		public State saveModel() {
 	        State model = new State();
 	        model.put(ZOOM_LEVEL, zoomLevel);
 	        return model;
@@ -40,7 +42,8 @@ public class LAPLayoutModel extends SidePanelModel {
 	        fireModelChanged();
 	    }
 	  		
-	    public String getId() {
+	    @Override
+		public String getId() {
 	        return "LAPLayoutModel";
 	    }
 	//Returning usersettings id for model.

@@ -1,7 +1,6 @@
 package LinearArcPlotEditor;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +8,7 @@ import java.util.Map;
 import ViewCanvas.LAPFeatureType;
 
 import com.clcbio.api.base.util.State;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
-import com.clcbio.api.free.editors.framework.sidepanel.event.SidePanelEvent;
 
 public class AnnotationTypeModel extends SidePanelModel{
 	

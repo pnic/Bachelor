@@ -13,6 +13,9 @@ import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Arc2D;
+
+import java.util.Timer;
+
 import javax.swing.event.MouseInputListener;
 
 import Engine.*;
@@ -85,6 +88,8 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		return root.getBaseXAxis()-(getArcHeight(x1,x2)/2);
 	}
 	
+
+	
 	public void updateStrokes(){
 		backArcStroke = new BasicStroke(3);
 		normalArcStroke = new BasicStroke(1);
@@ -103,6 +108,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		}
 	}
 	
+
 	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
 			newp1 = (int)(p1*root.getScaleX());
 			newp2 = (int) (p2*root.getScaleX());
@@ -329,6 +335,14 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	public void mouseDragged(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public LAP getRoot() {
+		return root;
+	}
+
+	public void setRoot(LAP root) {
+		this.root = root;
 	}
 	
 }

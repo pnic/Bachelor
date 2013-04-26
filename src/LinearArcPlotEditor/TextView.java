@@ -4,10 +4,12 @@ import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -21,7 +23,11 @@ public class TextView extends SidePanelView{
     private JCheckBox isBoldBox;
     private JComboBox fontNameBox;
     private JComboBox textSizeBox;
-
+    private JTextArea minBorder;
+    private JTextArea maxBorder;
+    private JButton showSub;
+    
+    
     private boolean includeFont = true;
     private boolean includeBold = true;
 
@@ -108,6 +114,7 @@ public class TextView extends SidePanelView{
 			
 			textSizeBox = new JComboBox(((TextModel)getModel()).getTextSizeNames());
 			textSizeBox.addItemListener(new ItemListener(){
+				@Override
 				public void itemStateChanged(ItemEvent even){
 					((TextModel)getModel()).setTextSize(textSizeBox.getSelectedIndex());
 				}
@@ -119,5 +126,4 @@ public class TextView extends SidePanelView{
 			fillPanel();
 		}
 	}
-
 }

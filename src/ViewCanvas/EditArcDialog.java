@@ -46,13 +46,13 @@ public class EditArcDialog extends JDialog{
         final JTextField secondNumber = new JTextField(Integer.toString(arc.p2));
         secondNumber.setPreferredSize(new Dimension(60,20));
 
-        
         TitledBorder border = new TitledBorder("Edit arc positions");
         editArcFields.add(first);
         editArcFields.add(firstNumber);
         editArcFields.add(second);
         editArcFields.add(secondNumber);
         editArcFields.setBorder(border);
+        
         add(editArcFields);
        	
        	// Buttons
@@ -65,6 +65,8 @@ public class EditArcDialog extends JDialog{
 			}
         	
         });
+        
+        
         
         JButton confirmBtn = new JButton("confirm");
         confirmBtn.addActionListener(new ActionListener(){
@@ -97,8 +99,21 @@ public class EditArcDialog extends JDialog{
 			}
         });
         
+        JButton showAsSequence = new JButton("Show as planar graph");
+        showAsSequence.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				arc.getRoot().showSub(arc);
+				System.out.println();
+				EditArcDialog.this.dispose();
+			}
+        	
+        });
+        
         btns.add(cancelBtn);
         btns.add(confirmBtn);
+        btns.add(showAsSequence);
         
         add(btns);
         

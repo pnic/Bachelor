@@ -39,7 +39,7 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 		
 		//Create rectangle array
 		for(int i = 0; i<colorResolution; i++){
-			rectangles[i] = new Rectangle2D.Double((float)i*(float)length/(float)colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);			
+			rectangles[i] = new Rectangle2D.Double((float)i*(float)length/colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);			
 		}
 		this.setColors(colorModel);
 		
@@ -52,7 +52,7 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 			x_pos = box.getXViewBounds(); 	
 			ga.setStroke(stroke);
 			for(int i = 0; i<colorResolution; i++){
-				rectangles[i].setFrame((float)i*(float)length/(float)colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);
+				rectangles[i].setFrame((float)i*(float)length/colorResolution+x_pos,y_pos,(float)length/(float)colorResolution,width);
 				ga.setColor(colors[i]);
 				ga.fill(rectangles[i]);
 			}

@@ -7,6 +7,7 @@ public class SequenceModel extends SidePanelModel{
 	private boolean drawNumbers;
 	private boolean showInfoBox;
 	private int startValue;
+	private boolean showSub = false;
 	
 	public SequenceModel(String title) {
 		super(title);
@@ -70,6 +71,21 @@ public class SequenceModel extends SidePanelModel{
 	
 	public boolean getShowInfoBox(){
 		return showInfoBox;
+	}
+
+	public void showSubSequence() {
+		showSub=true;
+		fireModelChanged();
+		
+		
+	}
+
+	public boolean isShowSub() {
+		return showSub;
+	}
+
+	public void setShowSub(boolean showSub) {
+		this.showSub = showSub;
 	}
 
 }

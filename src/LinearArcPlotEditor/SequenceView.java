@@ -7,6 +7,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+
+import javax.swing.JButton;
+
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -20,6 +23,7 @@ public class SequenceView extends SidePanelView{
 	private StandardLayout panel;
 	private JCheckBox numbersCheckBox;
 	private JCheckBox infoCheckBox;
+	private JButton showSub;
 	private StandardLayout indexNumberPanel;
 	
 	public SequenceView(SidePanelModel arg0) {
@@ -37,6 +41,7 @@ public class SequenceView extends SidePanelView{
 		panel.addComp(numbersCheckBox);
 		panel.addComp(indexNumberPanel);
 		panel.addComp(infoCheckBox);
+		//panel.addComp(showSub);
 	}
 	
 	private void createUI(){
@@ -79,6 +84,15 @@ public class SequenceView extends SidePanelView{
 					((SequenceModel)getModel()).showInfowBox(infoCheckBox.isSelected());
 				}
 				
+			});
+			
+			showSub = new JButton("Subsequence");
+			showSub.addActionListener(new ActionListener(){
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					((SequenceModel)getModel()).showSubSequence();
+				}				
 			});
 			
 			panel = new StandardLayout();

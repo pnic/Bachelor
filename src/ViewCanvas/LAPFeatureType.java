@@ -3,45 +3,31 @@ package ViewCanvas;
 
 import Engine.LAP;
 
-import com.clcbio.api.base.io.ClcFileFilter;
-import com.clcbio.api.base.io.ExportPlugin;
-import com.clcbio.api.base.persistence.PersistenceException;
-import com.clcbio.api.base.process.Activity;
-import com.clcbio.api.base.util.iterator.MovableIntegerIterator;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.FeatureColorMap;
+import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructures;
-import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.annotation.RnaStructureAnnotation;
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
 import com.clcbio.api.free.datatypes.ClcObject;
-import com.clcbio.api.free.datatypes.ClcString;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.feature.Feature;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.interval.Interval;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.Region;
-import com.clcbio.api.free.gui.dialog.ClcMessages;
-//import com.ppfold.algo.ExportTools;
-//import com.ppfold.algo.MatrixTools;
+import com.clcbio.api.free.editors.framework.Editor;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
+import javax.swing.JLabel;
 import javax.swing.event.MouseInputListener;
 
 public class LAPFeatureType extends ChildDrawingNode implements MouseInputListener{
@@ -51,6 +37,8 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	
 	private long prevClick = 0;
 	private long prevHover = 0;
+	
+	private JLabel label;
 	
 	private int x;
 	private int typeOffset;
@@ -63,6 +51,8 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	private boolean changed = false;
 	private boolean expanded;
 	private boolean isSelected;
+	
+	private int expandedIntervals = 0;
 	
 	private LAP root;
 
@@ -77,12 +67,19 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	private boolean asLines;
 	private boolean asArrows;
 	
+	
+	private Rectangle2D stringContainer;
+	private Rectangle2D drawnStringContainer;
 	private Rectangle2D content;
+	private boolean hasMouseListener;
+	private boolean typeHover;
 	
 	public LAPFeatureType(String name, LAP root){
 		this.name = name;
 		intervals = new ArrayList<LAPFeatureInterval>();
 	
+		
+		
 		this.color = FeatureColorMap.getColor(name);
 		
 		this.asArrows = true;
@@ -97,6 +94,8 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 		intervals = new ArrayList<LAPFeatureInterval>();
 		this.asArrows = true;
 		this.asLines = false;
+		
+		label = new JLabel(name);
 		
 		this.color = FeatureColorMap.getColor(name);
 		
@@ -122,16 +121,23 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 		return intervals;
 	}
 
+	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy)
 	{
-		if(relevant){
+		if(relevant && root.getLv().isShowAnnotations() && isSelected){
 			//if(changed || lastX != root.getXViewBounds()){
 				g2.setStroke(new BasicStroke(2));
 				g2.setColor(Color.BLACK);
-				this.addMouseInputListener(this);
+				if(!hasMouseListener){
+					this.addMouseInputListener(this);
+					hasMouseListener = true;
+				}
+				
 				content = new Rectangle2D.Double(x, root.getBaseXAxis()+typeOffset, width*getScaleX(), height);
 				g2.setColor(Color.WHITE);
 				g2.fill(content);
+				g2.setColor(Color.BLACK);
+			//	g2.draw(new Line2D.Double(new Point2D.Double(x, root.getLv().getFeaturesLowerY()), new Point2D.Double(x + 200, root.getLv().getFeaturesUpperY())));
 				
 				/*if(hover){
 					g2.setColor(Color.BLACK);
@@ -139,29 +145,40 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 					
 				}*/
 		//g2.draw(content);
+				
 				g2.setColor(Color.LIGHT_GRAY);
+				FontMetrics fm = g2.getFontMetrics();
+				
+				stringContainer = fm.getStringBounds(name, g2);
+				drawnStringContainer = new Rectangle2D.Double(root.getXViewBounds()+root.getViewPaneWidth()/2,(root.getBaseXAxis()+typeOffset-5)-fm.getAscent(), (int)stringContainer.getWidth(), (int)stringContainer.getHeight());
+				//g2.draw(drawnStringContainer);
+				if(typeHover){
+					g2.setColor(Color.BLUE);
+				}
 				g2.drawString(this.name, root.getXViewBounds()+(root.getViewPaneWidth()/2), root.getBaseXAxis()+typeOffset-5);
+				
+				//stringContainer = new Rectangle2D.Double(root.getXViewBounds()+root.getViewPaneWidth()/2,(root.getBaseXAxis()+typeOffset-5)-fm.getAscent(),(int)fm.)
+				
 				g2.setColor(Color.BLACK);
 			//g2.fillRect(root.getXViewBounds(), root.getBaseXAxis()+typeOffset-10, 20, 10);
 			//g2.setColor(Color.WHITE);
 				g2.setFont(myFont);
 				//g2.drawString("+", root.getXViewBounds()+5, root.getBaseXAxis()+typeOffset);
 				
-					
-				
-				if(expanded){
+				//if(expanded){
 					int inView = 1;
-					g2.drawString("Features:", root.getXViewBounds(), root.getBaseXAxis()+typeOffset+height+15);
+					//g2.drawString("Features:", root.getXViewBounds(), root.getBaseXAxis()+typeOffset+height+15);
 					for(LAPFeatureInterval li : intervals){
-						if(!(li.getEndPos()*getScaleX() < root.getXViewBounds() || li.getStartPos()*getScaleX() > root.getXViewBounds()+root.getViewPaneWidth())){
+						if(!(li.getEndPos()*getScaleX() < root.getXViewBounds() || li.getStartPos()*getScaleX() > root.getXViewBounds()+root.getViewPaneWidth()) && li.isExpanded()){
 							//g2.setColor(li.getCol());
+							
 							g2.setColor(color);
 							g2.drawString(li.getName()+", ", root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+height+15);
 							g2.drawString(li.getStartPos() + " - " + li.getEndPos(), root.getXViewBounds()+(inView*70), root.getBaseXAxis()+typeOffset+height+35);
 							inView+=1;
 						}
 					}
-				}
+				//}
 				changed = false;
 				lastX = root.getXViewBounds();
 			//}
@@ -173,14 +190,35 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	public void mouseClicked(MouseEvent arg0) {
 		
 		if(arg0.getWhen() - prevClick < 500 ) return;
-		if(content.getMinY() < arg0.getY()+root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.getYViewBounds()){
+		if(drawnStringContainer.contains(new Point(arg0.getX()+root.getXViewBounds(),arg0.getY()+root.getYViewBounds()))){
+			if(this.expanded){
+				for(LAPFeatureInterval li : intervals){
+					li.setExpanded(false);
+					this.expanded = false;
+					this.expandedIntervals = 0;
+					root.setRelevantTypes();
+					repaint();
+				}
+			} else {
+				this.expanded = true;
+				for(LAPFeatureInterval li : intervals){
+					li.setExpanded(true);
+					this.expanded = true;
+					this.expandedIntervals = intervals.size();
+					root.setRelevantTypes();
+					repaint();
+				}
+			}
+			
+		}
+		/*if(content.getMinY() < arg0.getY()+root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.getYViewBounds()){
 		this.expanded = !expanded;
 		this.changed = true;
 		root.setRelevantTypes();
 		prevClick = arg0.getWhen();
 		System.out.println("mouse clicked");
 		repaint();
-		}
+		}*/
 	}
 	
 	public int getX() {
@@ -258,22 +296,31 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-	/*	if(lastX != root.getXViewBounds()){ for repainting when zooming 
-			root.setRelevantTypes();
+	
+		if(drawnStringContainer.contains(new Point(arg0.getX()+root.getXViewBounds(),arg0.getY()+root.getYViewBounds()))){
+			this.typeHover = true;
 			repaint();
-		}*/
-		if(content.getMinY() < arg0.getY()+root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.getYViewBounds()){
+			System.out.println("highlight string");
+			return;
+		}
+		if(typeHover){
+			typeHover = false;
+			System.out.println("Don't highligt");
+			repaint();
+		}
+		System.out.println(stringContainer.getX() + " is value stringContainer x " + stringContainer.getY() + " is value of stringContainer y");
+		System.out.println(arg0.getX() + " arg0 x " + arg0.getY() + " Is arg0 y");
+		
+	/*	if(content.getMinY() < arg0.getY()+root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.getYViewBounds()){
 		this.hover = true;
 		prevHover = arg0.getWhen();
-		System.out.println("mouse moved");
 		repaint();
 		return;
 		} if(hover){
 			hover = false;
 
 			repaint();
-		}
+		}*/
 	}
 
 	public boolean isExpanded() {
@@ -338,6 +385,22 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 
 	public void setHover(boolean hover) {
 		this.hover = hover;
+	}
+
+	public void setExpandedIntervals(int expandedIntervals) {
+		this.expandedIntervals = expandedIntervals;
+	}
+
+	public void incrementIntervals(){
+		this.expandedIntervals++;
+	}
+	
+	public void decrementIntervals(){
+		this.expandedIntervals--;
+	}
+	
+	public int expandedIntervals() {
+		return expandedIntervals;
 	}
 	
 }

@@ -85,7 +85,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         colorGradientModel = new ColorGradientModel(ColorGradientManager.getGradients());
         
         info = new infoBox("David", colorGradientModel);
-        lap = new LAP(alignment,colorGradientModel,"The title", this);
+        lap = new LAP(alignment,colorGradientModel,"The title", this, manager);
         
         getCanvas().addChild(lap);		
         getCanvas().addChild(info);
@@ -102,9 +102,11 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         // This states what happens (to the view) when the model changes.
         lapModel.addSidePanelListener(new SidePanelListener() {
-            public void modelChanged(SidePanelModel model, SidePanelEvent event) {
+            @Override
+			public void modelChanged(SidePanelModel model, SidePanelEvent event) {
                 SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         if(info != null){
 
                         	info.getTitleText().setTitle(lapModel.getLapTitle());
@@ -135,7 +137,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			@Override
 			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
 				SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         if(lap != null){
                         	lap.getBaseline().setBold(textModel.isBold());
                         	lap.getBaseline().setFontSize(sizeLookup[textModel.getTextSize()]);
@@ -154,10 +157,12 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			@Override
 			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
 				SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
+                    @Override
+					public void run() {
                         if(lap != null){
                         	lap.getBaseline().drawNumbers(seqModel.getDrawNumbers());
                         	lap.getBaseline().setIndexNumber(seqModel.getIntervalNumbers());
+                        	
                         }
                         if(info != null){
                         	info.setVisible(seqModel.getShowInfoBox());
@@ -176,7 +181,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
         	@Override
         	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
         		SwingUtilities.invokeLater(new Runnable(){
-        			public void run(){
+        			@Override
+					public void run(){
         				if(lap != null){
         					if (annotationTypeModel.isLastUpdatedChanged()) lap.getLv().setTypeAcces(annotationTypeModel.getLastUpdated());
         					if (annotationTypeModel.isLabelChanged()) lap.getLv().setTypeColor(annotationTypeModel.getLastChangedLabelName(), annotationTypeModel.getLastChangedLabel());
@@ -194,7 +200,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
         	@Override
         	public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1){
         		SwingUtilities.invokeLater(new Runnable(){
-        			public void run(){
+        			@Override
+					public void run(){
         				if(lap != null){
         					lap.getLv().setShowAnnotations(annotationLayoutModel.getshowAnnotations());
         					lap.getLv().setShowView(annotationLayoutModel.getSelected());
@@ -329,6 +336,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     	
     }
 
+	@Override
 	public boolean canDoMode(MouseMode arg0) {
 		// TODO Auto-generated method stub
 		//pan & zoom enabled
@@ -353,6 +361,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 		this.info = info;
 	}
 	
+	@Override
 	public ClcObject[] getEditingObjects(boolean isDragging) {
         return new ClcObject[] { seq };
     }
@@ -363,11 +372,13 @@ public class LAPEditor extends AbstractGraphicsEditor {
         return getName();
     }
 
-    public double getVersion() {
+    @Override
+	public double getVersion() {
         return 1.0;
     }
 
-    public String getClassKey() {
+    @Override
+	public String getClassKey() {
         return "lap_editor";
     }
 
@@ -403,6 +414,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     }
 	//Human readable text string, that will appear in a "View" submenu. The concatenated string will then be "View As Simple Text"
     
+	@Override
 	public boolean canEdit(Class[] types) {
 		if (types == null || types.length != 1) {
             return false;
