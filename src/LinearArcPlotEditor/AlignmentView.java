@@ -19,9 +19,9 @@ public class AlignmentView extends SidePanelView {
 	private int alignmentLength;
 	private int oldValue;
 	
-	public AlignmentView(SidePanelModel arg0, int alignmentLength) {
+	public AlignmentView(SidePanelModel arg0, String[] names) {
 		super(arg0);
-		this.alignmentLength = alignmentLength;
+		this.alignmentLength = names.length;
 		oldValue = 1;
 		fillPanel();
 	}

@@ -76,6 +76,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         if(inputIsAlignment){
         	alignment = (Alignment)models[0];
+        	System.out.println("Alignments navn: " + alignment.getName());
         }
         else{
         	AlignmentFactory alignmentFactory = FactoryManager.getInstance().getAlignmentFactory();
@@ -117,8 +118,12 @@ public class LAPEditor extends AbstractGraphicsEditor {
             }
         });
         
+        String[] alignmentSequenceNames = new String[alignment.getSequenceCount()];
+        for(int i=0; i<alignment.getSequenceCount(); i++){
+        	alignmentSequenceNames[i] = alignment.getSequence(i).getName();
+        }
         final AlignmentModel alignModel = new AlignmentModel("Alignment Layout");
-        AlignmentView alignView = new AlignmentView(alignModel, alignment.getSequenceCount());
+        AlignmentView alignView = new AlignmentView(alignModel, alignmentSequenceNames);
         alignModel.addSidePanelListener(new SidePanelListener(){
 			@Override
 			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
