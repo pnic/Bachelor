@@ -48,7 +48,10 @@ public class LAPFeatureView {
 		this.showAnnotations = true;
 		this.showArrows = true;
 		this.showGradients = true;
-				
+		
+		this.types = new ArrayList<LAPFeatureType>();
+		this.relevantTypes = new ArrayList<LAPFeatureType>();
+		
 		features = new ArrayList<LAPFeature>();
 		typeWidth = seq.getLength();
 		buildFeatureTypes(root);
@@ -101,9 +104,7 @@ public void buildFeatureTypes(LAP root){
 				Interval in = II.next();
 				LAPFeatureInterval li = new LAPFeatureInterval(fet.getName(), in.getFirstPos().getMin(),in.getLastPos().getMax(),cur.getTypeOffset(), root, cur);
 				tmp.addFeatureInterval(li);
-				//System.out.println("Interval \n First Position: " + in.getFirstPos() + " \n Last Position: " + in.getLastPos());
-				//System.out.println("Interval \n First Position.getMin: " + in.getFirstPos().getMin() + " \n Last Position.getMin: " + in.getLastPos().getMin());
-				//System.out.println("Interval \n First Position.getMax: " + in.getFirstPos().getMax() + " \n Last Position.getMax: " + in.getLastPos().getMax());
+				
 				cur.addInterval(li);
 			}
 			features.add(tmp);
