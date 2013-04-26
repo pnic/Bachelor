@@ -530,6 +530,5 @@ public class LAP extends RootDrawingNode {
 				}
 			}
 		}
-	}
-		
+	}		
 }

@@ -1,7 +1,9 @@
 package LinearArcPlotEditor;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -18,10 +20,20 @@ public class AlignmentView extends SidePanelView {
 	private StandardLayout panel;
 	private int alignmentLength;
 	private int oldValue;
+	private HashMap<String, Integer> NamesDictionary;
+	private String[] names;
 	
 	public AlignmentView(SidePanelModel arg0, String[] names) {
 		super(arg0);
 		this.alignmentLength = names.length;
+		this.names = names;
+		NamesDictionary = new HashMap<String, Integer>();
+		
+		for(int i=0; i<names.length; i++){
+			System.out.println("names[" + i + "] " + names[i]);
+			NamesDictionary.put(names[i], i+1);
+		}
+		
 		oldValue = 1;
 		fillPanel();
 	}
@@ -34,17 +46,17 @@ public class AlignmentView extends SidePanelView {
 				numbers[i] = ""+(i+1);
 			}
 			
-			
-			final JComboBox alignmentNumber = new JComboBox(numbers);
+			final JComboBox alignmentNumber = new JComboBox(names);
+			alignmentNumber.setPreferredSize(new Dimension(150, 25));
 			
 			alignmentNumber.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					int newValue = Integer.parseInt((String)alignmentNumber.getSelectedItem());
-					
+					String s = (String)alignmentNumber.getSelectedItem();
+					int newValue = NamesDictionary.get(s);
+
 					if(!(newValue==oldValue)){
-						System.out.println("De er ikke ens, new: " + newValue + " old: " + oldValue);
-						((AlignmentModel)getModel()).setSequenceNumber(Integer.parseInt((String)alignmentNumber.getSelectedItem()));
+						((AlignmentModel)getModel()).setSequenceNumber(newValue);
 						oldValue = newValue;
 					}
 				}
