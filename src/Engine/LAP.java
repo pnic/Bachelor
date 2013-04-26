@@ -26,7 +26,7 @@ import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
 
 public class LAP extends RootDrawingNode {
 	private int [] pairings; 
-	private float [] reliabilities; 
+	private float[] reliabilities; 
 	private Alignment align;
 	private int broadestPair;
 	private Arc [] arcs; 
@@ -39,7 +39,7 @@ public class LAP extends RootDrawingNode {
 	private Arc mouseOverArc;
 	private int currentSequenceNumber;
 	private int pairArrais[][];
-	private int reliabilityArrays[][];
+	private float reliabilityArrays[][];
 	
 	public LAP(Alignment align, ColorGradientModel gradmodel, String title, LAPEditor editor){
 		this.align = align;
@@ -73,6 +73,9 @@ public class LAP extends RootDrawingNode {
 		//removeAllChildren();
 		pairings = structure.getPairing();
 		reliabilities = new float[structure.getLength()];
+		//Our Rna structure
+    	List<RnaStructureAnnotation> annotations = structure.getStructureAnnotations();
+		RnaStructureAnnotation probAnnotation = annotations.get(0);
 		
 		if(baseline == null){
 			scaleX = 700.0/pairings.length;
@@ -96,18 +99,21 @@ public class LAP extends RootDrawingNode {
 		if(pairArrais[currentSequenceNumber][0] != -1){
 			System.out.println("DEn har v¾ret brugt f¿r");
 			seqNumbers = pairArrais[currentSequenceNumber];
+			seqReliabillities = reliabilityArrays[currentSequenceNumber];
 		}
 		else{
 		//Generate arcs
-		
 		int alignCounter = 0;
 		if(!indexer.knowsAlignmentPositions()){
+			//i = the position in the sequence.
+			//j = the position in the alignment. 
 			for(int i=0; i<pairings.length; i++){
 				if(pairings[i] > i){
 					int arrIndex = 0;
 					int arrNumber = 0;
 					for(int j=alignCounter; j<align.getLength() && isFound <= 1; j++){
 						int alignPos = indexer.getSequencePosition(j);
+
 						if(alignPos == pairings[i]){
 							arrIndex = j;
 							isFound++;
@@ -124,9 +130,23 @@ public class LAP extends RootDrawingNode {
 				}
 			}
 		}
+		
+			//Set reliability values
+    		for(int i = 0; i<structure.getLength(); i++){
+    			//get reliability of structure at that position
+    			reliabilities[i] = (float)probAnnotation.getValue(i);
+    		} 
+    	
+    		for(int i=0; i<align.getLength(); i++){
+    			int seqPos = indexer.getSequencePosition(i);
+    			if(seqPos >= 0){
+    				seqReliabillities[i] = reliabilities[indexer.getSequencePosition(i)];
+    			}
+    		}
+    		reliabilityArrays[currentSequenceNumber] = seqReliabillities;
+    		pairArrais[currentSequenceNumber] = seqNumbers;
 		}
-		System.out.println("F¾rdig med h");
-		pairArrais[currentSequenceNumber] = seqNumbers;
+
 		
 		int cnt = 0;
 			arcs = new Arc[nr];
@@ -153,23 +173,11 @@ public class LAP extends RootDrawingNode {
 				}
 			}
 		
-		//Our Rna structure
-    	List<RnaStructureAnnotation> annotations = structure.getStructureAnnotations();
-		RnaStructureAnnotation probAnnotation = annotations.get(0);
-		
-		//Set reliability values
-    	for(int i = 0; i<structure.getLength(); i++){
-			//get reliability of structure at that position
-			reliabilities[i] = (float)probAnnotation.getValue(i);
-			//System.out.println("R: " + reliabilities[i]);
-		} 
-    	
 		lv = new LAPFeatureView(current_sequence,this);
 		
 		if(baseline == null){
 			baseline = new Baseline(align, this);
 			addChild(baseline);
-			
 		}
 			
 		setColor();
@@ -196,6 +204,7 @@ public class LAP extends RootDrawingNode {
 		setMinScaleRatio(1.0);
 		setMaxScaleRatio(1.0);
 		pairArrais = new int[align.getSequenceCount()][align.getLength()];
+		reliabilityArrays = new float[align.getSequenceCount()][align.getLength()];
 		for(int i=0; i < align.getSequenceCount(); i++){
 			pairArrais[i][0] = -1;
 		}
