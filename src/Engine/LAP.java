@@ -49,7 +49,7 @@ public class LAP extends RootDrawingNode {
 	private Arc mouseOverArc;
 	private int currentSequenceNumber;
 	private int pairArrais[][];
-	private int reliabilityArrays[][];
+	private float reliabilityArrays[][];
 
 	private WorkbenchManager manager;
 	
@@ -87,9 +87,18 @@ public class LAP extends RootDrawingNode {
 		
 		removeArcs();
         removeTypes();
-		//removeAllChildren();
+
 		pairings = structure.getPairing();
 		reliabilities = new float[structure.getLength()];
+		
+		//Our Rna structure
+    	List<RnaStructureAnnotation> annotations = structure.getStructureAnnotations();
+		RnaStructureAnnotation probAnnotation = annotations.get(0);
+		
+		//Set reliability values
+    	for(int i = 0; i<structure.getLength(); i++){
+			reliabilities[i] = (float)probAnnotation.getValue(i);
+		} 
 		
 		if(baseline == null){
 			scaleX = 700.0/pairings.length;
@@ -107,16 +116,18 @@ public class LAP extends RootDrawingNode {
 		
 		//Array for converting reliability sequence numbers to alignment numbers. 
 		float[] seqReliabillities = new float[align.getLength()];
+		
+		
 		int isFound = 0;
 		BasicIndexer indexer = new AlignmentSequenceIndexer(align, currentSequenceNumber);
 		
 		if(pairArrais[currentSequenceNumber][0] != -1){
 			System.out.println("DEn har v¾ret brugt f¿r");
 			seqNumbers = pairArrais[currentSequenceNumber];
+			seqReliabillities = reliabilityArrays[currentSequenceNumber];
 		}
 		else{
 		//Generate arcs
-		
 		int alignCounter = 0;
 		if(!indexer.knowsAlignmentPositions()){
 			for(int i=0; i<pairings.length; i++){
@@ -138,12 +149,14 @@ public class LAP extends RootDrawingNode {
 					isFound = 0;
 					seqNumbers[arrNumber] = arrIndex;
 					seqNumbers[arrIndex] = arrNumber;
+					seqReliabillities[arrIndex] = reliabilities[pairings[i]];
+					seqReliabillities[arrNumber] = reliabilities[i];
 				}
 			}
 		}
-		}
-		System.out.println("F¾rdig med h");
 		pairArrais[currentSequenceNumber] = seqNumbers;
+		reliabilityArrays[currentSequenceNumber] = seqReliabillities;
+		}
 		
 		int cnt = 0;
 			arcs = new Arc[nr];
@@ -169,17 +182,6 @@ public class LAP extends RootDrawingNode {
 					}
 				}
 			}
-		
-		//Our Rna structure
-    	List<RnaStructureAnnotation> annotations = structure.getStructureAnnotations();
-		RnaStructureAnnotation probAnnotation = annotations.get(0);
-		
-		//Set reliability values
-    	for(int i = 0; i<structure.getLength(); i++){
-			//get reliability of structure at that position
-			reliabilities[i] = (float)probAnnotation.getValue(i);
-			//System.out.println("R: " + reliabilities[i]);
-		} 
     	
     	
 		lv = new LAPFeatureView(current_sequence,this);
@@ -193,10 +195,7 @@ public class LAP extends RootDrawingNode {
 		}
 			
 		setColor();
-		System.out.println("SŒ s¾tter vi den hurtig hurtig");
 		setSize();
-		
-	
 		repaint();
 	}
 	
@@ -217,6 +216,7 @@ public class LAP extends RootDrawingNode {
 		setMinScaleRatio(1.0);
 		setMaxScaleRatio(1.0);
 		pairArrais = new int[align.getSequenceCount()][align.getLength()];
+		reliabilityArrays = new float[align.getSequenceCount()][align.getLength()];
 		for(int i=0; i < align.getSequenceCount(); i++){
 			pairArrais[i][0] = -1;
 		}
@@ -498,9 +498,11 @@ public class LAP extends RootDrawingNode {
 			getManager().getWorkspaceManager().getCurrentWorkspace().edit(new ClcObject[] { subSeq }, editor);
 		} catch(IllegalAccessException e) {
 			e.printStackTrace();
+			System.out.println("IllegalAccessException");
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("IllegalAccessException");
 		}
 		
 		getManager().getActionManager().getAction("MFoldAction").actionPerformed(null);
@@ -514,7 +516,7 @@ public class LAP extends RootDrawingNode {
 	public void setAlign(Alignment align) {
 		this.align = align;
 	}	
-
+	
 	public void removeTypes(){
 		if(lv!= null){
 			for(LAPFeatureType l : lv.getTypes()){
