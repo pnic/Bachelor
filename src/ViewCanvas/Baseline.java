@@ -349,20 +349,22 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		double x = root.getXViewBounds() + arg0.getX();
-		double newX = x/root.getScaleX();
+		if(root.getScaleX() >= 11){
+			double x = root.getXViewBounds() + arg0.getX();
+			double newX = x/root.getScaleX();
 		
-		double mouseTy = root.getYViewBounds() + arg0.getY();	
-		mouseTy = mouseTy -(root.getBaseXAxis()+root.getLv().getFeaturesLowerY() + stringHeight);
-		mouseTy = mouseTy/stringHeight;
-		int YSequence = (int)Math.round(mouseTy);
-		int XNucleotide = (int)Math.round(newX);
+			double mouseTy = root.getYViewBounds() + arg0.getY();	
+			mouseTy = mouseTy -(root.getBaseXAxis()+root.getLv().getFeaturesLowerY() + stringHeight);
+			mouseTy = mouseTy/stringHeight;
+			int YSequence = (int)Math.round(mouseTy);
+			int XNucleotide = (int)Math.round(newX);
 		
 
-		if(XNucleotide >= 0 && XNucleotide < alignment.getLength() && YSequence >= 0 && YSequence < alignment.getSequenceCount()){
-			BasicIndexer indexer = new AlignmentSequenceIndexer(alignment, YSequence);
-			int seqPosition = indexer.getSequencePosition(XNucleotide);
-			root.getEditor().setStatusInformation(this, "Alignment Position: " + XNucleotide + " [Sequence "+sequenceNames[YSequence] + " Type " + nucleotideSequences[YSequence][XNucleotide] + ": Sequence position " + seqPosition + "]");
+			if(XNucleotide >= 0 && XNucleotide < alignment.getLength() && YSequence >= 0 && YSequence < alignment.getSequenceCount()){
+				BasicIndexer indexer = new AlignmentSequenceIndexer(alignment, YSequence);
+				int seqPosition = indexer.getSequencePosition(XNucleotide);
+				root.getEditor().setStatusInformation(this, "Alignment Position: " + XNucleotide + " [Sequence "+sequenceNames[YSequence] + " Type " + nucleotideSequences[YSequence][XNucleotide] + ": Sequence position " + seqPosition + "]");
+			}
 		}
 	}
 	
