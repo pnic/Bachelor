@@ -79,7 +79,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		arc = new Arc2D.Double(newp1,arc_y_position,arc_width,arc_height,0,180,Arc2D.OPEN);
 	}
 	
-	
 	private int getArcHeight(int x1, int x2){
 		return (x2-x1)/2;
 	}
@@ -87,8 +86,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	private int getArcYPosition(int x1, int x2){
 		return root.getBaseXAxis()-(getArcHeight(x1,x2)/2);
 	}
-	
-
 	
 	public void updateStrokes(){
 		backArcStroke = new BasicStroke(3);
@@ -308,34 +305,18 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseEntered(MouseEvent arg0) {}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseExited(MouseEvent arg0) {}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mousePressed(MouseEvent arg0) {}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	public void mouseReleased(MouseEvent arg0) {}
 	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void mouseDragged(MouseEvent arg0) {}
 
 	public LAP getRoot() {
 		return root;
