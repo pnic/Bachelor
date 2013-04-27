@@ -530,5 +530,9 @@ public class LAP extends RootDrawingNode {
 				}
 			}
 		}
-	}		
+	}	
+	
+	public int getCurrentSequenceNumber(){
+		return currentSequenceNumber;
+	}
 }

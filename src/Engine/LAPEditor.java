@@ -134,6 +134,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 				if(lap != null){
 					lap.drawArcsFromSequence(alignModel.getSequenceNumber());
 					lap.getBaseline().setShowAlignments(alignModel.isShowAlignments());
+					lap.setSize();
 				}
 			}
         	

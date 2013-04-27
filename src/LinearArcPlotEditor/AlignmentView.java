@@ -64,6 +64,7 @@ public class AlignmentView extends SidePanelView {
 			});
 			
 			final JCheckBox showAlignments = new JCheckBox("Show alignments");
+			showAlignments.setSelected(true);
 			showAlignments.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
