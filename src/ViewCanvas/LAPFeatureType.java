@@ -300,12 +300,10 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 		if(drawnStringContainer.contains(new Point(arg0.getX()+root.getXViewBounds(),arg0.getY()+root.getYViewBounds()))){
 			this.typeHover = true;
 			repaint();
-			
 			return;
 		}
 		if(typeHover){
 			typeHover = false;
-			
 			repaint();
 		}
 		

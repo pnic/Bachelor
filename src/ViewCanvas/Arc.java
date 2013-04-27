@@ -234,7 +234,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 					boolean rt = root.canArcShowMouseOver(this);
 					if(rt){
 						repaint();
-						root.getEditor().setStatusInformation(this, "David er nice");
 						root.getEditor().setToolTip(this, arg0.getX()+10, arg0.getY()+10, 
 								"pair at (" +p1 + ","+p2 + ") with PPFold reliability " + reliability);
 					}

@@ -227,6 +227,10 @@ public class LAP extends RootDrawingNode {
 		for(int i=0; i < align.getSequenceCount(); i++){
 			pairArrais[i][0] = -1;
 		}
+		for(int i=0; i<align.getSequenceCount(); i++){
+			Sequence seq = align.getSequence(i);
+			System.out.println(seq.getName());
+		}
 	}
 	
     /*
@@ -530,6 +534,10 @@ public class LAP extends RootDrawingNode {
 				}
 			}
 		}
+	}	
+	
+	public int getCurrentSequenceNumber(){
+		return currentSequenceNumber;
 	}
 
 	public void setPrevXViewBounds(int prevXViewBounds) {
@@ -539,5 +547,4 @@ public class LAP extends RootDrawingNode {
 	public int getPrevXViewBounds() {
 		return prevXViewBounds;
 	}
-		
 }
