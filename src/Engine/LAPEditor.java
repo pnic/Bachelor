@@ -229,8 +229,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
         addSidePanelView(annotationTypeView);
         addSidePanelView(textView);        
         addSidePanelView(lapView);
-
-        
         final RasmolColorInfoProvider RasmosColors = new RasmolColorInfoProvider(manager, "Rasmol colors");
         RasmosColors.addInfoListener(new InfoListener(){
 			@Override

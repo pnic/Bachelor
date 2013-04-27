@@ -9,9 +9,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 
 import javax.swing.SwingUtilities;
+import javax.swing.event.MouseInputListener;
 
 import Engine.LAP;
 
@@ -20,22 +22,26 @@ import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentIndexer;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentSequenceIndexer;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.index.BasicIndexer;
 
-public class Baseline extends ChildDrawingNode {
+public class Baseline extends ChildDrawingNode implements MouseInputListener{
 	
 	Line2D baseLine = new Line2D.Double(0,0,300,0);
 	Stroke stroke = new BasicStroke(2); 
 	private int length;
 	private int gapHeight;
 	private int stringHeight;
+	private int stringWidth;
+	
 	private Font font;
 	private Font numbersFont;
 	private boolean isBold;
 	private int fontSize;
 	private String fontName;
+	
 	private LAP root;
 	private boolean drawNumbers; 
 	private boolean rasmolFront;
@@ -45,7 +51,7 @@ public class Baseline extends ChildDrawingNode {
 	private String[][] nucleotideSequences;
 	private int[] sequenceLengths;
 	private boolean showAlignments;
-	
+	private String[] sequenceNames;
 	/*
 	 * A baseline represents the x-axis of the linearArcDiagram.
 	 */
@@ -64,6 +70,8 @@ public class Baseline extends ChildDrawingNode {
 	private void init(){
 		nucleotideSequences = new String[alignment.getSequenceCount()][alignment.getLength()];
 		sequenceLengths = new int[alignment.getSequenceCount()];
+		sequenceNames = new String[alignment.getSequenceCount()];
+		
 		for(int i=0; i<alignment.getSequenceCount(); i++){
 			sequenceLengths[i] = alignment.getSequence(i).getLength();
 		}
@@ -73,6 +81,7 @@ public class Baseline extends ChildDrawingNode {
 		for(int j=0; j<alignment.getSequenceCount(); j++){
 			BasicIndexer indexer = new AlignmentSequenceIndexer(alignment, j);
 			Sequence seq = alignment.getSequence(j);
+			sequenceNames[j] = seq.getName();
 				for(int i=0; i<alignment.getLength(); i++){
 				if(indexer.getSequencePosition(i) < 0){
 					s = "-";
@@ -83,6 +92,10 @@ public class Baseline extends ChildDrawingNode {
 				nucleotideSequences[j][i] = s;
 			}
 		}
+		font = new Font("sansserif", Font.BOLD, 14);
+		
+		BasicIndexer indexer = new AlignmentSequenceIndexer(alignment, 0);
+		Sequence seq = alignment.getSequence(0);
 		
 		drawNumbers = true;
 		showAlignments = true;
@@ -91,6 +104,8 @@ public class Baseline extends ChildDrawingNode {
 		isBold = true;
 		fontName = "SansSerif";
 		updateFont();
+		
+		this.addMouseInputListener(this);
 	}
 	
 	@Override
@@ -120,7 +135,7 @@ public class Baseline extends ChildDrawingNode {
 		}
 		// If scaleX() is over 12, draw sequence instead.
 		else{
-			int stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), "U");
+			stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), "U");
 			for(int j=0; j<alignment.getSequenceCount(); j++){
 				for(int i=0; i<alignment.getLength(); i++){	
 					// Only if number is in the screen. 
@@ -157,7 +172,7 @@ public class Baseline extends ChildDrawingNode {
 			if(numbersFont != null) { g2.setFont(numbersFont); }
 
 			// Making variables ready who wont change during the loop, e.g. y-coordinate of texts. 
-			int stringWidth, YPosition_text, YPosition_line_start, YPosition_line_end;
+			int YPosition_text, YPosition_line_start, YPosition_line_end;
 			//Under 11
 			if(root.getScaleX() < 11){
 				YPosition_text = root.getBaseXAxis()+stringHeight+firstGap + secondGap + intervalHeight;
@@ -165,9 +180,9 @@ public class Baseline extends ChildDrawingNode {
 				YPosition_line_start = root.getBaseXAxis()+firstGap;
 			}//Over 11
 			else{
-				YPosition_text = root.getBaseXAxis()+((alignment.getSequenceCount()+1)*stringHeight)+firstGap + secondGap + intervalHeight;
-				YPosition_line_start = root.getBaseXAxis()+(stringHeight*alignment.getSequenceCount())+firstGap;
-				YPosition_line_end = root.getBaseXAxis()+(stringHeight*alignment.getSequenceCount())+firstGap+intervalHeight;
+				YPosition_text = root.getBaseXAxis()+((alignment.getSequenceCount()+1)*stringHeight)+firstGap + secondGap + intervalHeight + root.getLv().getFeaturesLowerY();
+				YPosition_line_start = root.getBaseXAxis()+(stringHeight*alignment.getSequenceCount())+firstGap + root.getLv().getFeaturesLowerY();
+				YPosition_line_end = root.getBaseXAxis()+(stringHeight*alignment.getSequenceCount())+firstGap+intervalHeight + root.getLv().getFeaturesLowerY();
 			}
 			
 			for(int i=0; i<length; i+= interval){
@@ -238,6 +253,10 @@ public class Baseline extends ChildDrawingNode {
 		repaint();
 	}
 	
+	public Font getFont(){
+		return font;
+	}
+	
 	public String getFontName() {
 		return fontName;
 	}
@@ -280,5 +299,71 @@ public class Baseline extends ChildDrawingNode {
 		this.showAlignments = showAlignments;
 	}
 	
+	public int GetNucleotideZoomLevel(){
+		return 11;
+	}
+	
+	public boolean isRasmolBack(){
+		return rasmolBack;
+	}
+	
+	public boolean isRasmolFron(){
+		return rasmolFront;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		double x = root.getXViewBounds() + arg0.getX();
+		double newX = x/root.getScaleX();
+		
+		double mouseTy = root.getYViewBounds() + arg0.getY();	
+		mouseTy = mouseTy -(root.getBaseXAxis()+root.getLv().getFeaturesLowerY() + stringHeight);
+		mouseTy = mouseTy/stringHeight;
+		int YSequence = (int)Math.round(mouseTy);
+		int XNucleotide = (int)Math.round(newX);
+		
+
+		if(XNucleotide >= 0 && XNucleotide < alignment.getLength() && YSequence >= 0 && YSequence < alignment.getSequenceCount()){
+			BasicIndexer indexer = new AlignmentSequenceIndexer(alignment, YSequence);
+			int seqPosition = indexer.getSequencePosition(XNucleotide);
+			root.getEditor().setStatusInformation(this, "Alignment Position: " + XNucleotide + " [Sequence "+sequenceNames[YSequence] + " Type " + nucleotideSequences[YSequence][XNucleotide] + ": Sequence position " + seqPosition + "]");
+		}
+	}
 	
 }
