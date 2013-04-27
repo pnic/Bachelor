@@ -16,7 +16,8 @@ public class TitleText extends ChildDrawingNode{
 	private infoBox box;
 	public boolean visible;
 	
-	public TitleText(String title){
+	public TitleText(String title, infoBox i){
+		this.box = i;
 		this.title = title;
 		this.visible = true;
 	}
@@ -31,7 +32,13 @@ public class TitleText extends ChildDrawingNode{
 					g2.setStroke(new BasicStroke(2));
 					g2.fillRect(box.getXViewBounds()-1, box.getYViewBounds()-1, 200, 79);
 					g2.setColor(Color.black);
-					g2.setFont(new Font("sansserif", Font.BOLD, 12));
+					System.out.println(box.getTextSize());
+					if(box.isBold()){
+					g2.setFont(new Font(box.getFontName(), Font.BOLD, box.getTextSize()));
+					} else {
+						g2.setFont(new Font(box.getFontName(), Font.PLAIN, box.getTextSize()));
+					}
+					
 					g2.drawRect(box.getXViewBounds()-1, box.getYViewBounds()-1, 201, 80);
 					g2.drawString(title, box.getXViewBounds()+5, box.getYViewBounds() + 20);;
 				}

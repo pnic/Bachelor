@@ -9,6 +9,7 @@ import ViewCanvas.Arc;
 import ViewCanvas.Baseline;
 import ViewCanvas.LAPFeatureInterval;
 import ViewCanvas.LAPFeatureType;
+import ViewCanvas.NoGraphPluginDialog;
 
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructureElement;
@@ -51,6 +52,8 @@ public class LAP extends RootDrawingNode {
 	private int pairArrais[][];
 	private float reliabilityArrays[][];
 
+	private int prevXViewBounds = -999;
+	
 	private WorkbenchManager manager;
 	
 	public LAP(Alignment align, ColorGradientModel gradmodel, String title, LAPEditor editor, WorkbenchManager man){
@@ -188,6 +191,10 @@ public class LAP extends RootDrawingNode {
 		//if(lv.getRelevantTypes() != null){
 			setRelevantTypes();
 		//}
+		if(editor.getAnnotationTypeView() != null){
+			editor.updateAnnotationView(lv.getTypes());
+		}
+			
 		if(baseline == null){
 			baseline = new Baseline(align, this);
 			addChild(baseline);
@@ -236,6 +243,7 @@ public class LAP extends RootDrawingNode {
 	}
 	
 	public void setRelevantTypes(){
+		System.out.println("Setting relevant types");
 		for(LAPFeatureType l : lv.getTypes()){
 			removeChild(l);
 			for(LAPFeatureInterval li : l.getIntervals()){
@@ -500,13 +508,9 @@ public class LAP extends RootDrawingNode {
     	try{
 		    Editor editor = getManager().getEditorManager().getEditorClassById("com.clcbio.plugins.rnasecondary.editor.RnaSecondaryStructureEditor").newInstance();
 			getManager().getWorkspaceManager().getCurrentWorkspace().edit(new ClcObject[] { subSeq }, editor);
-		} catch(IllegalAccessException e) {
-			e.printStackTrace();
-			System.out.println("IllegalAccessException");
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("IllegalAccessException");
+		} catch(Exception e) {
+			NoGraphPluginDialog np = new NoGraphPluginDialog("A problem occured trying to view the 2D planar graph plugin. The plugin either does not exist in your workbench or you do not have sufficient access rights to view it.");
+			np.setVisible(true);
 		}
 		
 		getManager().getActionManager().getAction("MFoldAction").actionPerformed(null);
@@ -534,5 +538,13 @@ public class LAP extends RootDrawingNode {
 	
 	public int getCurrentSequenceNumber(){
 		return currentSequenceNumber;
+	}
+
+	public void setPrevXViewBounds(int prevXViewBounds) {
+		this.prevXViewBounds = prevXViewBounds;
+	}
+
+	public int getPrevXViewBounds() {
+		return prevXViewBounds;
 	}
 }

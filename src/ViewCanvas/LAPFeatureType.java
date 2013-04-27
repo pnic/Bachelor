@@ -216,7 +216,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 		this.changed = true;
 		root.setRelevantTypes();
 		prevClick = arg0.getWhen();
-		System.out.println("mouse clicked");
+		
 		repaint();
 		}*/
 	}

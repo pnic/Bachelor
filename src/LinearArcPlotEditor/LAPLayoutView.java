@@ -6,9 +6,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import LinearArcPlotEditor.LAPLayoutModel;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelView;
@@ -21,6 +25,7 @@ public class LAPLayoutView extends SidePanelView {
     private JTextField Title;
     private JLabel titleLabel;
     private JButton setTitle;
+    private JCheckBox setCgrVisible;
     private StandardLayout titlePanel;
     
 //Here have the three Swing components representing our model properties. Furthermore we use the CLC component StandardLayout to do the layout of our UI.
@@ -54,8 +59,21 @@ public class LAPLayoutView extends SidePanelView {
 				}
 			});
             
+            setCgrVisible = new JCheckBox("Show Reliabilities");
+            setCgrVisible.setSelected(true);
+            setCgrVisible.addChangeListener(new ChangeListener(){
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					((LAPLayoutModel)getModel()).setCgrVisible(setCgrVisible.isSelected());					
+				}
+            	
+            });
+            
+            
             titlePanel.add(titleLabel);
             titlePanel.add(Title);
+            titlePanel.addComp(setCgrVisible);
             
             panel = new StandardLayout();
             
@@ -68,6 +86,7 @@ public class LAPLayoutView extends SidePanelView {
         createUI();
         panel.removeAll();  
         panel.addComp(titlePanel);
+        panel.addComp(setCgrVisible);
     }
 //And here we do the layout of the components in our StandardLayout. Notice how the fontNameBox and isBoldBox are only added if their respective "include" flags are set.
 

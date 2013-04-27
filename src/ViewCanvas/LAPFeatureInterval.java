@@ -78,6 +78,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy)
 	{
+		
 		if(root.getLv().isShowAnnotations() && type.isSelected()){
 			
 			if(!hasMouseListener){

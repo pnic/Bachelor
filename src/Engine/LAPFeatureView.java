@@ -294,6 +294,7 @@ public void setShowGradients(boolean showGradients) {
 }
 
 public void repaintTypes(){
+	System.out.println("Repainting types");
 	for(LAPFeatureType t : types){
 		for(LAPFeatureInterval i : t.getIntervals()){
 			i.repaintInterval();
