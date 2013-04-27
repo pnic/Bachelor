@@ -216,7 +216,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 		this.changed = true;
 		root.setRelevantTypes();
 		prevClick = arg0.getWhen();
-		System.out.println("mouse clicked");
+		
 		repaint();
 		}*/
 	}
@@ -300,16 +300,14 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 		if(drawnStringContainer.contains(new Point(arg0.getX()+root.getXViewBounds(),arg0.getY()+root.getYViewBounds()))){
 			this.typeHover = true;
 			repaint();
-			System.out.println("highlight string");
+			
 			return;
 		}
 		if(typeHover){
 			typeHover = false;
-			System.out.println("Don't highligt");
+			
 			repaint();
 		}
-		System.out.println(stringContainer.getX() + " is value stringContainer x " + stringContainer.getY() + " is value of stringContainer y");
-		System.out.println(arg0.getX() + " arg0 x " + arg0.getY() + " Is arg0 y");
 		
 	/*	if(content.getMinY() < arg0.getY()+root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.getYViewBounds()){
 		this.hover = true;

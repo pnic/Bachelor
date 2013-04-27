@@ -50,7 +50,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 	private boolean changed;
 
 	public LAPFeatureInterval(String name, int startPos, int endPos, int offset, LAP root, LAPFeatureType type){
-		System.out.println("Creating Interval");
+	
 		this.lines = false;
 		this.arrows = true;
 		this.name = name;
@@ -79,6 +79,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy)
 	{
+		
 		if(root.getLv().isShowAnnotations() && type.isSelected()){
 			
 			if(!hasMouseListener){
@@ -204,7 +205,6 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 	}
 
 	public void repaintInterval(){
-		System.out.println("repaint int");
 		this.repaint();
 	}
 

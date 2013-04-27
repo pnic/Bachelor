@@ -8,6 +8,7 @@ public class LAPLayoutModel extends SidePanelModel {
 
 	 private int zoomLevel = 100;
      private String LAPTitle = "Title";
+     private boolean cgrVisible = true;
 
 	    private static final String ZOOM_LEVEL = "100%";
 	    
@@ -16,7 +17,7 @@ public class LAPLayoutModel extends SidePanelModel {
 	    
 	    public LAPLayoutModel(WorkbenchManager manager) {
 	        super("Infobox");
-
+	        
 	    }
 	// Construction and initialization.
 
@@ -60,6 +61,18 @@ public class LAPLayoutModel extends SidePanelModel {
 		
 		public String getLapTitle(){
 			return LAPTitle;
+		}
+
+		public boolean isCgrVisible() {
+			return cgrVisible;
+		}
+
+		public void setCgrVisible(boolean cgrVisible) {
+			if (cgrVisible == this.cgrVisible) {
+	            return;
+	        }
+	        this.cgrVisible = cgrVisible;
+	        fireModelChanged();
 		}
 		
 		

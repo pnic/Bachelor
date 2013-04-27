@@ -20,18 +20,18 @@ public class AnnotationTypeModel extends SidePanelModel{
 	private String lastChangedLabelName;
 	private Color lastChangedLabel;
 	private boolean labelChanged = false;
-	
+	List<LAPFeatureType> types;
 	
 	private Map<String, Boolean> booltypes;
 	
-	public AnnotationTypeModel(String title, List<LAPFeatureType> types) {
+	public AnnotationTypeModel(String title, List<LAPFeatureType> firstTypes) {
 		super(title);
 		booltypes = new HashMap<String, Boolean>();
-		
-		buildMap(types);
+		this.types = firstTypes;
+		buildMap();
 	}
 
-	private void buildMap(List<LAPFeatureType> types) {
+	private void buildMap() {
 		
 			if(types != null){
 				for(LAPFeatureType l : types){
@@ -122,5 +122,20 @@ public class AnnotationTypeModel extends SidePanelModel{
 	public void setLabelChanged(boolean labelChanged) {
 		this.labelChanged = labelChanged;
 	}
+
+	public List<LAPFeatureType> getTypes() {
+		return types;
+	}
+
+	public void setTypes(List<LAPFeatureType> types) {
+		this.types = types;
+	}
+	
+	public void rebuildMap(List<LAPFeatureType> l){
+		this.types = l;
+		buildMap();
+		fireModelChanged();
+	}
+	
 
 }

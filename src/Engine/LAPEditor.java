@@ -9,6 +9,8 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
@@ -26,6 +28,7 @@ import LinearArcPlotEditor.SequenceView;
 import LinearArcPlotEditor.StructureValueInfoProvider;
 import LinearArcPlotEditor.TextModel;
 import LinearArcPlotEditor.TextView;
+import ViewCanvas.LAPFeatureType;
 import ViewCanvas.infoBox;
 
 import com.clcbio.api.base.session.FactoryManager;
@@ -41,12 +44,15 @@ import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentFactory;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelListener;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
+import com.clcbio.api.free.editors.framework.sidepanel.SidePanelView;
+import com.clcbio.api.free.editors.framework.sidepanel.SidePanelVisitor;
 import com.clcbio.api.free.editors.framework.sidepanel.event.SidePanelEvent;
 import com.clcbio.api.free.framework.workspace.Workspace;
 import com.clcbio.api.free.gui.icon.ClcIcon;
 import com.clcbio.api.free.gui.icon.DefaultClcIcon;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 import com.clcbio.api.clc.graphics.AbstractGraphicsEditor;
+import com.clcbio.api.clc.graphics.CanvasListener;
 import com.clcbio.api.clc.graphics.components.ColorGradientManager;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.InfoListener;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.InfoProvider;
@@ -70,6 +76,14 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	
     private int[] sizeLookup = new int[] { 6, 9, 14, 18, 24 };	
 	public ClcObject[] models;
+	
+	private SequenceView seqView; 
+	private LAPLayoutView lapView;
+	private AlignmentView alignView; 
+	private AnnotationLayoutView annotationLayoutView;
+	private AnnotationTypeView annotationTypeView;
+	
+	private TextView textView;  
 	
 	@Override
     public void initGraphicsEditorInstance(WorkbenchManager manager, ClcObject[] models, Workspace ws) {
@@ -102,7 +116,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	 */
 	private void fillSidePanel(){
 		final LAPLayoutModel lapModel = new LAPLayoutModel(manager);
-        LAPLayoutView lapView = new LAPLayoutView(lapModel);
+        lapView = new LAPLayoutView(lapModel);
         
         // This states what happens (to the view) when the model changes.
         lapModel.addSidePanelListener(new SidePanelListener() {
@@ -112,7 +126,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
                     @Override
 					public void run() {
                         if(info != null){
-
+                        	info.getCgr().visible = lapModel.isCgrVisible();
                         	info.getTitleText().setTitle(lapModel.getLapTitle());
                         }
                         repaint();
@@ -122,7 +136,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         });
         
         final AlignmentModel alignModel = new AlignmentModel("Alignment Layout");
-        AlignmentView alignView = new AlignmentView(alignModel, alignment.getSequenceCount());
+        alignView = new AlignmentView(alignModel, alignment.getSequenceCount());
         alignModel.addSidePanelListener(new SidePanelListener(){
 			@Override
 			public void modelChanged(SidePanelModel arg0, SidePanelEvent arg1) {
@@ -135,7 +149,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         });
         
         final TextModel textModel = new TextModel(manager);
-        TextView textView = new TextView(textModel);
+        textView = new TextView(textModel);
         
         textModel.addSidePanelListener(new SidePanelListener(){
 			@Override
@@ -148,6 +162,9 @@ public class LAPEditor extends AbstractGraphicsEditor {
                         	lap.getBaseline().setFontSize(sizeLookup[textModel.getTextSize()]);
                         	lap.getBaseline().setFontName(textModel.getFontName());
                         	lap.getBaseline().updateFont();
+                        	info.setTextSize(sizeLookup[textModel.getTextSize()]);
+                        	info.setBold(textModel.isBold());
+                        	info.setFontName(textModel.getFontName());
                         }
                     }
                 });
@@ -155,7 +172,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         });
         
         final SequenceModel seqModel = new SequenceModel("SequenceLayout");
-        SequenceView seqView = new SequenceView(seqModel);
+        seqView = new SequenceView(seqModel);
         
         seqModel.addSidePanelListener(new SidePanelListener(){
 			@Override
@@ -179,7 +196,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         
         final AnnotationTypeModel annotationTypeModel = new AnnotationTypeModel("Annotation Types", lap.getLv().getTypes());
-        AnnotationTypeView annotationTypeView = new AnnotationTypeView(annotationTypeModel);
+        annotationTypeView = new AnnotationTypeView(annotationTypeModel);
         
         annotationTypeModel.addSidePanelListener(new SidePanelListener(){
         	@Override
@@ -197,7 +214,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         });
         
         final AnnotationLayoutModel annotationLayoutModel = new AnnotationLayoutModel("Annotation layout");
-        AnnotationLayoutView annotationLayoutView = new AnnotationLayoutView(annotationLayoutModel);
+        annotationLayoutView = new AnnotationLayoutView(annotationLayoutModel);
         
         
         annotationLayoutModel.addSidePanelListener(new SidePanelListener(){
@@ -225,6 +242,9 @@ public class LAPEditor extends AbstractGraphicsEditor {
         addSidePanelView(textView);        
         addSidePanelView(lapView);
 
+        
+        CanvasListener c = getCanvasListener();
+        
         
         final RasmolColorInfoProvider RasmosColors = new RasmolColorInfoProvider(manager, "Rasmol colors");
         RasmosColors.addInfoListener(new InfoListener(){
@@ -284,10 +304,28 @@ public class LAPEditor extends AbstractGraphicsEditor {
         });
         SubSequenceInfoModel subSequenceInfoModel = new SubSequenceInfoModel(new SequenceInfoModel(new InfoProvider[] {RasmosColors, StructureValue }, null), "Residue Coloring", CreateList.of(RasmosColors, StructureValue));
         
-        addSidePanelView(new SequenceInfoView(subSequenceInfoModel));	
-    
+        addSidePanelView(new SequenceInfoView(subSequenceInfoModel));
         
-        
+        getCanvas().getScrollPane().addMouseMotionListener(new MouseMotionListener(){
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+				if(lap != null){
+					//if(!)
+					//System.out.println("Repainting from scrollpane");
+					//lap.setRelevantTypes();
+					//lap.getLv().repaintTypes();
+				}
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				
+				
+			}
+        	
+        });
         
 	}
 	
@@ -327,8 +365,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
     	java.net.URL imgURL = getClass().getResource(path);
     	if (imgURL != null) {
     		return new ImageIcon(imgURL, description);
-    	} else {
-    		
+    	} else {    		
     		System.err.println("Couldn't find file: " + path);
     		return null;
     	}
@@ -432,6 +469,34 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         return false;
     }
+	
+	public void updateAnnotationView(List<LAPFeatureType> l){
+		annotationTypeView.setNewTypes(l);
+		SidePanelView curS;
+		getSidePanel().getSidePanelGroup().visitAllSidePanelViews(new SidePanelVisitor(){
+				
+			@Override
+			public void visit(SidePanelView cur) {
+				cur.updateUI();
+				cur.repaint();
+				
+				System.out.println("Visiting");
+				System.out.println(cur.getName());
+				
+			}			
+		});
+		
+		//getSidePanel().getSidePanelGroup().removeSidePanelView(annotationTypeView);
+		//this.addSidePanelView(annotationTypeView);
+	}
+
+	public AnnotationTypeView getAnnotationTypeView() {
+		return annotationTypeView;
+	}
+
+	public void setAnnotationTypeView(AnnotationTypeView annotationTypeView) {
+		this.annotationTypeView = annotationTypeView;
+	}
 
 
 }

@@ -71,8 +71,7 @@ public class TextView extends SidePanelView{
 		}
 		if(includeBold){
 			panel.addComp(isBoldBox);
-		}
-		
+		}		
 	}
 
 	@Override

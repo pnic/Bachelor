@@ -8,10 +8,13 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Stroke;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
 
 import javax.swing.SwingUtilities;
+import javax.swing.event.MouseInputListener;
 
 import Engine.LAP;
 
@@ -24,7 +27,7 @@ import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.index.BasicIndexer;
 
-public class Baseline extends ChildDrawingNode {
+public class Baseline extends ChildDrawingNode implements MouseInputListener{
 	
 	Line2D baseLine = new Line2D.Double(0,0,300,0);
 	Stroke stroke = new BasicStroke(2); 
@@ -45,6 +48,10 @@ public class Baseline extends ChildDrawingNode {
 	private String[][] nucleotideSequences;
 	private int[] sequenceLengths;
 	private boolean showAlignments;
+	private Point startDragPoint;
+	private boolean dragging;
+	private Point curDragPoint;
+	private boolean hasMouseListener;
 	
 	/*
 	 * A baseline represents the x-axis of the linearArcDiagram.
@@ -107,6 +114,11 @@ public class Baseline extends ChildDrawingNode {
 		g2.setFont(font);
 		stringHeight = g2.getFontMetrics().getHeight();
 		g2.setStroke(stroke);
+		
+		if(!hasMouseListener){
+			this.addMouseInputListener(this);
+			hasMouseListener = true;
+		}
 		
 		int numbersGap = 50;
 		
@@ -178,6 +190,14 @@ public class Baseline extends ChildDrawingNode {
 					g2.drawString(Integer.toString(i-startingIndexNumber), lineX_pos-(stringWidth/2), YPosition_text);
 					g2.drawLine(lineX_pos, YPosition_line_start, lineX_pos, YPosition_line_end);
 			}
+		}
+		
+		if(dragging){
+			int startX;
+			int startY;
+			startX = startDragPoint.getX() > curDragPoint.getX() ? (int)(root.getXViewBounds()+curDragPoint.getX()) : (int)(root.getXViewBounds()+startDragPoint.getX());
+			startY = startDragPoint.getY() > curDragPoint.getY() ? (int)(root.getYViewBounds()+curDragPoint.getY()) : (int)(root.getYViewBounds()+startDragPoint.getY());
+			g2.drawRect(startX,startY,Math.abs((int)(curDragPoint.getX()-startDragPoint.getX())),Math.abs((int)(curDragPoint.getY()-startDragPoint.getY())));
 		}
 		return DrawingResult.NORMAL;
 	}
@@ -278,6 +298,54 @@ public class Baseline extends ChildDrawingNode {
 
 	public void setShowAlignments(boolean showAlignments) {
 		this.showAlignments = showAlignments;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		System.out.println("mouse pressed");
+		dragging = true;
+		startDragPoint = e.getPoint();
+		curDragPoint = startDragPoint;
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		dragging = false;
+		this.repaint();
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		if(Math.abs(e.getPoint().getX()-curDragPoint.getX()) > 15 || Math.abs(e.getPoint().getY()-curDragPoint.getY()) > 15){
+		curDragPoint = e.getPoint();
+		this.repaint();
+		}
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

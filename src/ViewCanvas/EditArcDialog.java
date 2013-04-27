@@ -104,9 +104,10 @@ public class EditArcDialog extends JDialog{
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				EditArcDialog.this.dispose();
 				arc.getRoot().showSub(arc);
 				System.out.println();
-				EditArcDialog.this.dispose();
+				
 			}
         	
         });
