@@ -233,7 +233,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 						root.setNucleotideRectangleIndex(p1, p2);
 						repaint();
 						root.getEditor().setToolTip(this, arg0.getX()+10, arg0.getY()+10, 
-								"pair at (" +p1 + ","+p2 + ") with PPFold reliability " + reliability);
+								"Pair at alignment positions (" +p1 + ","+p2 + ") with PPFold reliability " + reliability);
 					}
 			}
 			else{

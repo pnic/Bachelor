@@ -20,7 +20,7 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 	double fixedMax;
 	
 	int colorResolution = 100; 
-	int length = 200; 
+	int length; 
 	int width = 20; 
 	private double x_pos; 
 	private double y_pos; 
@@ -35,6 +35,7 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 		this.fixedMin = fixedMin;
 		this.fixedMax = fixedMax;
 		this.box = box;
+		this.length = box.getWidth()-5;
 
 		
 		//Create rectangle array
@@ -48,7 +49,7 @@ public class ColorGradientRectangle extends ChildDrawingNode  {
 	@Override
 	protected DrawingResult internalDraw(Graphics2D ga, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy) {
 		if(visible){
-			y_pos = box.getYViewBounds()+50; 
+			y_pos = box.getYViewBounds()+55; 
 			x_pos = box.getXViewBounds(); 	
 			ga.setStroke(stroke);
 			for(int i = 0; i<colorResolution; i++){

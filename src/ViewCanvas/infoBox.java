@@ -15,15 +15,17 @@ public class infoBox extends RootDrawingNode{
 	private int textSize;
 	private boolean bold;
 	private String fontName;
+	private int width;
 	
 	public infoBox(String title, ColorGradientModel colorModel){
 		bold = true;
 		textSize = 14;
+		this.width = 200;
 		setFontName("sansSerif");
 		this.titleText = new TitleText(title,this);
 		titleText.setBox(this);
 		this.colorModel = colorModel;
-		cgr = new ColorGradientRectangle("Color of pairs", 0, 0, this, this.colorModel);
+		cgr = new ColorGradientRectangle("Color of pairs", 0, 1, this, this.colorModel);
 		this.addChild(titleText);
 		this.addChild(cgr);
 	}
@@ -115,5 +117,9 @@ public class infoBox extends RootDrawingNode{
 
 	public String getFontName() {
 		return fontName;
+	}
+	
+	public int getWidth(){
+		return width;
 	}
 }

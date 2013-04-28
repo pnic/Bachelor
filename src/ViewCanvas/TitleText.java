@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.RoundRectangle2D;
 
 
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
@@ -30,7 +31,7 @@ public class TitleText extends ChildDrawingNode{
 					//g2.drawString(title, 20, 20);
 					g2.setColor(Color.white);
 					g2.setStroke(new BasicStroke(2));
-					g2.fillRect(box.getXViewBounds()-1, box.getYViewBounds()-1, 200, 79);
+					g2.fillRect(box.getXViewBounds()-1, box.getYViewBounds()-1, box.getWidth(), 79);
 					g2.setColor(Color.black);
 					System.out.println(box.getTextSize());
 					if(box.isBold()){
@@ -39,8 +40,8 @@ public class TitleText extends ChildDrawingNode{
 						g2.setFont(new Font(box.getFontName(), Font.PLAIN, box.getTextSize()));
 					}
 					
-					g2.drawRect(box.getXViewBounds()-1, box.getYViewBounds()-1, 201, 80);
-					g2.drawString(title, box.getXViewBounds()+5, box.getYViewBounds() + 20);;
+					g2.draw(new RoundRectangle2D.Double(box.getXViewBounds()-1,box.getYViewBounds()-1, box.getWidth()+1, 80, 6, 6));
+					g2.drawString(title, box.getXViewBounds(), box.getYViewBounds() + 20);;
 				}
 			}
 		}

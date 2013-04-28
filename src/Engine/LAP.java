@@ -60,7 +60,6 @@ public class LAP extends RootDrawingNode {
 	public LAP(Alignment align, ColorGradientModel gradmodel, String title, LAPEditor editor, WorkbenchManager man){
 
 		this.align = align;
-
 		this.current_sequence = align.getSequence(0);
 		currentSequenceNumber = 0;
 		this.editor = editor;
