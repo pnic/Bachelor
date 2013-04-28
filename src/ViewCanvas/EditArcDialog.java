@@ -115,9 +115,6 @@ public class EditArcDialog extends JDialog{
         btns.add(showAsSequence);
         
         add(btns);
-        
-        
-        
 
         setModalityType(ModalityType.APPLICATION_MODAL);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

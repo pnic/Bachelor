@@ -3,6 +3,8 @@ package ViewCanvas;
 import java.util.List;
 
 
+import Engine.LAP;
+
 import com.clcbio.api.clc.editors.graphics.components.ColorGradientModel;
 import com.clcbio.api.clc.graphics.framework.ClcScrollPane;
 import com.clcbio.api.clc.graphics.framework.RootDrawingNode;

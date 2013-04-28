@@ -97,6 +97,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 			normalArcStroke = new BasicStroke(2);
 			backArcStroke = new BasicStroke(4);
 			overArcStroke = new BasicStroke(6);
+			return;
 		}
 		if(root.getScaleX() > 11) {
 			normalArcStroke = new BasicStroke(3);
@@ -105,7 +106,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		}
 	}
 	
-
 	public DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy){
 			newp1 = (int)(p1*root.getScaleX());
 			newp2 = (int) (p2*root.getScaleX());
@@ -153,34 +153,19 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	public void setColor(Color input){
 		color = input;
 	}	
-
-	
-	/*
-	 * Returns whether or not the x and y parameters touches the arc. 
-	 * This method is not used, but I keep it for a bit, because its easier to read - before optimization.
-	 */
-	private boolean touchesArc(int x_pos, int y){
-		int a = (newp2-newp1)/2;
-		int b = getArcHeight(newp1, newp2)/2;
-		int mouse_x = x_pos-(a+newp1);
-		int mouse_y = (b+getArcYPosition(newp1, newp2)-y);
-		contains = (((Math.pow(mouse_x, 2))/Math.pow(a, 2))+((Math.pow(mouse_y, 2))/Math.pow(b, 2)));
-		if(contains > 0.9 && contains < 1.1 && mouse_y > 0){
-			return true;
-		}
-		return false;
-	}
 	
 	/*
 	 * Optimized solution of touchersArc().
 	 */
-	private boolean touchesArc2(int x_pos, int y){
+	private boolean touchesArc(int x_pos, int y, int search_area){
 		int a = (newp2-newp1)/2;
 		int b = getArcHeight(newp1, newp2)/2;
-		int mouse_x = (x_pos-(a+newp1))-5;
-		int x_limit = mouse_x+10;
-		int mouse_y = ((b+getArcYPosition(newp1, newp2)-y))-5;
-		int y_limit = mouse_y+10;
+		
+		int mouse_x = (x_pos-(a+newp1))-search_area;
+		int mouse_y = ((b+getArcYPosition(newp1, newp2)-y))-search_area;
+		
+		int x_limit = mouse_x+search_area;
+		int y_limit = mouse_y+search_area;
 		
 		for(int i = mouse_x; i < x_limit; i++){
 			for(int j= mouse_y; j < y_limit; j++){
@@ -199,6 +184,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	 * Returns if the arc is inside the visible screen. 
 	 */
 	private boolean isArcInScreen(){
+		System.out.println("IS in screen");
 		if(getScaleX() < 2) return true;
 		
 		int viewPX = root.getXViewBounds();
@@ -208,12 +194,12 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		
 		if(newp1 > viewPX && newp1 < (viewPX+viewWidth)) return true;
 		if(newp2 > viewPX && newp2 < (viewPX+viewWidth)) return true;
-		
+		System.out.println("IS in screen 2");
 		for(int i=viewPX; i<(viewPX+viewWidth); i += 2){
-			if(touchesArc(i,viewPY)) return true;
+			if(touchesArc(i,viewPY, 1)) return true;
 		}
 		for(int j=viewPY; j<(viewPY+viewHeight); j += 2){
-			if(touchesArc(viewPX, j)) return true;
+			if(touchesArc(viewPX, j,1)) return true;
 		}
 		
 		return false;
@@ -227,11 +213,11 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 			if(arg0.getY() < (root.getBaseXAxis() + 5)){
 			int x_pos = arg0.getX()+root.getXViewBounds();
 			int y_pos = arg0.getY()+root.getYViewBounds();
-			if(touchesArc2(x_pos, y_pos)){
+			if(touchesArc(x_pos, y_pos, 5)){
 					boolean rt = root.canArcShowMouseOver(this);
 					if(rt){
 						root.setNucleotideRectangleIndex(p1, p2);
-						repaint();
+						this.repaint();
 						root.getEditor().setToolTip(this, arg0.getX()+10, arg0.getY()+10, 
 								"Pair at alignment positions (" +p1 + ","+p2 + ") with PPFold reliability " + reliability);
 					}

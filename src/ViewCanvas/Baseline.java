@@ -86,6 +86,7 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 		// Put all the sequences into string arrays, then it is faster to draw them. 
 		for(int j=0; j<alignment.getSequenceCount(); j++){
 			BasicIndexer indexer = new AlignmentSequenceIndexer(alignment, j);
+
 			Sequence seq = alignment.getSequence(j);
 			sequenceNames[j] = seq.getName();
 				for(int i=0; i<alignment.getLength(); i++){
@@ -372,11 +373,9 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		System.out.println("mouse pressed");
 		dragging = true;
 		startDragPoint = e.getPoint();
 		curDragPoint = startDragPoint;
-		
 	}
 
 	@Override

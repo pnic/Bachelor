@@ -104,7 +104,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         colorGradientModel = new ColorGradientModel(ColorGradientManager.getGradients());
         
         info = new infoBox("David", colorGradientModel);
-        lap = new LAP(alignment,colorGradientModel,"The title", this, manager);
+        lap = new LAP(alignment, colorGradientModel,"The title", this, manager);
         
         getCanvas().addChild(lap);		
         getCanvas().addChild(info);
@@ -375,15 +375,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
     	}
     }
     
-    /*
-     * Show the rasmol colors on a sequence.
-     * @show = show yes/no
-     * @ground: 1 = foreground, 2 = background. 
-     */
-    public void showRasmolColors(boolean show, int ground){
-    	
-    }
-
 	@Override
 	public boolean canDoMode(MouseMode arg0) {
 		// TODO Auto-generated method stub
@@ -483,10 +474,6 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			public void visit(SidePanelView cur) {
 				cur.updateUI();
 				cur.repaint();
-				
-				System.out.println("Visiting");
-				System.out.println(cur.getName());
-				
 			}			
 		});
 		
