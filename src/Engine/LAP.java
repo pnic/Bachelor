@@ -9,7 +9,6 @@ import ViewCanvas.Arc;
 import ViewCanvas.Baseline;
 import ViewCanvas.LAPFeatureInterval;
 import ViewCanvas.LAPFeatureType;
-import ViewCanvas.NoGraphPluginDialog;
 import ViewCanvas.RectangleOverNucleotide;
 
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
@@ -34,6 +33,7 @@ import com.clcbio.api.free.datatypes.bioinformatics.sequence.index.BasicIndexer;
 import com.clcbio.api.free.datatypes.framework.history.HistoryEntry;
 import com.clcbio.api.free.editors.framework.Editor;
 import com.clcbio.api.free.framework.workspace.WorkspaceManager;
+import com.clcbio.api.free.gui.dialog.ClcMessages;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 
 public class LAP extends RootDrawingNode {
@@ -509,8 +509,7 @@ public class LAP extends RootDrawingNode {
 		    Editor editor = getManager().getEditorManager().getEditorClassById("com.clcbio.plugins.rnasecondary.editor.RnaSecondaryStructureEditor").newInstance();
 			getManager().getWorkspaceManager().getCurrentWorkspace().edit(new ClcObject[] { subSeq }, editor);
 		} catch(Exception e) {
-			NoGraphPluginDialog np = new NoGraphPluginDialog("A problem occured trying to view the 2D planar graph plugin. The plugin either does not exist in your workbench or you do not have sufficient access rights to view it.");
-			np.setVisible(true);
+			ClcMessages.showError(null, "Planar graph plugin was not found", "A problem occured trying to view the 2D planar graph plugin. The plugin either does not exist in your workbench or you do not have sufficient access rights to view it.");
 		}
 		
 		getManager().getActionManager().getAction("MFoldAction").actionPerformed(null);
