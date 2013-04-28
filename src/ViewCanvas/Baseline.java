@@ -36,6 +36,7 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 	private int gapHeight;
 	private int stringHeight;
 	private int stringWidth;
+	private int NucleotideStringWidth;
 	
 	private Font font;
 	private Font numbersFont;
@@ -122,6 +123,7 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 		gapHeight = firstGap + secondGap + intervalHeight;
 		
 		g2.setFont(font);
+		NucleotideStringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), "U");
 		stringHeight = g2.getFontMetrics().getHeight();
 		g2.setStroke(stroke);
 		
@@ -190,6 +192,7 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 			if(root.getScaleX() >= 11){
 			int currentSeq = root.getCurrentSequenceNumber();
 			stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), "U");
+			
 			for(int i=0; i<alignment.getLength(); i++){
 				if(viewPX < (i*root.getScaleX()) && i*root.getScaleX() < (viewPX+viewPWidth)){
 					//String s = AlphabetTools.getRnaAlphabet().getSymbol(nrs[i]).getShortName();
@@ -330,7 +333,6 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 	
 	public int getHeight(){
 		if(showAlignments){
-			System.out.println("Alignments");
 			if(root.getScaleX() < 11){
 				return  (2+sequenceLengths.length*stringHeight) + gapHeight+50;
 			}
@@ -339,7 +341,6 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 			}
 		}
 		else{
-			System.out.println("Ikke alignments");
 			return stringHeight + gapHeight + 30;
 		}
 	}
@@ -439,5 +440,12 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 			}
 		}
 	}
-	
+
+	public int getStringHeight() {
+		return stringHeight;
+	}
+
+	public int getStringWidth() {
+		return NucleotideStringWidth;
+	}	
 }

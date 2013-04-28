@@ -230,6 +230,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 			if(touchesArc2(x_pos, y_pos)){
 					boolean rt = root.canArcShowMouseOver(this);
 					if(rt){
+						root.setNucleotideRectangleIndex(p1, p2);
 						repaint();
 						root.getEditor().setToolTip(this, arg0.getX()+10, arg0.getY()+10, 
 								"pair at (" +p1 + ","+p2 + ") with PPFold reliability " + reliability);
@@ -247,6 +248,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 
 					root.getEditor().removeToolTip(this);
 					root.getEditor().setStatusInformation(this, "");
+					root.drawNucleotideRectangle(false);
 					repaint();
 				}
 			}

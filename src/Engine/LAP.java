@@ -10,6 +10,7 @@ import ViewCanvas.Baseline;
 import ViewCanvas.LAPFeatureInterval;
 import ViewCanvas.LAPFeatureType;
 import ViewCanvas.NoGraphPluginDialog;
+import ViewCanvas.RectangleOverNucleotide;
 
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructureElement;
@@ -51,7 +52,7 @@ public class LAP extends RootDrawingNode {
 	private int currentSequenceNumber;
 	private int pairArrais[][];
 	private float reliabilityArrays[][];
-
+	private RectangleOverNucleotide overRect;
 	private int prevXViewBounds = -999;
 	
 	private WorkbenchManager manager;
@@ -71,14 +72,16 @@ public class LAP extends RootDrawingNode {
 		
 		// set structure
 		setStructure(RnaStructures.getStructures(current_sequence).getStructure(0));
+		
+		overRect = new RectangleOverNucleotide(this);
+		this.addChild(overRect);
 	}
 	
 	public void drawArcsFromSequence(int sequenceNumber){
 		if(sequenceNumber >= 0 && sequenceNumber < align.getSequenceCount() && sequenceNumber != currentSequenceNumber){
 			current_sequence = align.getSequence(sequenceNumber);
 			currentSequenceNumber = sequenceNumber;
-			setStructure(RnaStructures.getStructures(current_sequence).getStructure(0));
-			
+			setStructure(RnaStructures.getStructures(current_sequence).getStructure(0));	
 		}
 	}
 	
@@ -86,8 +89,6 @@ public class LAP extends RootDrawingNode {
 	 * Sets the RNA structure visualized by the diagram. 
 	 */
 	private void setStructure(RnaStructure structure){
-		
-		
 		removeArcs();
         removeTypes();
 
@@ -229,7 +230,6 @@ public class LAP extends RootDrawingNode {
 		}
 		for(int i=0; i<align.getSequenceCount(); i++){
 			Sequence seq = align.getSequence(i);
-			System.out.println(seq.getName());
 		}
 	}
 	
@@ -546,5 +546,13 @@ public class LAP extends RootDrawingNode {
 
 	public int getPrevXViewBounds() {
 		return prevXViewBounds;
+	}
+	
+	public void setNucleotideRectangleIndex(int first_indexNumber, int second_indexNumber){
+		overRect.setIndexNumbers(first_indexNumber, second_indexNumber);
+	}
+	
+	public void drawNucleotideRectangle(boolean draw){
+		overRect.setDrawRect(draw);
 	}
 }
