@@ -65,7 +65,6 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 		this.alignment = alignment; 
 		this.root = root;
 		this.length = alignment.getLength();
-		
 		init();
 	}
 	
@@ -108,7 +107,7 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 		isBold = true;
 		fontName = "SansSerif";
 		updateFont();
-		
+		rasmolBack = true;
 		this.addMouseInputListener(this);
 	}
 	
@@ -434,7 +433,7 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 				else{
 					BasicIndexer indexer = new AlignmentSequenceIndexer(alignment, root.getCurrentSequenceNumber());
 					int seqPosition = indexer.getSequencePosition(XNucleotide);
-					root.getEditor().setStatusInformation(this, "Alignment Position: " + XNucleotide + " [Sequence "+sequenceNames[root.getCurrentSequenceNumber()] + " Type " + nucleotideSequences[root.getCurrentSequenceNumber()][XNucleotide] + ": Sequence position " + seqPosition + "]");
+					root.getEditor().setStatusInformation(this, "Alignment position: " + XNucleotide + " [Sequence "+sequenceNames[root.getCurrentSequenceNumber()] + " Type " + nucleotideSequences[root.getCurrentSequenceNumber()][XNucleotide] + ": Sequence position " + seqPosition + "]");
 				}
 			}
 		}

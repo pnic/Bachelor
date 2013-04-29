@@ -85,8 +85,7 @@ public class AnnotationLayoutView extends SidePanelView{
 				}				
 			});
 			
-			
-			showAsLines = new JRadioButton("Show as Lines");
+			showAsLines = new JRadioButton("Show as lines");
 			showAsLines.setSelected(false);
 			showAsLines.addItemListener(new ItemListener() {
 

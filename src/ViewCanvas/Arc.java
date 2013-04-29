@@ -213,15 +213,15 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 			if(arg0.getY() < (root.getBaseXAxis() + 5)){
 			int x_pos = arg0.getX()+root.getXViewBounds();
 			int y_pos = arg0.getY()+root.getYViewBounds();
-			if(touchesArc(x_pos, y_pos, 5)){
-					boolean rt = root.canArcShowMouseOver(this);
-					if(rt){
-						root.setNucleotideRectangleIndex(p1, p2);
-						this.repaint();
-						root.getEditor().setToolTip(this, arg0.getX()+10, arg0.getY()+10, 
+				if(touchesArc(x_pos, y_pos, 5)){
+						boolean rt = root.canArcShowMouseOver(this);
+						if(rt){
+							root.setNucleotideRectangleIndex(p1, p2);
+							this.repaint();
+							root.getEditor().setToolTip(this, arg0.getX()+10, arg0.getY()+10, 
 								"Pair at alignment positions (" +p1 + ","+p2 + ") with PPFold reliability " + reliability);
-					}
-			}
+						}
+				}
 			else{
 				if(oldViewX == root.getXViewBounds() && oldViewY == root.getYViewBounds() && drawRect == false){
 					
@@ -238,6 +238,14 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 					repaint();
 				}
 			}
+				
+			}
+			else{
+				showAnnotation = false;
+				drawRect = false;
+				root.getEditor().removeToolTip(this);
+				root.getEditor().setStatusInformation(this, "");
+				root.drawNucleotideRectangle(false);
 		}
 		}
 		}

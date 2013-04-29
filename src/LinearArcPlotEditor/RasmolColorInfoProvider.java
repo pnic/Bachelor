@@ -34,6 +34,7 @@ public class RasmolColorInfoProvider extends AbstractInfoProvider{
 		});
 	
 		BackgroundColor = new JCheckBox("Background color");
+		BackgroundColor.setSelected(true);
 		BackgroundColor.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
