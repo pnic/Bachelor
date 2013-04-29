@@ -184,7 +184,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 	 * Returns if the arc is inside the visible screen. 
 	 */
 	private boolean isArcInScreen(){
-		System.out.println("IS in screen");
+		
 		if(getScaleX() < 2) return true;
 		
 		int viewPX = root.getXViewBounds();
@@ -194,7 +194,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 		
 		if(newp1 > viewPX && newp1 < (viewPX+viewWidth)) return true;
 		if(newp2 > viewPX && newp2 < (viewPX+viewWidth)) return true;
-		System.out.println("IS in screen 2");
+		
 		for(int i=viewPX; i<(viewPX+viewWidth); i += 2){
 			if(touchesArc(i,viewPY, 1)) return true;
 		}

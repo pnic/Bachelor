@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import ViewCanvas.Arc;
 import ViewCanvas.Baseline;
+import ViewCanvas.CanvasChangedListener;
 import ViewCanvas.LAPFeatureInterval;
 import ViewCanvas.LAPFeatureType;
 import ViewCanvas.RectangleOverNucleotide;
@@ -230,6 +231,8 @@ public class LAP extends RootDrawingNode {
 		for(int i=0; i<align.getSequenceCount(); i++){
 			Sequence seq = align.getSequence(i);
 		}
+		CanvasChangedListener canvasChanged = new CanvasChangedListener(this);
+		this.addChild(canvasChanged);
 	}
 	
     /*

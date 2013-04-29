@@ -134,6 +134,10 @@ public class AnnotationTypeModel extends SidePanelModel{
 	public void rebuildMap(List<LAPFeatureType> l){
 		this.types = l;
 		buildMap();
+		
+	}
+	
+	public void wasChanged(){
 		fireModelChanged();
 	}
 	
