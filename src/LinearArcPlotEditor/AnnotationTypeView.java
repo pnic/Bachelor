@@ -35,6 +35,7 @@ public class AnnotationTypeView extends SidePanelView{
 		super(arg0);
 		checkTypes = new ArrayList<JCheckBox>();
 		labels = new HashMap<String, ColorPickerLabel>();
+		panel = new StandardLayout();
 		createUI();
 	}
 
@@ -47,15 +48,11 @@ public class AnnotationTypeView extends SidePanelView{
 		createUI();
 		
 		for(JCheckBox jc : checkTypes){
-			
-			System.out.println("Adding component");
-			pan.add(jc);
-			pan.add(labels.get(jc.getText()));
-			
+					
 			panel.addComps(labels.get(jc.getText()),jc);
 			
 		}
-		panel.add(pan);
+		
 	}
 	
 	private void createUI(){
@@ -85,9 +82,10 @@ public class AnnotationTypeView extends SidePanelView{
 				});
 				labels.put(cur.getText(), curLab);
 			}
-			pan = new JPanel();
+		
 			newTypes = false;
-			panel = new StandardLayout();
+			panel.removeAll();
+			
 			fillUI();
 			
 		}
@@ -107,11 +105,11 @@ public class AnnotationTypeView extends SidePanelView{
 	public void setNewTypes(List<LAPFeatureType> l){
 		((AnnotationTypeModel)getModel()).rebuildMap(l);
 		newTypes = true;
-		checkTypes = new ArrayList<JCheckBox>();
-		labels = new HashMap<String, ColorPickerLabel>();
+		checkTypes.clear();
+		labels.clear();
 		System.out.println("About to create ui");
 		createUI();
-		((AnnotationTypeModel)getModel()).rebuildMap(l);
+		((AnnotationTypeModel)getModel()).wasChanged();
 	
 		System.out.println("Created ui");
 	}

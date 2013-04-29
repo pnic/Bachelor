@@ -34,6 +34,7 @@ public class AnnotationTypeModel extends SidePanelModel{
 	private void buildMap() {
 		
 			if(types != null){
+				booltypes.clear();
 				for(LAPFeatureType l : types){
 				booltypes.put(l.getName(), true);
 			}
