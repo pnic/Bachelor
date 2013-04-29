@@ -116,7 +116,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	 * Fills the sidePanel and attaches listeners. 
 	 */
 	private void fillSidePanel(){
-		final LAPLayoutModel lapModel = new LAPLayoutModel(manager);
+		final LAPLayoutModel lapModel = new LAPLayoutModel(manager, "Infobox layout");
         lapView = new LAPLayoutView(lapModel);
         
         // This states what happens (to the view) when the model changes.
@@ -140,7 +140,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         for(int i=0; i<alignment.getSequenceCount(); i++){
         	alignmentSequenceNames[i] = alignment.getSequence(i).getName();
         }
-        final AlignmentModel alignModel = new AlignmentModel("Alignment Layout");
+        final AlignmentModel alignModel = new AlignmentModel("Alignment layout");
         alignView = new AlignmentView(alignModel, alignmentSequenceNames);
         alignModel.addSidePanelListener(new SidePanelListener(){
 			@Override
@@ -177,7 +177,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			}
         });
         
-        final SequenceModel seqModel = new SequenceModel("SequenceLayout");
+        final SequenceModel seqModel = new SequenceModel("Sequence layout");
         seqView = new SequenceView(seqModel);
         
         seqModel.addSidePanelListener(new SidePanelListener(){
@@ -201,7 +201,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         
         
         
-        final AnnotationTypeModel annotationTypeModel = new AnnotationTypeModel("Annotation Types", lap.getLv().getTypes());
+        final AnnotationTypeModel annotationTypeModel = new AnnotationTypeModel("Annotation types", lap.getLv().getTypes());
         annotationTypeView = new AnnotationTypeView(annotationTypeModel);
         
         annotationTypeModel.addSidePanelListener(new SidePanelListener(){
@@ -306,7 +306,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			}
         	
         });
-        SubSequenceInfoModel subSequenceInfoModel = new SubSequenceInfoModel(new SequenceInfoModel(new InfoProvider[] {RasmosColors, StructureValue }, null), "Residue Coloring", CreateList.of(RasmosColors, StructureValue));
+        SubSequenceInfoModel subSequenceInfoModel = new SubSequenceInfoModel(new SequenceInfoModel(new InfoProvider[] {RasmosColors, StructureValue }, null), "Residue coloring", CreateList.of(RasmosColors, StructureValue));
         
         addSidePanelView(new SequenceInfoView(subSequenceInfoModel));
         

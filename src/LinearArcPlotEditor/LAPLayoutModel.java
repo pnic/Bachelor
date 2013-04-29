@@ -15,8 +15,8 @@ public class LAPLayoutModel extends SidePanelModel {
 	//Here we define some keys for later use in usersettings of the sidepanel model.
 
 	    
-	    public LAPLayoutModel(WorkbenchManager manager) {
-	        super("Infobox");
+	    public LAPLayoutModel(WorkbenchManager manager, String title) {
+	        super(title);
 	        
 	    }
 	// Construction and initialization.

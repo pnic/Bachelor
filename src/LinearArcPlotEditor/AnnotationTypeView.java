@@ -89,6 +89,7 @@ public class AnnotationTypeView extends SidePanelView{
 
 	@Override
 	public void updateUI(SidePanelModel arg0) {
+		System.out.println("Update");
 		createUI();
 	}
 	

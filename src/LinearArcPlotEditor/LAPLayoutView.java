@@ -59,7 +59,7 @@ public class LAPLayoutView extends SidePanelView {
 				}
 			});
             
-            setCgrVisible = new JCheckBox("Show Reliabilities");
+            setCgrVisible = new JCheckBox("Show reliabilities");
             setCgrVisible.setSelected(true);
             setCgrVisible.addChangeListener(new ChangeListener(){
 
