@@ -53,9 +53,6 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 	private String[][] nucleotideSequences;
 	private int[] sequenceLengths;
 	private boolean showAlignments;
-	private Point startDragPoint;
-	private boolean dragging;
-	private Point curDragPoint;
 	private boolean hasMouseListener;
 	private String[] sequenceNames;
 	/*
@@ -236,13 +233,6 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 			}
 		}
 		
-		if(dragging){
-			int startX;
-			int startY;
-			startX = startDragPoint.getX() > curDragPoint.getX() ? (int)(root.getXViewBounds()+curDragPoint.getX()) : (int)(root.getXViewBounds()+startDragPoint.getX());
-			startY = startDragPoint.getY() > curDragPoint.getY() ? (int)(root.getYViewBounds()+curDragPoint.getY()) : (int)(root.getYViewBounds()+startDragPoint.getY());
-			g2.drawRect(startX,startY,Math.abs((int)(curDragPoint.getX()-startDragPoint.getX())),Math.abs((int)(curDragPoint.getY()-startDragPoint.getY())));
-		}
 		return DrawingResult.NORMAL;
 	}
 	
@@ -372,15 +362,12 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		dragging = true;
-		startDragPoint = e.getPoint();
-		curDragPoint = startDragPoint;
+		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		dragging = false;
-		this.repaint();
+		
 		
 	}
 
@@ -398,10 +385,7 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if(Math.abs(e.getPoint().getX()-curDragPoint.getX()) > 15 || Math.abs(e.getPoint().getY()-curDragPoint.getY()) > 15){
-		curDragPoint = e.getPoint();
-		this.repaint();
-		}
+		
 	}
 
 	

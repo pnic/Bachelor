@@ -7,9 +7,11 @@ import java.util.Date;
 import java.util.List;
 import ViewCanvas.Arc;
 import ViewCanvas.Baseline;
+import ViewCanvas.CanvasChangedListener;
 import ViewCanvas.LAPFeatureInterval;
 import ViewCanvas.LAPFeatureType;
 import ViewCanvas.RectangleOverNucleotide;
+import ViewCanvas.SubSequenceRectangle;
 
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructureElement;
@@ -125,7 +127,7 @@ public class LAP extends RootDrawingNode {
 		BasicIndexer indexer = new AlignmentSequenceIndexer(align, currentSequenceNumber);
 		
 		if(pairArrais[currentSequenceNumber][0] != -1){
-			System.out.println("DEn har v¾ret brugt f¿r");
+			//System.out.println("DEn har v¾ret brugt f¿r");
 			seqNumbers = pairArrais[currentSequenceNumber];
 			seqReliabillities = reliabilityArrays[currentSequenceNumber];
 		}
@@ -230,6 +232,10 @@ public class LAP extends RootDrawingNode {
 		for(int i=0; i<align.getSequenceCount(); i++){
 			Sequence seq = align.getSequence(i);
 		}
+		CanvasChangedListener canvasChanged = new CanvasChangedListener(this);
+		this.addChild(canvasChanged);
+		SubSequenceRectangle subSeqRect = new SubSequenceRectangle(this);
+		this.addChild(subSeqRect);
 	}
 	
     /*
@@ -496,24 +502,29 @@ public class LAP extends RootDrawingNode {
 	}
 	
 	public void showSub(Arc arc){
-	System.out.println("trying");
-		Sequence subSeq = current_sequence.getSubsequence(new Region(arc.p1,arc.p2));
-		
-		subSeq.setName("Extract " + arc.p1 + " - " + arc.p2);
-		
-		getManager().getWorkspaceManager().getCurrentObjectsContainer().setCurrentObjects(new ClcObject[]{subSeq});
-		getManager().getWorkspaceManager().getCurrentObjectsContainer().setSelected(true);
-	
-    	try{
-		    Editor editor = getManager().getEditorManager().getEditorClassById("com.clcbio.plugins.rnasecondary.editor.RnaSecondaryStructureEditor").newInstance();
-			getManager().getWorkspaceManager().getCurrentWorkspace().edit(new ClcObject[] { subSeq }, editor);
-		} catch(Exception e) {
-			ClcMessages.showError(null, "Planar graph plugin was not found", "A problem occured trying to view the 2D planar graph plugin. The plugin either does not exist in your workbench or you do not have sufficient access rights to view it.");
-		}
-		
-		getManager().getActionManager().getAction("MFoldAction").actionPerformed(null);
+		showSub(arc.p1,arc.p2);
 		
 	}
+	
+	public void showSub(int start, int end){
+		System.out.println("trying");
+			Sequence subSeq = current_sequence.getSubsequence(new Region(start,end));
+			
+			subSeq.setName("Extract " + start + " - " + end);
+			
+			getManager().getWorkspaceManager().getCurrentObjectsContainer().setCurrentObjects(new ClcObject[]{subSeq});
+			getManager().getWorkspaceManager().getCurrentObjectsContainer().setSelected(true);
+		
+	    	try{
+			    Editor editor = getManager().getEditorManager().getEditorClassById("com.clcbio.plugins.rnasecondary.editor.RnaSecondaryStructureEditor").newInstance();
+				getManager().getWorkspaceManager().getCurrentWorkspace().edit(new ClcObject[] { subSeq }, editor);
+			} catch(Exception e) {
+				ClcMessages.showError(null, "Planar graph plugin was not found", "A problem occured trying to view the 2D planar graph plugin. The plugin either does not exist in your workbench or you do not have sufficient access rights to view it.");
+			}
+			
+			getManager().getActionManager().getAction("MFoldAction").actionPerformed(null);
+			
+		}
 
 	public Alignment getAlign() {
 		return align;

@@ -213,6 +213,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
         				if(lap != null){
         					if (annotationTypeModel.isLastUpdatedChanged()) lap.getLv().setTypeAcces(annotationTypeModel.getLastUpdated());
         					if (annotationTypeModel.isLabelChanged()) lap.getLv().setTypeColor(annotationTypeModel.getLastChangedLabelName(), annotationTypeModel.getLastChangedLabel());
+        					//annotationTypeView.updateUI();
+        					//annotationTypeView.updateUI(annotationTypeModel);
         				}
         			}
         		});

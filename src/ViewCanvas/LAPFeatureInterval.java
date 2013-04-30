@@ -85,14 +85,16 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 				this.addMouseInputListener(this);
 				hasMouseListener = true;
 			}
+			int lineStart = (int)(startPos*getScaleX());
+			int lineEnd = (int)(endPos*getScaleX());
 			
+			if(lineStart>(root.getXViewBounds()+root.getViewPaneWidth()) || lineEnd < root.getXViewBounds()) return DrawingResult.NORMAL;
 			if(type.isRelevant()){
 				//	if(type.isChanged() || type.getLastX() != root.getXViewBounds()){
 				g2.setStroke(new BasicStroke(1));
 				g2.setColor(col);
 
-				int lineStart = (int)(startPos*getScaleX());
-				int lineEnd = (int)(endPos*getScaleX());
+				
 				if(type.asLines()){					
 
 					g2.draw(new Line2D.Double(lineStart, root.getBaseXAxis()+offset+type.getHeight()/2, lineEnd, root.getBaseXAxis()+offset+type.getHeight()/2));
