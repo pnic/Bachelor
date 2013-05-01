@@ -105,7 +105,7 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 		fontName = "SansSerif";
 		updateFont();
 		rasmolBack = true;
-		this.addMouseInputListener(this);
+		//this.addMouseInputListener(this);
 	}
 	
 	@Override

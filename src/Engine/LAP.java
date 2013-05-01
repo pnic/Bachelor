@@ -28,6 +28,7 @@ import com.clcbio.api.free.datatypes.ClcObject;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.Alignment;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.Region;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.RegionTools;
 
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentSequenceIndexer;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.index.BasicIndexer;
@@ -109,90 +110,37 @@ public class LAP extends RootDrawingNode {
 			scaleX = 700.0/pairings.length;
 			scaleY = scaleX;
 		}
-		int nr=0;
-		for(int i = 0;i<pairings.length; i++){
-			if(pairings[i]>i){
-				nr = nr+1;
-			}
-		}
 		
 		//Array for converting pair sequence numbers to alignment numbers.
 		int[] seqNumbers = new int[align.getLength()];
 		
 		//Array for converting reliability sequence numbers to alignment numbers. 
 		float[] seqReliabillities = new float[align.getLength()];
-		
-		
-		int isFound = 0;
-		BasicIndexer indexer = new AlignmentSequenceIndexer(align, currentSequenceNumber);
-		
+			
 		if(pairArrais[currentSequenceNumber][0] != -1){
-			//System.out.println("DEn har v¾ret brugt f¿r");
 			seqNumbers = pairArrais[currentSequenceNumber];
 			seqReliabillities = reliabilityArrays[currentSequenceNumber];
 		}
 		else{
-		//Generate arcs
-		int alignCounter = 0;
-		if(!indexer.knowsAlignmentPositions()){
-			for(int i=0; i<pairings.length; i++){
-				if(pairings[i] > i){
-					int arrIndex = 0;
-					int arrNumber = 0;
-					for(int j=alignCounter; j<align.getLength() && isFound <= 1; j++){
-						int alignPos = indexer.getSequencePosition(j);
-						if(alignPos == pairings[i]){
-							arrIndex = j;
-							isFound++;
-						}
-						if(alignPos == i){
-							arrNumber = j;
-							alignCounter = j;
-							isFound++;
-						}
-					}
-					isFound = 0;
-					seqNumbers[arrNumber] = arrIndex;
-					seqNumbers[arrIndex] = arrNumber;
-					seqReliabillities[arrIndex] = reliabilities[pairings[i]];
-					seqReliabillities[arrNumber] = reliabilities[i];
-				}
-			}
+			setPairsAndReliabillities(seqNumbers, seqReliabillities);
 		}
-		pairArrais[currentSequenceNumber] = seqNumbers;
-		reliabilityArrays[currentSequenceNumber] = seqReliabillities;
-		}
-		
+
 		int cnt = 0;
-			arcs = new Arc[nr];
-			if(indexer.knowsAlignmentPositions()){
-				for(int i = 0; i<pairings.length; i++){
-					if(pairings[i]>i){
-						arcs[cnt] = new Arc(i,pairings[i], reliabilities[i], this);
-						arcs[cnt].broadestPair = broadestPair;
-						addChild(arcs[cnt]);
-						arcs[cnt].pairNumber = cnt;
-						cnt = cnt+1;
-					}
-				}
+		int nr = getNumberOfPairs(pairings);
+		arcs = new Arc[nr];
+		for(int i=0; i<seqNumbers.length; i++){
+			if(seqNumbers[i] > i){
+				arcs[cnt] = new Arc(i, seqNumbers[i], seqReliabillities[i], this);
+				arcs[cnt].broadestPair = broadestPair;
+				addChild(arcs[cnt]);
+				arcs[cnt].pairNumber = cnt;
+				cnt = cnt+1;
 			}
-			else{
-				for(int i=0; i<seqNumbers.length; i++){
-					if(seqNumbers[i] > i){
-						arcs[cnt] = new Arc(i, seqNumbers[i], seqReliabillities[i], this);
-						arcs[cnt].broadestPair = broadestPair;
-						addChild(arcs[cnt]);
-						arcs[cnt].pairNumber = cnt;
-						cnt = cnt+1;
-					}
-				}
-			}
-    	
-    	
+		}
+
 		lv = new LAPFeatureView(current_sequence,this);
-		//if(lv.getRelevantTypes() != null){
-			setRelevantTypes();
-		//}
+		setRelevantTypes();
+		
 		if(editor.getAnnotationTypeView() != null){
 			editor.updateAnnotationView(lv.getTypes());
 		}
@@ -206,6 +154,37 @@ public class LAP extends RootDrawingNode {
 		setColor();
 		setSize();
 		repaint();
+	}
+	
+	private int getNumberOfPairs(int[] pairSequence){
+		int nr=0;
+		for(int i = 0;i<pairSequence.length; i++){
+			if(pairSequence[i]>i){
+				nr = nr+1;
+			}
+		}
+		return nr;
+	}
+	
+	/*
+	 * Sets the correct array positions for pairs and reliabilities in respect to the currentSequence. 
+	 */
+	private void setPairsAndReliabillities(int[] seqNumbers, float[] seqReliabillities){
+		BasicIndexer indexer = new AlignmentSequenceIndexer(align, currentSequenceNumber);
+		pairArrais[currentSequenceNumber][0] = 0;
+		for(int i=0; i<pairings.length; i++){
+			if(pairings[i] > i){
+				int last_pos = RegionTools.convertPosition(pairings[i], false, indexer);
+				int first_pos = RegionTools.convertPosition(i, false, indexer);
+				seqNumbers[last_pos] = first_pos;
+				seqNumbers[first_pos] = last_pos;
+				seqReliabillities[last_pos] = reliabilities[pairings[i]];
+				seqReliabillities[first_pos] = reliabilities[i];
+			}
+		}
+		// Caching
+		pairArrais[currentSequenceNumber] = seqNumbers;
+		reliabilityArrays[currentSequenceNumber] = seqReliabillities;
 	}
 	
 	private void removeArcs(){
@@ -229,9 +208,7 @@ public class LAP extends RootDrawingNode {
 		for(int i=0; i < align.getSequenceCount(); i++){
 			pairArrais[i][0] = -1;
 		}
-		for(int i=0; i<align.getSequenceCount(); i++){
-			Sequence seq = align.getSequence(i);
-		}
+
 		CanvasChangedListener canvasChanged = new CanvasChangedListener(this);
 		this.addChild(canvasChanged);
 		SubSequenceRectangle subSeqRect = new SubSequenceRectangle(this);
@@ -248,7 +225,6 @@ public class LAP extends RootDrawingNode {
 	}
 	
 	public void setRelevantTypes(){
-		System.out.println("Setting relevant types");
 		for(LAPFeatureType l : lv.getTypes()){
 			removeChild(l);
 			for(LAPFeatureInterval li : l.getIntervals()){
@@ -269,6 +245,10 @@ public class LAP extends RootDrawingNode {
 		int cnt2=0;
 		for(int j=0; j<pairings.length; j++){
 			if(pairings[j] > j){
+				if(arcs[cnt2] == null){
+					System.out.println("Arc er null");
+				}
+
 				arcs[cnt2].setColor(gradmodel.getColor(reliabilities[j]));
 				cnt2++;
 			}
@@ -507,7 +487,6 @@ public class LAP extends RootDrawingNode {
 	}
 	
 	public void showSub(int start, int end){
-		System.out.println("trying");
 			Sequence subSeq = current_sequence.getSubsequence(new Region(start,end));
 			
 			subSeq.setName("Extract " + start + " - " + end);

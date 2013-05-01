@@ -45,8 +45,9 @@ public class AlignmentModel extends SidePanelModel{
 
 	@Override
 	protected State saveModel() {
-		// TODO Auto-generated method stub
-		return null;
+		State s = new State();
+		
+		return s;
 	}
 
 }
