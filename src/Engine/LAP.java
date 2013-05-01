@@ -93,13 +93,13 @@ public class LAP extends RootDrawingNode {
 	private void setStructure(RnaStructure structure){
 		removeArcs();
         removeTypes();
+        
+        //Our RNA structure
+    	List<RnaStructureAnnotation> annotations = structure.getStructureAnnotations();
+		RnaStructureAnnotation probAnnotation = annotations.get(0);
 
 		pairings = structure.getPairing();
 		reliabilities = new float[structure.getLength()];
-		
-		//Our Rna structure
-    	List<RnaStructureAnnotation> annotations = structure.getStructureAnnotations();
-		RnaStructureAnnotation probAnnotation = annotations.get(0);
 		
 		//Set reliability values
     	for(int i = 0; i<structure.getLength(); i++){
