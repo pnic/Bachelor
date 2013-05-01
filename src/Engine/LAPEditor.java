@@ -491,5 +491,13 @@ public class LAPEditor extends AbstractGraphicsEditor {
 		this.annotationTypeView = annotationTypeView;
 	}
 
+	public void loadModel(State model){
+		
+	}
+	
+	public State saveModel(){
+		State model = new State();
+		return model;
+	}
 
 }

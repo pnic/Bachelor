@@ -240,13 +240,6 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 			}
 				
 			}
-			else{
-				showAnnotation = false;
-				drawRect = false;
-				root.getEditor().removeToolTip(this);
-				root.getEditor().setStatusInformation(this, "");
-				root.drawNucleotideRectangle(false);
-		}
 		}
 		}
 	}
