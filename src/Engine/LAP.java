@@ -136,6 +136,7 @@ public class LAP extends RootDrawingNode {
 		int alignCounter = 0;
 		if(!indexer.knowsAlignmentPositions()){
 			for(int i=0; i<pairings.length; i++){
+				
 				if(pairings[i] > i){
 					int arrIndex = 0;
 					int arrNumber = 0;
@@ -167,6 +168,8 @@ public class LAP extends RootDrawingNode {
 			arcs = new Arc[nr];
 			if(indexer.knowsAlignmentPositions()){
 				for(int i = 0; i<pairings.length; i++){
+					
+					
 					if(pairings[i]>i){
 						arcs[cnt] = new Arc(i,pairings[i], reliabilities[i], this);
 						arcs[cnt].broadestPair = broadestPair;
@@ -563,5 +566,13 @@ public class LAP extends RootDrawingNode {
 	
 	public void drawNucleotideRectangle(boolean draw){
 		overRect.setDrawRect(draw);
+	}
+
+	public int[] getPairings() {
+		return pairings;
+	}
+
+	public void setPairings(int[] pairings) {
+		this.pairings = pairings;
 	}
 }
