@@ -551,4 +551,16 @@ public class LAP extends RootDrawingNode {
 	public void setPairings(int[] pairings) {
 		this.pairings = pairings;
 	}
+
+	public int[][] getPairArrais() {
+		return pairArrais;
+	}
+
+	public void setPairArrais(int[][] pairArrais) {
+		this.pairArrais = pairArrais;
+	}
+
+	public void setCurrentSequenceNumber(int currentSequenceNumber) {
+		this.currentSequenceNumber = currentSequenceNumber;
+	}
 }
