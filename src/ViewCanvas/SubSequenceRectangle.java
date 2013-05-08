@@ -61,6 +61,11 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if(Math.abs(curDragPoint.getX() - startDragPoint.getX()) < 10 || Math.abs(curDragPoint.getY() - startDragPoint.getY()) < 10 ) {
+				dragging = false;
+				return;
+			}
+		
 		dragging = false;
 		
 		double xStart;
