@@ -23,6 +23,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Peter Skovgaard/Desktop/6. semester/Bachelor Projekt/New CLC 932/CLCDeveloperKit/CLCWorkbench.jar"/>
+	<classpathentry kind="lib" path="/Users/dvddaver/Documents/ITU/6 semester/Bachelor/CLCDeveloperKit_3_9_2/CLCDeveloperKit/CLCWorkbench.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

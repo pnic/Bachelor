@@ -61,7 +61,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 		this.root = root;		
 		this.type = type;
 		
-		calcColors(type.getWidth());
+		//calcColors(type.getWidth());
 	}
 
 	private void calcColors(float normalizeBound) {

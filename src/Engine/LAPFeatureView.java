@@ -6,9 +6,12 @@ import ViewCanvas.LAPFeatureInterval;
 import ViewCanvas.LAPFeatureType;
 
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentSequenceIndexer;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.feature.Feature;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.index.BasicIndexer;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.interval.Interval;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.Region;
+import com.clcbio.api.free.datatypes.bioinformatics.sequence.region.RegionTools;
 import com.clcbio.api.free.framework.workspace.WorkspaceManager;
 import com.clcbio.api.free.workbench.WorkbenchManager;
 
@@ -83,7 +86,7 @@ public void buildFeatureTypes(LAP root){
 		int curOverlaps = 0;
 		int offset = 60;
 		
-		
+		BasicIndexer indexer = new AlignmentSequenceIndexer(root.getAlign(), root.getCurrentSequenceNumber());
 		while(featureIter.hasNext()){
 			Feature fet = featureIter.next(); 
 			
@@ -102,7 +105,7 @@ public void buildFeatureTypes(LAP root){
 			
 			while(II.hasNext()){
 				Interval in = II.next();
-				LAPFeatureInterval li = new LAPFeatureInterval(fet.getName(), in.getFirstPos().getMin(),in.getLastPos().getMax(),cur.getTypeOffset(), root, cur);
+				LAPFeatureInterval li = new LAPFeatureInterval(fet.getName(), RegionTools.convertPosition(in.getFirstPos().getMin(),false,indexer),RegionTools.convertPosition(in.getLastPos().getMax(),false,indexer),cur.getTypeOffset(), root, cur);
 				tmp.addFeatureInterval(li);
 				
 				cur.addInterval(li);
