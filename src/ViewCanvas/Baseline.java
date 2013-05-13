@@ -37,7 +37,6 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 	private int stringHeight;
 	private int stringWidth;
 	private int NucleotideStringWidth;
-	
 	private Font font;
 	private Font numbersFont;
 	private boolean isBold;
@@ -119,6 +118,7 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 		int intervalHeight = 10;
 		gapHeight = firstGap + secondGap + intervalHeight;
 		
+		
 		g2.setFont(font);
 		NucleotideStringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), "U");
 		stringHeight = g2.getFontMetrics().getHeight();
@@ -147,7 +147,7 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 				for(int j=0; j<alignment.getSequenceCount(); j++){
 					for(int i=0; i<alignment.getLength(); i++){	
 						// Only if number is in the screen. 
-						if(viewPX < (i*root.getScaleX()) && i*root.getScaleX() < (viewPX+viewPWidth)){
+						if((viewPX < (i*root.getScaleX()) && i*root.getScaleX() < (viewPX+viewPWidth))|| root.getExporting()){
 							//String s = AlphabetTools.getRnaAlphabet().getSymbol(nrs[i]).getShortName();
 							String s = nucleotideSequences[j][i];
 							g2.setColor(getRasmolColor(s));
@@ -191,7 +191,7 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 			stringWidth = SwingUtilities.computeStringWidth(g2.getFontMetrics(), "U");
 			
 			for(int i=0; i<alignment.getLength(); i++){
-				if(viewPX < (i*root.getScaleX()) && i*root.getScaleX() < (viewPX+viewPWidth)){
+				if((viewPX < (i*root.getScaleX()) && i*root.getScaleX() < (viewPX+viewPWidth)) || root.getExporting()){
 					//String s = AlphabetTools.getRnaAlphabet().getSymbol(nrs[i]).getShortName();
 					String s = nucleotideSequences[currentSeq][i];
 					g2.setColor(getRasmolColor(s));
@@ -429,5 +429,5 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 
 	public int getStringWidth() {
 		return NucleotideStringWidth;
-	}	
+	}
 }

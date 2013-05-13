@@ -57,6 +57,7 @@ public class LAP extends RootDrawingNode {
 	private float reliabilityArrays[][];
 	private RectangleOverNucleotide overRect;
 	private int prevXViewBounds = -999;
+	private boolean isExporting = false;
 	
 	private WorkbenchManager manager;
 	
@@ -562,5 +563,13 @@ public class LAP extends RootDrawingNode {
 
 	public void setCurrentSequenceNumber(int currentSequenceNumber) {
 		this.currentSequenceNumber = currentSequenceNumber;
+	}
+	
+	public void setExporting(boolean exp){
+		this.isExporting = exp;
+	}
+	
+	public boolean getExporting(){
+		return this.isExporting;
 	}
 }
