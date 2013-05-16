@@ -427,7 +427,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	
 	@Override
 	public ClcObject[] getEditingObjects(boolean isDragging) {
-        return new ClcObject[]{alignment};
+
+		return new ClcObject[]{alignment};
     }
 // Here we return an array of the object being edited. The parameter should almost always be ignored
 
