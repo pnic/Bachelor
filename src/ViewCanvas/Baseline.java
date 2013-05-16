@@ -151,10 +151,11 @@ public class Baseline extends ChildDrawingNode implements MouseInputListener{
 							//String s = AlphabetTools.getRnaAlphabet().getSymbol(nrs[i]).getShortName();
 							String s = nucleotideSequences[j][i];
 							g2.setColor(getRasmolColor(s));
-						
-							if(rasmolBack && s != "-") g2.fillRect((int)(i*root.getScaleX())-(stringWidth/2), root.getBaseXAxis()+4+(j*stringHeight)+root.getLv().getFeaturesLowerY(), stringWidth, stringHeight-2);
+							
+							int annotY = root.getLv().isShowAnnotations() ? root.getLv().getFeaturesLowerY() : 0;
+							if(rasmolBack && s != "-") g2.fillRect((int)(i*root.getScaleX())-(stringWidth/2), root.getBaseXAxis()+4+(j*stringHeight)+annotY, stringWidth, stringHeight-2);
 							if(!rasmolFront) g2.setColor(new Color(0,0,0));
-							g2.drawString(s, (int)(i*root.getScaleX())-stringWidth/2, root.getBaseXAxis()+stringHeight+(j*stringHeight)+root.getLv().getFeaturesLowerY());
+							g2.drawString(s, (int)(i*root.getScaleX())-stringWidth/2, root.getBaseXAxis()+stringHeight+(j*stringHeight)+annotY);
 						}
 					}	
 				}

@@ -82,7 +82,7 @@
 
 	<!-- ### Distribution ### //-->
 	<target name="dist" depends="compile">
-		<jar destfile="${packageDir}/${pluginName}.jar">
+		<jar destfile="${packageDir}/${LinearArcPlot-DGK-PNS}.jar">
 
 			<!-- Include the compiled class files //-->
 			<fileset dir="${buildDir}">

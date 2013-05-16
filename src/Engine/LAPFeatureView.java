@@ -78,7 +78,7 @@ public void buildFeatureTypes(LAP root){
 		
 		//Get type iterator
 		if(types == null){
-			System.out.println("types er null");
+			System.out.println("types is null");
 		}
 		Iterator<LAPFeatureType> typeIter = types.iterator();
 		LAPFeatureType cur = typeIter.next();
@@ -278,6 +278,7 @@ public boolean isShowArrows() {
 
 public void setShowAnnotations(boolean b){
 	this.showAnnotations = b;
+	root.setSize();
 	repaintTypes();
 }
 

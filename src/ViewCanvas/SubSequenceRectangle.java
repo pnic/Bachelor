@@ -149,10 +149,12 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 				System.out.println("drawn but not inside");
 				startDragPoint = e.getPoint();
 				curDragPoint = startDragPoint;
+				finished = false;
 			}
 		} else {		
 		startDragPoint = e.getPoint();
 		curDragPoint = startDragPoint;
+		
 		}
 		drawn = false;
 		dragging = true;
