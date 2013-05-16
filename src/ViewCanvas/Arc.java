@@ -9,21 +9,14 @@ import java.awt.AlphaComposite;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Arc2D;
-
-import java.util.Timer;
-
 import javax.swing.event.MouseInputListener;
-
 import Engine.*;
-
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
-import com.clcbio.api.free.datatypes.bioinformatics.sequence.alphabet.AlphabetTools;
 import com.clcbio.api.free.editors.framework.MouseMode;
 
 public class Arc extends ChildDrawingNode implements MouseInputListener{
@@ -112,7 +105,7 @@ public class Arc extends ChildDrawingNode implements MouseInputListener{
 			
 			update();
 			// Check if arc is in screen. 
-			if(isArcInScreen() && arc_width > 5){
+			if((isArcInScreen() && arc_width > 5) || root.getExporting()){
 				updateStrokes();
 				if(!mouseListenerSat && (arc_width > 100 || getScaleX() > 8)){
 					this.addMouseInputListener(this);

@@ -14,6 +14,10 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
+import org.apache.axis.utils.ArrayUtil;
+
+import oracle.sql.ARRAY;
+
 import LinearArcPlotEditor.AlignmentModel;
 import LinearArcPlotEditor.AlignmentView;
 import LinearArcPlotEditor.AnnotationLayoutModel;
@@ -58,6 +62,7 @@ import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.InfoListener;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.info.InfoProvider;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.SequenceInfoModel;
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.SubSequenceInfoModel;
+import com.clcbio.api.clc.print.PrintSetting;
 import com.clcbio.api.free.editors.framework.MouseMode;
 
 
@@ -67,6 +72,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	static{
         System.out.println("### LAPEditor LOADED SUCCESFULLY ###");
     }
+	
 	private LAP lap;
 	private infoBox info;
 	private ColorGradientModel colorGradientModel;	
@@ -91,7 +97,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 		// This method is called whenever an Editor of this type is instantiated. As seen in the Action example, we are fed the the global context object WorkbenchManager. In this method we set up an observer on the sequence we want to edit in order to update the Editor whenever the sequence changes. This is fundamental part of the Model View Controller (MVC) design pattern.
         //Assume a sequence is selected (otherwise we wouldn't be here) 
         //Set up model listener
-        
+        this.models = models;
         if(inputIsAlignment){
         	alignment = (Alignment)models[0];
         	System.out.println("Alignments navn: " + alignment.getName());
@@ -100,6 +106,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         	AlignmentFactory alignmentFactory = FactoryManager.getInstance().getAlignmentFactory();
         	alignment = alignmentFactory.createAlignment((Sequence)(models[0]));
         }
+        this.
         
         colorGradientModel = new ColorGradientModel(ColorGradientManager.getGradients());
         
@@ -109,8 +116,24 @@ public class LAPEditor extends AbstractGraphicsEditor {
         getCanvas().addChild(lap);		
         getCanvas().addChild(info);
 
-		fillSidePanel();  
+		fillSidePanel();
+	
     }
+	
+	@Override
+	public void prepareForGraphicsPrintOrExport(PrintSetting arg0, boolean arg2){
+		System.out.println("Prepare for export");
+		lap.setExporting(true);
+		
+	}
+	
+	@Override
+	public void cleanupAfterGraphicsPrintOrExport(PrintSetting arg0){
+		System.out.println("CleanUp");
+		lap.setExporting(false);
+	}
+	
+	
 	
 	/*
 	 * Fills the sidePanel and attaches listeners. 
@@ -404,7 +427,8 @@ public class LAPEditor extends AbstractGraphicsEditor {
 	
 	@Override
 	public ClcObject[] getEditingObjects(boolean isDragging) {
-        return new ClcObject[] { seq };
+
+		return new ClcObject[]{alignment};
     }
 // Here we return an array of the object being edited. The parameter should almost always be ignored
 
