@@ -184,6 +184,7 @@ public void buildRelevantTypes(){
 		}
 	}
 	featuresLowerY = (expanded*45)+(relevantTypes.size()*(typeHeight+20))+startOffset;
+	if(featuresLowerY == startOffset) featuresLowerY = 0;
 	featuresUpperY = startOffset;	
 }
 

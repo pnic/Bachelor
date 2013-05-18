@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.event.MouseInputListener;
 
@@ -28,6 +29,7 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 	private boolean finished = false;
 	private boolean drawn = false;
 
+	private Rectangle2D.Double finishedRect;
 	private double xStart;
 	private double xEnd;
 	private boolean startHover;
@@ -56,7 +58,7 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 			
 			g2.drawRect(startX,startY,Math.abs((int)(curDragPoint.getX()-startDragPoint.getX())),Math.abs((int)(curDragPoint.getY()-startDragPoint.getY())));
 		}
-		if(finished){
+		if(finished && lap.getEditor().getMouseMode() == MouseMode.SELECT_MODE){
 			 startX = startDragPoint.getX() > curDragPoint.getX() ? (int)(lap.getXViewBounds()+curDragPoint.getX()) : (int)(lap.getXViewBounds()+startDragPoint.getX());
 			 startY = startDragPoint.getY() > curDragPoint.getY() ? (int)(lap.getYViewBounds()+curDragPoint.getY()) : (int)(lap.getYViewBounds()+startDragPoint.getY());
 			 xStart = startX > 0 ? startX : 0;
@@ -64,16 +66,17 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 			 Color col;
 			 col = !valid ? new Color(Color.RED.getRed(),Color.RED.getGreen(),Color.RED.getBlue(),140) : new Color(Color.BLUE.getRed(),Color.BLUE.getGreen(),Color.BLUE.getBlue(),140);
 			 g2.setColor(col);
+			 finishedRect = new Rectangle2D.Double(startX,startY,Math.abs((int)(curDragPoint.getX()-startDragPoint.getX())),Math.abs((int)(curDragPoint.getY()-startDragPoint.getY())));
 			 g2.fillRect(startX,startY,Math.abs((int)(curDragPoint.getX()-startDragPoint.getX())),Math.abs((int)(curDragPoint.getY()-startDragPoint.getY())));
 			 drawn = true;
 		}
-		System.out.println(xStart + " xStart");
-		System.out.println();
+		
 		return DrawingResult.NORMAL;		
 	}
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		if(lap.getEditor().getMouseMode() == MouseMode.SELECT_MODE){
 		if(lap.getXViewBounds()+e.getPoint().getX() <xEnd && lap.getXViewBounds()+e.getPoint().getX() > xStart){
 			if(e.getWhen() - prevClick < 500){
 				double newXStart;		
@@ -81,7 +84,7 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 				newXStart = xStart/lap.getScaleX();
 				newXEnd = xEnd/lap.getScaleX();
 				
-				int XNucleotideStart = (int)Math.round(newXStart);
+				int XNucleotideStart = (int)Math.round(newXStart); 
 				int XNucleotideEnd = (int)Math.round(newXEnd);
 				
 				indexer = new AlignmentSequenceIndexer(lap.getAlign(), lap.getCurrentSequenceNumber());
@@ -120,33 +123,34 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 			finished = false;
 			repaint();
 		}
+		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		//int lap.getXViewBounds() = lap.getXViewBounds() < 0 ? 0 : lap.getXViewBounds();
-		System.out.println("xStart: " + xStart + " e.getPoint().getX(): " + e.getPoint().getX() + " xEnd: " + xEnd + " e + viewbounds: " + (e.getPoint().getX()+(int)lap.getXViewBounds()));
+		if(lap.getEditor().getMouseMode() == MouseMode.SELECT_MODE){
+		
 		if(drawn){
 			if(xEnd > (lap.getXViewBounds()+e.getPoint().getX()) && xStart < (lap.getXViewBounds()+e.getPoint().getX())) {
 				if(xEnd - (lap.getXViewBounds()+e.getPoint().getX()) < (lap.getXViewBounds()+e.getPoint().getX())- xStart){
-					System.out.println("end closest");
 					//xEnd -= (xEnd-(e.getPoint().getX()+lap.getXViewBounds()));
 					//curDragPoint.setLocation(xEnd, startDragPoint.getY());
-					System.out.println(startDragPoint);
+					
 					startDragPoint.setLocation(xStart-lap.getXViewBounds(), startDragPoint.getY());
-					System.out.println(xStart + " is startdrag point in mousepressed");
+					
 				} else {
-					System.out.println("start closest");
+					
 					//xStart += ((e.getPoint().getX()+lap.getXViewBounds())-xStart);
 					//curDragPoint.setLocation(xStart, startDragPoint.getY());
-					System.out.println(startDragPoint);
-					System.out.println(xEnd + " is x end in mousepressed");
+					
+					
 					startDragPoint.setLocation(xEnd-lap.getXViewBounds(), startDragPoint.getY());
-					System.out.println(startDragPoint.getX() + " after being set");
+					
 					startDragged = true;
 				}
 			} else {
-				System.out.println("drawn but not inside");
+				
 				startDragPoint = e.getPoint();
 				curDragPoint = startDragPoint;
 				finished = false;
@@ -158,10 +162,12 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 		}
 		drawn = false;
 		dragging = true;
+		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if(lap.getEditor().getMouseMode() == MouseMode.SELECT_MODE){
 		if(Math.abs(curDragPoint.getX() - startDragPoint.getX()) < 10 || Math.abs(curDragPoint.getY() - startDragPoint.getY()) < 10 ) {
 			dragging = false;
 			return;
@@ -201,21 +207,13 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 			 return;
 		}
 		
-		System.out.println(lap.getAlign().getLength() + " Align length");
-		
-		System.out.println(lap.getPairings().length + " pairings length");
-		
-		System.out.println(XNucleotideStart + " start NuclX");
-		System.out.println(XNucleotideEnd + " end NuclX");
-		System.out.println(seqPositionStart + " seq start");
-		System.out.println(seqPositionEnd + " seq end");
 		
 		
 		if (validRect(seqPositionStart, seqPositionEnd)) valid = true;
 		else valid = false;
 		repaint();
 		//lap.showSub(seqPositionStart, seqPositionEnd);
-		
+		}
 	}
 
 
@@ -235,12 +233,57 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 	public void mouseDragged(MouseEvent e) {
 		//if(Math.abs(e.getPoint().getX()-curDragPoint.getX()) > 15 || Math.abs(e.getPoint().getY()-curDragPoint.getY()) > 15){
 		
-		
+		if(lap.getEditor().getMouseMode() == MouseMode.SELECT_MODE){
 		curDragPoint = e.getPoint();
+		
+		if(Math.abs(curDragPoint.getX() - startDragPoint.getX()) < 10 || Math.abs(curDragPoint.getY() - startDragPoint.getY()) < 10 ) {
+			dragging = false;
+			return;
+		}
+		
+		startDragged = false;
+		dragging = false;
+		finished = true;
+		
+		double newXStart;		
+		double newXEnd;		
+		newXStart = xStart/lap.getScaleX();
+		newXEnd = xEnd/lap.getScaleX();
+		
+		int XNucleotideStart = (int)Math.round(newXStart);
+		int XNucleotideEnd = (int)Math.round(newXEnd);
+		
+		indexer = new AlignmentSequenceIndexer(lap.getAlign(), lap.getCurrentSequenceNumber());
+		
+		int seqPositionStart;
+		
+		if(XNucleotideStart < lap.getAlign().getLength()){
+			seqPositionStart = XNucleotideStart >= 0 ? indexer.getSequencePosition(XNucleotideStart) : 0;
+			seqPositionStart = seqPositionStart < 0 ? 0 : seqPositionStart;
+		} else {
+			 this.repaint();
+			 return;
+		}
+		
+		int seqPositionEnd;
+		
+		if(XNucleotideEnd > 0){
+			seqPositionEnd = XNucleotideEnd <= lap.getAlign().getLength() ? indexer.getSequencePosition(XNucleotideEnd) : lap.getAlign().getLength();
+			seqPositionEnd = seqPositionEnd < 0 ? lap.getSequence().getLength() : seqPositionEnd;
+		}else {
+			 this.repaint();
+			 return;
+		}
+		
+		
+		
+		if (validRect(seqPositionStart, seqPositionEnd)) valid = true;
+		else valid = false;
 		//if (startDragged) xStart = startDragPoint.getX();
 		
 		this.repaint();
 		//}
+		}
 	}
 
 	@Override
@@ -252,10 +295,7 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 	public boolean validRect(int start, int end){
 		int c = start;
 		while(c < end){
-			int tmp = lap.getPairings()[c];
-		
-			System.out.println(tmp + " tmp");
-			System.out.println(c + " c");
+			int tmp = lap.getPairings()[c];		
 			
 			if(tmp > 0 && tmp < c){
 				return false;				

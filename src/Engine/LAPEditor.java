@@ -355,7 +355,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
 			}
         	
         });
-        
+        updateAnnotationView(lap.getLv().getTypes());
 	}
 	
 		// This method returns a title for the sidepanel. More about this in the next section, which is about side panels
