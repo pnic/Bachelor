@@ -2,6 +2,7 @@ package ViewCanvas;
 
 
 import Engine.LAP;
+import Engine.FeatureView;
 
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.FeatureColorMap;
 import com.clcbio.api.clc.datatypes.bioinformatics.structure.rnasecondary.RnaStructure;
@@ -30,15 +31,17 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.event.MouseInputListener;
 
-public class LAPFeatureType extends ChildDrawingNode implements MouseInputListener{
+public class FeatureType extends ChildDrawingNode implements MouseInputListener{
 
 	private String name;
-	private List<LAPFeatureInterval> intervals;
+	private List<FeatureInterval> intervals;
 	
 	private long prevClick = 0;
 	private long prevHover = 0;
 	
 	private JLabel label;
+	
+	public FeatureView root;
 	
 	private int x;
 	private int typeOffset;
@@ -54,7 +57,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	
 	private int expandedIntervals = 0;
 	
-	private LAP root;
+	
 
 	private boolean relevant;
 	
@@ -74,9 +77,9 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	private boolean hasMouseListener;
 	private boolean typeHover;
 	
-	public LAPFeatureType(String name, LAP root){
+	public FeatureType(String name){
 		this.name = name;
-		intervals = new ArrayList<LAPFeatureInterval>();
+		intervals = new ArrayList<FeatureInterval>();
 	
 		
 		
@@ -86,12 +89,12 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 		this.asLines = false;
 		
 		this.isSelected = true;
-		this.root = root;
+		
 	}
 	
-	public LAPFeatureType(String name, int x, int offset, int w, int h, LAP root) {
+	public FeatureType(String name, int x, int offset, int w, int h, FeatureView root) {
 		this.name = name;
-		intervals = new ArrayList<LAPFeatureInterval>();
+		intervals = new ArrayList<FeatureInterval>();
 		this.asArrows = true;
 		this.asLines = false;
 		
@@ -113,19 +116,19 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 		return name;
 	}
 	
-	public void addInterval(LAPFeatureInterval f){
+	public void addInterval(FeatureInterval f){
 		intervals.add(f);
 	}
 	
-	public List<LAPFeatureInterval> getIntervals(){
+	public List<FeatureInterval> getIntervals(){
 		return intervals;
 	}
 
 	@Override
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy)
 	{
-		if(relevant && root.getLv().isShowAnnotations() && isSelected){
-			//if(changed || lastX != root.getXViewBounds()){
+		if(relevant && root.root.getLv().isShowAnnotations() && isSelected){
+			//if(changed || lastX != root.root.getXViewBounds()){
 				g2.setStroke(new BasicStroke(2));
 				g2.setColor(Color.BLACK);
 				if(!hasMouseListener){
@@ -133,11 +136,11 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 					hasMouseListener = true;
 				}
 				
-				content = new Rectangle2D.Double(x, root.getBaseXAxis()+typeOffset, width*getScaleX(), height);
+				content = new Rectangle2D.Double(x, root.root.getBaseXAxis()+typeOffset, width*getScaleX(), height);
 				g2.setColor(Color.WHITE);
 				g2.fill(content);
 				g2.setColor(Color.BLACK);
-			//	g2.draw(new Line2D.Double(new Point2D.Double(x, root.getLv().getFeaturesLowerY()), new Point2D.Double(x + 200, root.getLv().getFeaturesUpperY())));
+			//	g2.draw(new Line2D.Double(new Point2D.Double(x, root.root.getLv().getFeaturesLowerY()), new Point2D.Double(x + 200, root.root.getLv().getFeaturesUpperY())));
 				
 				/*if(hover){
 					g2.setColor(Color.BLACK);
@@ -150,43 +153,43 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 				FontMetrics fm = g2.getFontMetrics();
 				
 				stringContainer = fm.getStringBounds(name, g2);
-				drawnStringContainer = new Rectangle2D.Double(root.getXViewBounds()+root.getViewPaneWidth()/2,(root.getBaseXAxis()+typeOffset-5)-fm.getAscent(), (int)stringContainer.getWidth(), (int)stringContainer.getHeight());
+				drawnStringContainer = new Rectangle2D.Double(root.root.getXViewBounds()+root.root.getViewPaneWidth()/2,(root.root.getBaseXAxis()+typeOffset-5)-fm.getAscent(), (int)stringContainer.getWidth(), (int)stringContainer.getHeight());
 				//g2.draw(drawnStringContainer);
 				if(typeHover){
 					g2.setColor(Color.BLUE);
 				}
-				g2.drawString(this.name, root.getXViewBounds()+(root.getViewPaneWidth()/2), root.getBaseXAxis()+typeOffset-5);
+				g2.drawString(this.name, root.root.getXViewBounds()+(root.root.getViewPaneWidth()/2), root.root.getBaseXAxis()+typeOffset-5);
 				
-				//stringContainer = new Rectangle2D.Double(root.getXViewBounds()+root.getViewPaneWidth()/2,(root.getBaseXAxis()+typeOffset-5)-fm.getAscent(),(int)fm.)
+				//stringContainer = new Rectangle2D.Double(root.root.getXViewBounds()+root.root.getViewPaneWidth()/2,(root.root.getBaseXAxis()+typeOffset-5)-fm.getAscent(),(int)fm.)
 				
 				g2.setColor(Color.BLACK);
-			//g2.fillRect(root.getXViewBounds(), root.getBaseXAxis()+typeOffset-10, 20, 10);
+			//g2.fillRect(root.root.getXViewBounds(), root.root.getBaseXAxis()+typeOffset-10, 20, 10);
 			//g2.setColor(Color.WHITE);
 				g2.setFont(myFont);
-				//g2.drawString("+", root.getXViewBounds()+5, root.getBaseXAxis()+typeOffset);
+				//g2.drawString("+", root.root.getXViewBounds()+5, root.root.getBaseXAxis()+typeOffset);
 				
 				//if(expanded){
 					int inView = 1;
 					
-					if(root.getBaseline().isBold()){
-						g2.setFont(new Font(root.getBaseline().getFontName(), Font.BOLD, root.getBaseline().getFontSize()));
+					if(root.root.getBaseline().isBold()){
+						g2.setFont(new Font(root.root.getBaseline().getFontName(), Font.BOLD, root.root.getBaseline().getFontSize()));
 						} else {
-							g2.setFont(new Font(root.getBaseline().getFontName(), Font.PLAIN, root.getBaseline().getFontSize()));
+							g2.setFont(new Font(root.root.getBaseline().getFontName(), Font.PLAIN, root.root.getBaseline().getFontSize()));
 						}
-					//g2.drawString("Features:", root.getXViewBounds(), root.getBaseXAxis()+typeOffset+height+15);
-					for(LAPFeatureInterval li : intervals){
-						if(!(li.getEndPos()*getScaleX() < root.getXViewBounds() || li.getStartPos()*getScaleX() > root.getXViewBounds()+root.getViewPaneWidth()) && li.isExpanded()){
+					//g2.drawString("Features:", root.root.getXViewBounds(), root.root.getBaseXAxis()+typeOffset+height+15);
+					for(FeatureInterval li : intervals){
+						if(!(li.getEndPos()*getScaleX() < root.root.getXViewBounds() || li.getStartPos()*getScaleX() > root.root.getXViewBounds()+root.root.getViewPaneWidth()) && li.isExpanded()){
 							//g2.setColor(li.getCol());
 							
 							g2.setColor(color);
-							g2.drawString(li.getName()+", ", root.getXViewBounds()+(inView*100), root.getBaseXAxis()+typeOffset+height+15);
-							g2.drawString(li.getStartPos() + " - " + li.getEndPos(), root.getXViewBounds()+(inView*100), root.getBaseXAxis()+typeOffset+height+35);
+							g2.drawString(li.getName()+", ", root.root.getXViewBounds()+(inView*100), root.root.getBaseXAxis()+typeOffset+height+15);
+							g2.drawString(li.getStartPos() + " - " + li.getEndPos(), root.root.getXViewBounds()+(inView*100), root.root.getBaseXAxis()+typeOffset+height+35);
 							inView+=1;
 						}
 					}
 				//}
 				changed = false;
-				lastX = root.getXViewBounds();
+				lastX = root.root.getXViewBounds();
 			//}
 		}
 		return DrawingResult.NORMAL;
@@ -196,31 +199,31 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	public void mouseClicked(MouseEvent arg0) {
 		
 		if(arg0.getWhen() - prevClick < 500 ) return;
-		if(drawnStringContainer.contains(new Point(arg0.getX()+root.getXViewBounds(),arg0.getY()+root.getYViewBounds()))){
+		if(drawnStringContainer.contains(new Point(arg0.getX()+root.root.getXViewBounds(),arg0.getY()+root.root.getYViewBounds()))){
 			if(this.expanded){
-				for(LAPFeatureInterval li : intervals){
+				for(FeatureInterval li : intervals){
 					li.setExpanded(false);
 					this.expanded = false;
 					this.expandedIntervals = 0;
-					root.setRelevantTypes();
+					root.root.setRelevantTypes();
 					repaint();
 				}
 			} else {
 				this.expanded = true;
-				for(LAPFeatureInterval li : intervals){
+				for(FeatureInterval li : intervals){
 					li.setExpanded(true);
 					this.expanded = true;
 					this.expandedIntervals = intervals.size();
-					root.setRelevantTypes();
+					root.root.setRelevantTypes();
 					repaint();
 				}
 			}
 			
 		}
-		/*if(content.getMinY() < arg0.getY()+root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.getYViewBounds()){
+		/*if(content.getMinY() < arg0.getY()+root.root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.root.getYViewBounds()){
 		this.expanded = !expanded;
 		this.changed = true;
-		root.setRelevantTypes();
+		root.root.setRelevantTypes();
 		prevClick = arg0.getWhen();
 		
 		repaint();
@@ -283,7 +286,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
-		//root.setRelevantTypes();
+		//root.root.setRelevantTypes();
 		
 		
 	}
@@ -303,7 +306,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
 	
-		if(drawnStringContainer.contains(new Point(arg0.getX()+root.getXViewBounds(),arg0.getY()+root.getYViewBounds()))){
+		if(drawnStringContainer.contains(new Point(arg0.getX()+root.root.getXViewBounds(),arg0.getY()+root.root.getYViewBounds()))){
 			this.typeHover = true;
 			repaint();
 			return;
@@ -313,7 +316,7 @@ public class LAPFeatureType extends ChildDrawingNode implements MouseInputListen
 			repaint();
 		}
 		
-	/*	if(content.getMinY() < arg0.getY()+root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.getYViewBounds()){
+	/*	if(content.getMinY() < arg0.getY()+root.root.getYViewBounds() && content.getMaxY() > arg0.getY()+root.root.getYViewBounds()){
 		this.hover = true;
 		prevHover = arg0.getWhen();
 		repaint();

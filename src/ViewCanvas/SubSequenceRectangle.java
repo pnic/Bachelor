@@ -112,7 +112,7 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 				
 				
 				
-				if (validRect(seqPositionStart, seqPositionEnd)) valid = true;
+				if (validateSelection(seqPositionStart, seqPositionEnd)) valid = true;
 				else valid = false;
 				
 				lap.showSub(seqPositionStart, seqPositionEnd);
@@ -209,7 +209,7 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 		
 		
 		
-		if (validRect(seqPositionStart, seqPositionEnd)) valid = true;
+		if (validateSelection(seqPositionStart, seqPositionEnd)) valid = true;
 		else valid = false;
 		repaint();
 		//lap.showSub(seqPositionStart, seqPositionEnd);
@@ -277,7 +277,7 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 		
 		
 		
-		if (validRect(seqPositionStart, seqPositionEnd)) valid = true;
+		if (validateSelection(seqPositionStart, seqPositionEnd)) valid = true;
 		else valid = false;
 		//if (startDragged) xStart = startDragPoint.getX();
 		
@@ -292,14 +292,15 @@ public class SubSequenceRectangle extends ChildDrawingNode implements MouseInput
 		
 	}
 
-	public boolean validRect(int start, int end){
+	public boolean validateSelection(int start, int end){
 		int c = start;
 		while(c < end){
 			int tmp = lap.getPairings()[c];		
 			
 			if(tmp > 0 && tmp < c){
 				return false;				
-			} else if( tmp > c){
+			} 
+			if( tmp > c){
 				if(tmp > end) return false;
 				else c = tmp;
 			}

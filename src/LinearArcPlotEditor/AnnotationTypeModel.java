@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ViewCanvas.LAPFeatureType;
+import ViewCanvas.FeatureType;
 
 import com.clcbio.api.base.util.State;
 import com.clcbio.api.free.editors.framework.sidepanel.SidePanelModel;
@@ -20,11 +20,11 @@ public class AnnotationTypeModel extends SidePanelModel{
 	private String lastChangedLabelName;
 	private Color lastChangedLabel;
 	private boolean labelChanged = false;
-	List<LAPFeatureType> types;
+	List<FeatureType> types;
 	
 	private Map<String, Boolean> booltypes;
 	
-	public AnnotationTypeModel(String title, List<LAPFeatureType> firstTypes) {
+	public AnnotationTypeModel(String title, List<FeatureType> firstTypes) {
 		super(title);
 		booltypes = new HashMap<String, Boolean>();
 		this.types = firstTypes;
@@ -35,7 +35,7 @@ public class AnnotationTypeModel extends SidePanelModel{
 		
 			if(types != null){
 				booltypes.clear();
-				for(LAPFeatureType l : types){
+				for(FeatureType l : types){
 				booltypes.put(l.getName(), true);
 			}
 		}
@@ -124,15 +124,15 @@ public class AnnotationTypeModel extends SidePanelModel{
 		this.labelChanged = labelChanged;
 	}
 
-	public List<LAPFeatureType> getTypes() {
+	public List<FeatureType> getTypes() {
 		return types;
 	}
 
-	public void setTypes(List<LAPFeatureType> types) {
+	public void setTypes(List<FeatureType> types) {
 		this.types = types;
 	}
 	
-	public void rebuildMap(List<LAPFeatureType> l){
+	public void rebuildMap(List<FeatureType> l){
 		this.types = l;
 		buildMap();
 		

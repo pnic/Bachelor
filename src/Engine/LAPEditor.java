@@ -32,7 +32,7 @@ import LinearArcPlotEditor.SequenceView;
 import LinearArcPlotEditor.StructureValueInfoProvider;
 import LinearArcPlotEditor.TextModel;
 import LinearArcPlotEditor.TextView;
-import ViewCanvas.LAPFeatureType;
+import ViewCanvas.FeatureType;
 import ViewCanvas.infoBox;
 
 import com.clcbio.api.base.session.FactoryManager;
@@ -491,7 +491,7 @@ public class LAPEditor extends AbstractGraphicsEditor {
         return false;
     }
 	
-	public void updateAnnotationView(List<LAPFeatureType> l){
+	public void updateAnnotationView(List<FeatureType> l){
 		annotationTypeView.setNewTypes(l);
 		SidePanelView curS;
 		getSidePanel().getSidePanelGroup().visitAllSidePanelViews(new SidePanelVisitor(){

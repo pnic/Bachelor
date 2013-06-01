@@ -13,7 +13,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import ViewCanvas.LAPFeatureType;
+import ViewCanvas.FeatureType;
 
 import com.clcbio.api.clc.plugins.editors.graphics.sequence.sidepanel.FeatureColorMap;
 import com.clcbio.api.free.gui.components.ColorPickerLabel;
@@ -102,7 +102,7 @@ public class AnnotationTypeView extends SidePanelView{
 		createUI();
 	}
 	
-	public void setNewTypes(List<LAPFeatureType> l){
+	public void setNewTypes(List<FeatureType> l){
 		((AnnotationTypeModel)getModel()).rebuildMap(l);
 		newTypes = true;
 		checkTypes.clear();

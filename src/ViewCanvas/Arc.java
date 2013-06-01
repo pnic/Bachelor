@@ -1,5 +1,7 @@
 package ViewCanvas;
 
+
+
 /*
  * David Korczynski
  * dgeo@itu.dk
@@ -14,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Arc2D;
 import javax.swing.event.MouseInputListener;
 import Engine.*;
+
 import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;

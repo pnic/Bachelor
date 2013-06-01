@@ -1,15 +1,17 @@
 package Engine;
 
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import ViewCanvas.Arc;
 import ViewCanvas.Baseline;
 import ViewCanvas.CanvasChangedListener;
-import ViewCanvas.LAPFeatureInterval;
-import ViewCanvas.LAPFeatureType;
+import ViewCanvas.FeatureInterval;
+import ViewCanvas.FeatureType;
 import ViewCanvas.RectangleOverNucleotide;
 import ViewCanvas.SubSequenceRectangle;
 
@@ -49,7 +51,7 @@ public class LAP extends RootDrawingNode {
 	private boolean firstModification = true;
 	private Sequence current_sequence;
 	private ColorGradientModel gradmodel;
-	private LAPFeatureView lv;
+	private FeatureView lv;
 	private LAPEditor editor;
 	private Arc mouseOverArc;
 	private int currentSequenceNumber;
@@ -139,7 +141,7 @@ public class LAP extends RootDrawingNode {
 			}
 		}
 
-		lv = new LAPFeatureView(current_sequence,this);
+		lv = new FeatureView(current_sequence,this);
 		setRelevantTypes();
 		
 		if(editor.getAnnotationTypeView() != null){
@@ -226,17 +228,17 @@ public class LAP extends RootDrawingNode {
 	}
 	
 	public void setRelevantTypes(){
-		for(LAPFeatureType l : lv.getTypes()){
+		for(FeatureType l : lv.getTypes()){
 			removeChild(l);
-			for(LAPFeatureInterval li : l.getIntervals()){
+			for(FeatureInterval li : l.getIntervals()){
 				removeChild(li);
 			}
 		}
 
 		lv.buildRelevantTypes();
-		for(LAPFeatureType l : lv.getRelevantTypes()){
+		for(FeatureType l : lv.getRelevantTypes()){
 			addChild(l);
-			for(LAPFeatureInterval li : l.getIntervals()){
+			for(FeatureInterval li : l.getIntervals()){
 				addChild(li);
 			}
 		}
@@ -445,11 +447,11 @@ public class LAP extends RootDrawingNode {
 		return current_sequence;
 	}
 
-	public LAPFeatureView getLv() {
+	public FeatureView getLv() {
 		return lv;
 	}
 
-	public void setLv(LAPFeatureView lv) {
+	public void setLv(FeatureView lv) {
 		this.lv = lv;
 	}
 
@@ -516,9 +518,9 @@ public class LAP extends RootDrawingNode {
 	
 	public void removeTypes(){
 		if(lv!= null){
-			for(LAPFeatureType l : lv.getTypes()){
+			for(FeatureType l : lv.getTypes()){
 				removeChild(l);
-				for(LAPFeatureInterval li : l.getIntervals()){
+				for(FeatureInterval li : l.getIntervals()){
 					removeChild(li);
 				}
 			}

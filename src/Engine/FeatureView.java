@@ -2,8 +2,8 @@ package Engine;
 
 
 import ViewCanvas.LAPFeature;
-import ViewCanvas.LAPFeatureInterval;
-import ViewCanvas.LAPFeatureType;
+import ViewCanvas.FeatureInterval;
+import ViewCanvas.FeatureType;
 
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.Sequence;
 import com.clcbio.api.free.datatypes.bioinformatics.sequence.alignment.AlignmentSequenceIndexer;
@@ -23,15 +23,15 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
-public class LAPFeatureView {
+public class FeatureView {
 	
 	Sequence seq;
-	List<LAPFeatureType> types;
-	List<LAPFeatureType> relevantTypes;
+	List<FeatureType> types;
+	List<FeatureType> relevantTypes;
 	List<LAPFeature> features;
 	private int typeHeight = 24;
 	private int typeWidth;
-	private LAP root;
+	public LAP root;
 	
 	private int featuresUpperY;
 	private int featuresLowerY;
@@ -43,7 +43,7 @@ public class LAPFeatureView {
 	
 	
 	
-	public LAPFeatureView(Sequence seq, LAP root){
+	public FeatureView(Sequence seq, LAP root){
 		this.root = root;
 		this.seq = seq;
 		
@@ -52,8 +52,8 @@ public class LAPFeatureView {
 		this.showArrows = true;
 		this.showGradients = true;
 		
-		this.types = new ArrayList<LAPFeatureType>();
-		this.relevantTypes = new ArrayList<LAPFeatureType>();
+		this.types = new ArrayList<FeatureType>();
+		this.relevantTypes = new ArrayList<FeatureType>();
 		
 		features = new ArrayList<LAPFeature>();
 		typeWidth = seq.getLength();
@@ -68,7 +68,7 @@ public void buildFeatureTypes(LAP root){
 		Iterator<Feature> featureIter = seq.getFeatureIterator();
 		
 		
-		if(featureIter.hasNext()) types = new ArrayList<LAPFeatureType>();
+		if(featureIter.hasNext()) types = new ArrayList<FeatureType>();
 		else{
 			return;
 		}
@@ -80,8 +80,8 @@ public void buildFeatureTypes(LAP root){
 		if(types == null){
 			System.out.println("types is null");
 		}
-		Iterator<LAPFeatureType> typeIter = types.iterator();
-		LAPFeatureType cur = typeIter.next();
+		Iterator<FeatureType> typeIter = types.iterator();
+		FeatureType cur = typeIter.next();
 		
 		int curOverlaps = 0;
 		int offset = 60;
@@ -105,7 +105,7 @@ public void buildFeatureTypes(LAP root){
 			
 			while(II.hasNext()){
 				Interval in = II.next();
-				LAPFeatureInterval li = new LAPFeatureInterval(fet.getName(), RegionTools.convertPosition(in.getFirstPos().getMin(),false,indexer),RegionTools.convertPosition(in.getLastPos().getMax(),false,indexer),cur.getTypeOffset(), root, cur);
+				FeatureInterval li = new FeatureInterval(fet.getName(), RegionTools.convertPosition(in.getFirstPos().getMin(),false,indexer),RegionTools.convertPosition(in.getLastPos().getMax(),false,indexer),cur.getTypeOffset(), cur);
 				tmp.addFeatureInterval(li);
 				
 				cur.addInterval(li);
@@ -120,13 +120,13 @@ public void buildFeatureTypes(LAP root){
 		
 		//drawFeatures();
 		
-		relevantTypes = new ArrayList<LAPFeatureType>();
+		relevantTypes = new ArrayList<FeatureType>();
 		
 		buildRelevantTypes();
 }
 	
 private void sortTypes() {
-	for(LAPFeatureType t : types){
+	for(FeatureType t : types){
 		java.util.Collections.sort(t.getIntervals());
 	}	
 }
@@ -155,13 +155,13 @@ public void buildRelevantTypes(){
 	}
 	
 	relevantTypes.clear();
-	for(LAPFeatureType l : types){
+	for(FeatureType l : types){
 		if(l.isSelected()){
 		if(l.getIntervals().size() > 0){
 			
 			boolean rel = false;
 			l.setTypeOffset(startOffset+((typeHeight+20)*curAdded)+(expanded*45));
-			for(LAPFeatureInterval li : l.getIntervals()){
+			for(FeatureInterval li : l.getIntervals()){
 				//Check if type has at least one feature interval within the current view.
 				if(!rel){				
 					startPosX = li.getStartPos()*li.getScaleX();
@@ -188,8 +188,8 @@ public void buildRelevantTypes(){
 	featuresUpperY = startOffset;	
 }
 
-private LAPFeatureType changeCurrentType(String fetType){
-	for(LAPFeatureType type : types){
+private FeatureType changeCurrentType(String fetType){
+	for(FeatureType type : types){
 		if( type.getName().compareToIgnoreCase(fetType) == 0) return type;
 	}
 	return null;
@@ -199,7 +199,7 @@ private LAPFeatureType changeCurrentType(String fetType){
 private void buildTypes(Set<String> s, LAP root){
 	int offset = 70;
 	for(String t : s){
-		types.add(new LAPFeatureType(t,0,offset,seq.getLength(),typeHeight,root));
+		types.add(new FeatureType(t,0,offset,seq.getLength(),typeHeight,this));
 		offset+=typeHeight+20;
 	}
 }
@@ -213,8 +213,8 @@ public void drawFeatures(){
 	
 	
 	
-	for(LAPFeatureType l : types){
-		for(LAPFeatureInterval i : l.getIntervals()){
+	for(FeatureType l : types){
+		for(FeatureInterval i : l.getIntervals()){
 			if(i.getStartPos() < curEnd){
 				i.addToOffset(overlap+5);
 				overlap+=1;
@@ -254,22 +254,22 @@ return "alignment_annotations_exporter";
 //Class identifier of the plugin
 
 
-public List<LAPFeatureType> getTypes() {
+public List<FeatureType> getTypes() {
 	return types;
 }
 
 
-public void setTypes(List<LAPFeatureType> types) {
+public void setTypes(List<FeatureType> types) {
 	this.types = types;
 }
 
 
-public List<LAPFeatureType> getRelevantTypes() {
+public List<FeatureType> getRelevantTypes() {
 	return relevantTypes;
 }
 
 
-public void setRelevantTypes(List<LAPFeatureType> relevantTypes) {
+public void setRelevantTypes(List<FeatureType> relevantTypes) {
 	this.relevantTypes = relevantTypes;
 }
 
@@ -300,15 +300,15 @@ public void setShowGradients(boolean showGradients) {
 
 public void repaintTypes(){
 	System.out.println("Repainting types");
-	for(LAPFeatureType t : types){
-		for(LAPFeatureInterval i : t.getIntervals()){
+	for(FeatureType t : types){
+		for(FeatureInterval i : t.getIntervals()){
 			i.repaintInterval();
 		}
 	}
 }
 
 public void setTypeAcces(String lastUpdated) {
-	for(LAPFeatureType l : types){
+	for(FeatureType l : types){
 		if(l.getName() == lastUpdated){
 			l.setSelected(!l.isSelected());
 			break;
@@ -318,10 +318,10 @@ public void setTypeAcces(String lastUpdated) {
 }
 
 public void setTypeColor(String type, Color col){
-	for(LAPFeatureType l : types){
+	for(FeatureType l : types){
 		if(l.getName() == type){
 			l.setColor(col);
-			for(LAPFeatureInterval i : l.getIntervals()){
+			for(FeatureInterval i : l.getIntervals()){
 				i.setCol(col);
 			}
 			break;
@@ -333,12 +333,12 @@ public void setTypeColor(String type, Color col){
 
 public void setShowView(String selected) {
 	if(selected.equals("arrows")){
-		for(LAPFeatureType l : types){
+		for(FeatureType l : types){
 			l.setAsLines(false);
 			l.setAsArrows(true);
 		}
 	} else if(selected.equals("lines")){
-		for(LAPFeatureType l : types){
+		for(FeatureType l : types){
 			l.setAsArrows(false);
 			l.setAsLines(true);
 		}	

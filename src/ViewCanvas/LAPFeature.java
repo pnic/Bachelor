@@ -17,7 +17,7 @@ public class LAPFeature extends ChildDrawingNode{
 	private int startPos;
 	private int endPos;
 	private int offset;
-	private List<LAPFeatureInterval> intervals;
+	private List<FeatureInterval> intervals;
 	
 	private LAP root;
 	
@@ -27,15 +27,15 @@ public class LAPFeature extends ChildDrawingNode{
 		this.startPos = startPos;
 		this.endPos = endPos;
 		this.offset = offset;
-		intervals = new ArrayList<LAPFeatureInterval>();		
+		intervals = new ArrayList<FeatureInterval>();		
 		this.root = root;
 	}
 	
-	public void addFeatureInterval(LAPFeatureInterval l){
+	public void addFeatureInterval(FeatureInterval l){
 		intervals.add(l);
 	}
 	
-	public void removeFeatureInterval(LAPFeatureInterval l){
+	public void removeFeatureInterval(FeatureInterval l){
 		intervals.remove(l);
 	}
 	
@@ -43,7 +43,7 @@ public class LAPFeature extends ChildDrawingNode{
 		return offset+root.getBaseXAxis();
 	}
 	
-	public List<LAPFeatureInterval> getIntervals(){
+	public List<FeatureInterval> getIntervals(){
 		return intervals;
 	}
 	

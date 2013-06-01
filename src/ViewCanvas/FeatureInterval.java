@@ -18,7 +18,7 @@ import com.clcbio.api.clc.graphics.framework.ChildDrawingNode;
 import com.clcbio.api.clc.graphics.framework.DrawingLayer;
 import com.clcbio.api.clc.graphics.framework.DrawingResult;
 
-public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, MouseInputListener{
+public class FeatureInterval extends ChildDrawingNode implements Comparable, MouseInputListener{
 
 	Line2D startLine;
 	Line2D endLine;
@@ -38,8 +38,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 
 	private String name;
 
-	private LAPFeatureType type;
-	private LAP root;
+	private FeatureType type;
 	
 	private boolean lines;
 	private boolean arrows;
@@ -49,7 +48,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 	private boolean expanded;
 	private boolean changed;
 
-	public LAPFeatureInterval(String name, int startPos, int endPos, int offset, LAP root, LAPFeatureType type){
+	public FeatureInterval(String name, int startPos, int endPos, int offset, FeatureType type){
 		this.lines = false;
 		this.arrows = true;
 		this.name = name;
@@ -58,7 +57,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 		this.offset = offset;
 		this.startLine = new Line2D.Double(startPos*getScaleX(), offset+30, startPos*getScaleX(), offset+15);
 		this.endLine = new Line2D.Double(endPos*getScaleX(),offset+30,endPos*getScaleX(), offset);
-		this.root = root;		
+		this.type.root.root = type.root.root;		
 		this.type = type;
 		
 		//calcColors(type.getWidth());
@@ -79,7 +78,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 	protected DrawingResult internalDraw(Graphics2D g2, boolean drawoutline, DrawingLayer drawinglayer, double minx, double maxx, double miny, double maxy)
 	{
 		
-		if(root.getLv().isShowAnnotations() && type.isSelected()){
+		if(type.root.root.getLv().isShowAnnotations() && type.isSelected()){
 			
 			if(!hasMouseListener){
 				this.addMouseInputListener(this);
@@ -88,18 +87,18 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 			int lineStart = (int)(startPos*getScaleX());
 			int lineEnd = (int)(endPos*getScaleX());
 			
-			if(lineStart>(root.getXViewBounds()+root.getViewPaneWidth()) || lineEnd < root.getXViewBounds()) return DrawingResult.NORMAL;
+			if(lineStart>(type.root.root.getXViewBounds()+type.root.root.getViewPaneWidth()) || lineEnd < type.root.root.getXViewBounds()) return DrawingResult.NORMAL;
 			if(type.isRelevant()){
-				//	if(type.isChanged() || type.getLastX() != root.getXViewBounds()){
+				//	if(type.isChanged() || type.getLastX() != type.root.root.getXViewBounds()){
 				g2.setStroke(new BasicStroke(1));
 				g2.setColor(col);
 
 				
 				if(type.asLines()){					
 
-					g2.draw(new Line2D.Double(lineStart, root.getBaseXAxis()+offset+type.getHeight()/2, lineEnd, root.getBaseXAxis()+offset+type.getHeight()/2));
-					startLine = new Line2D.Double(lineStart, root.getBaseXAxis()+offset+type.getHeight(), lineStart, root.getBaseXAxis()+offset+type.getHeight()/2);
-					endLine = new Line2D.Double(lineEnd,root.getBaseXAxis()+offset+(type.getHeight()/2),lineEnd,root.getBaseXAxis()+offset);
+					g2.draw(new Line2D.Double(lineStart, type.root.root.getBaseXAxis()+offset+type.getHeight()/2, lineEnd, type.root.root.getBaseXAxis()+offset+type.getHeight()/2));
+					startLine = new Line2D.Double(lineStart, type.root.root.getBaseXAxis()+offset+type.getHeight(), lineStart, type.root.root.getBaseXAxis()+offset+type.getHeight()/2);
+					endLine = new Line2D.Double(lineEnd,type.root.root.getBaseXAxis()+offset+(type.getHeight()/2),lineEnd,type.root.root.getBaseXAxis()+offset);
 					g2.draw(startLine);
 					g2.draw(endLine);
 				} else if(type.asArrows()) {
@@ -120,17 +119,17 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 					
 					int x7 = x1; //upperleft
 					
-					int y1 = root.getBaseXAxis()+offset+type.getHeight()-type.getHeight()/4; //Lower left
+					int y1 = type.root.root.getBaseXAxis()+offset+type.getHeight()-type.getHeight()/4; //Lower left
 					
 					int y2 = y1; //Middle start of bottom of arrow
 					
-					int y3 = root.getBaseXAxis()+offset+type.getHeight(); //Bottom of start of arrow
+					int y3 = type.root.root.getBaseXAxis()+offset+type.getHeight(); //Bottom of start of arrow
 					
-					int y4 = root.getBaseXAxis()+offset+type.getHeight()/2; //Tip of arrow
+					int y4 = type.root.root.getBaseXAxis()+offset+type.getHeight()/2; //Tip of arrow
 					
-					int y5 = root.getBaseXAxis()+offset; //Back to top of start of arrow
+					int y5 = type.root.root.getBaseXAxis()+offset; //Back to top of start of arrow
 					
-					int y6 = root.getBaseXAxis()+offset+type.getHeight()/4; //Back to middle start of top of arrow
+					int y6 = type.root.root.getBaseXAxis()+offset+type.getHeight()/4; //Back to middle start of top of arrow
 					
 					int y7 = y6; //upper left
 					
@@ -176,16 +175,16 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 
 	@Override
 	public int compareTo(Object o) {
-		LAPFeatureInterval li = (LAPFeatureInterval)o;
+		FeatureInterval li = (FeatureInterval)o;
 		return this.getStartPos() < li.getStartPos() ? 1 : 0;
 
 	}
 
-	public LAPFeatureType getType() {
+	public FeatureType getType() {
 		return type;
 	}
 
-	public void setType(LAPFeatureType type) {
+	public void setType(FeatureType type) {
 		this.type = type;
 	}
 
@@ -213,20 +212,20 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 	public void mouseClicked(MouseEvent arg0) {
 		
 		if(arg0.getWhen() - prevClick < 500 ) return;
-		if(arrowPolygon.contains(new Point(arg0.getX()+root.getXViewBounds(),arg0.getY()+root.getYViewBounds()))){
+		if(arrowPolygon.contains(new Point(arg0.getX()+type.root.root.getXViewBounds(),arg0.getY()+type.root.root.getYViewBounds()))){
 		if(!this.expanded){
 			this.expanded = true;
 			type.incrementIntervals();
 			if(type.expandedIntervals() == 1){
 				type.setExpanded(true);
-				root.setRelevantTypes();
+				type.root.root.setRelevantTypes();
 			}
 		} else {
 			this.expanded = false;
 			type.decrementIntervals();
 			if(type.expandedIntervals() == 0){
 				type.setExpanded(false);
-				root.setRelevantTypes();
+				type.root.root.setRelevantTypes();
 			}
 		}
 		this.changed = true;
@@ -268,7 +267,7 @@ public class LAPFeatureInterval extends ChildDrawingNode implements Comparable, 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
 		
-		if(arrowPolygon.contains(new Point(arg0.getX()+root.getXViewBounds(),arg0.getY()+root.getYViewBounds()))){
+		if(arrowPolygon.contains(new Point(arg0.getX()+type.root.root.getXViewBounds(),arg0.getY()+type.root.root.getYViewBounds()))){
 			this.hover = true;
 			prevHover = arg0.getWhen();
 			repaint();
